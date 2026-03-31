@@ -1472,7 +1472,7 @@
                 var cls = '', txt = '';
                 if (d === -1) { cls = 'destroyed'; txt = '💀'; }
                 else if (d === 0) { cls = 'disabled'; txt = '?'; }
-                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : 'kept') : (this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.map[d] || d; }
+                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : 'kept') : (this.actionSelected && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.map[d] || d; }
                 var skinStyle = (d > 0 && d !== -1 && skinData.cssClass === 'skin-preview-gotisch') ? ' style="font-family:MedievalSharp,Cinzel,Georgia,serif;"' : (d > 0 && d !== -1 && skinData.cssClass === 'skin-preview-strich') ? ' style="font-size:0.7em;letter-spacing:1px;"' : '';
                 diceHtml += '<div style="display:inline-block;text-align:center;margin:0 5px;">';
                 diceHtml += '<div class="dice ' + cls + '"' + skinStyle + ' onclick="game.toggleDiceKeep(' + i + ')">' + txt + '</div>';
@@ -2177,6 +2177,7 @@
         Game.prototype.toggleDiceKeep = function(idx) {
             if (this.onlineMode && !this.isMyTurn()) return;
             if (this.currentDice[idx] <= 0) return; // 0 oder -1
+            if (!this.actionSelected) { showScroll('Zuerst eine Aktion wählen!', '⚠️'); return; }
             if (this.diceKept[idx]) {
                 if (this.diceLocked[idx]) return; // aus vorherigem Wurf gesperrt
                 if (this.onlineMode) { this.sendOnlineAction({ type: 'toggleDiceKeep', index: idx }); return; }
