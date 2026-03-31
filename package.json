@@ -1,0 +1,21 @@
+{
+  "name": "wuerfelspiel-web",
+  "version": "1.0.0",
+  "description": "Würfelspiel - Dice Battle Game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "würfelspiel",
+    "dice",
+    "game"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.8.3"
+  }
+}
