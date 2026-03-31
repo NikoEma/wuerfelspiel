@@ -140,12 +140,12 @@
         .screen-shake { animation: screenShake 0.5s ease-out; }
         .attack-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,60,60,0.3) 0%, rgba(255,60,60,0) 70%); z-index: 1999; pointer-events: none; animation: attackFlashAnim 0.4s ease-out forwards; }
         @keyframes attackFlashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
-        .sparkle-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1998; overflow: hidden; }
-        .sparkle { position: absolute; width: 6px; height: 6px; background: #d4a030; border-radius: 50%; box-shadow: 0 0 6px #d4a030, 0 0 12px rgba(212,160,48,0.5); animation: sparkleFall 1.5s ease-out forwards; }
-        @keyframes sparkleFall {
-            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
-            50% { opacity: 1; }
-            100% { transform: translateY(120px) scale(0) rotate(360deg); opacity: 0; }
+        .ripple-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1998; overflow: hidden; }
+        .ripple-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 60px; height: 60px; border-radius: 50%; border: 3px solid #d4a030; box-shadow: 0 0 8px rgba(212,160,48,0.5), inset 0 0 8px rgba(212,160,48,0.15); animation: rippleExpand 1.6s ease-out forwards; }
+        @keyframes rippleExpand {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            60% { opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(12); opacity: 0; }
         }
         .heal-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(76,175,80,0.35) 0%, rgba(76,175,80,0) 70%); z-index: 1999; pointer-events: none; animation: healFlashAnim 0.6s ease-out forwards; }
         @keyframes healFlashAnim { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
@@ -2390,21 +2390,16 @@
         };
 
         Game.prototype.showSparkles = function() {
-            var sparkleDiv = document.createElement('div');
-            sparkleDiv.className = 'sparkle-container';
-            document.body.appendChild(sparkleDiv);
-            for (var i = 0; i < 25; i++) {
-                var s = document.createElement('div');
-                s.className = 'sparkle';
-                s.style.left = (10 + Math.random() * 80) + '%';
-                s.style.top = (10 + Math.random() * 40) + '%';
-                s.style.animationDelay = (Math.random() * 0.6) + 's';
-                s.style.animationDuration = (1 + Math.random() * 1) + 's';
-                sparkleDiv.appendChild(s);
+            var container = document.createElement('div');
+            container.className = 'ripple-container';
+            for (var i = 0; i < 5; i++) {
+                var ring = document.createElement('div');
+                ring.className = 'ripple-ring';
+                ring.style.animationDelay = (i * 0.25) + 's';
+                container.appendChild(ring);
             }
-            setTimeout(function() {
-                if (sparkleDiv.parentNode) sparkleDiv.parentNode.removeChild(sparkleDiv);
-            }, 2500);
+            document.body.appendChild(container);
+            setTimeout(function() { if (container.parentNode) container.parentNode.removeChild(container); }, 2500);
         };
 
         Game.prototype.isDiceEligible = function(idx) {
