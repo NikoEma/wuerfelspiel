@@ -123,6 +123,30 @@
             50% { box-shadow: 3px 3px 0 #000, 0 0 0 3px #d4a030; border-color: #e8b84a; }
             100% { box-shadow: 3px 3px 0 #000; border-color: #d4a030; }
         }
+        .dice-eligible { box-shadow: 3px 3px 0 #000, 0 0 12px rgba(212,160,48,0.6), 0 0 20px rgba(212,160,48,0.3); border-color: #d4a030 !important; }
+        .btn-select-action.action-active { border-color: #d4a030; background-color: #261f42; color: #fff; box-shadow: 2px 2px 0 #000, 0 0 8px rgba(212,160,48,0.4); }
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-6px, -3px); }
+            20% { transform: translate(5px, 2px); }
+            30% { transform: translate(-4px, 4px); }
+            40% { transform: translate(3px, -2px); }
+            50% { transform: translate(-2px, 3px); }
+            60% { transform: translate(4px, -1px); }
+            70% { transform: translate(-3px, 2px); }
+            80% { transform: translate(2px, -3px); }
+            90% { transform: translate(-1px, 1px); }
+        }
+        .screen-shake { animation: screenShake 0.5s ease-out; }
+        .attack-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,60,60,0.3) 0%, rgba(255,60,60,0) 70%); z-index: 1999; pointer-events: none; animation: attackFlashAnim 0.4s ease-out forwards; }
+        @keyframes attackFlashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
+        .sparkle-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1998; overflow: hidden; }
+        .sparkle { position: absolute; width: 6px; height: 6px; background: #d4a030; border-radius: 50%; box-shadow: 0 0 6px #d4a030, 0 0 12px rgba(212,160,48,0.5); animation: sparkleFall 1.5s ease-out forwards; }
+        @keyframes sparkleFall {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: translateY(120px) scale(0) rotate(360deg); opacity: 0; }
+        }
         .meta-screen { max-width: 700px; margin: 30px auto; padding: 25px; background: #141020; border: 3px solid #3d2d66; color: #d4c8e0; font-family: 'VT323', monospace; box-shadow: 4px 4px 0 #000; }
         .meta-title { text-align: center; font-family: 'Press Start 2P', monospace; font-size: 1.1em; color: #d4a030; margin-bottom: 20px; text-shadow: 2px 2px 0 #000; line-height: 1.4; }
         .stat-row { display: flex; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid #2d1f4d; font-size: 1.1em; }
@@ -1410,14 +1434,17 @@
 
             // Aktions-Buttons
             var actionHtml = '';
-            if (hasRolled && !this.actionSelected) {
+            if (hasRolled) {
+                var atkCls = this.actionSelected === 'attack' ? ' action-active' : '';
+                var healCls = this.actionSelected === 'heal' ? ' action-active' : '';
+                var abCls = this.actionSelected === 'ability' ? ' action-active' : '';
                 actionHtml = '<div class="action-buttons-container">' +
-                    '<button class="btn-select-action" onclick="game.selectAction(\'attack\')">⚔ Angriff</button>' +
-                    '<button class="btn-select-action" onclick="game.selectAction(\'heal\')">💚 Heilen</button>' +
-                    '<button class="btn-select-action" onclick="game.selectAction(\'ability\')">⭐ Fähigkeitspunkte</button>';
-                // Schadensblockade: wenn Rebell Fähigkeit 1 hat und Schaden erlitten
+                    '<button class="btn-select-action' + atkCls + '" onclick="game.selectAction(\'attack\')">⚔ Angriff</button>' +
+                    '<button class="btn-select-action' + healCls + '" onclick="game.selectAction(\'heal\')">💚 Heilen</button>' +
+                    '<button class="btn-select-action' + abCls + '" onclick="game.selectAction(\'ability\')">⭐ Fähigkeitspunkte</button>';
                 if (this.playerHasEffect(current, CharacterType.Rebell, 1) && current.lastDamageReceived > 0) {
-                    actionHtml += '<button class="btn-select-action" style="background-color: #1e1832; border-color: #d4a030;" onclick="game.selectAction(\'block\')">🛡️ Blocken (' + current.lastDamageReceived + ' Schaden)</button>';
+                    var blkCls = this.actionSelected === 'block' ? ' action-active' : '';
+                    actionHtml += '<button class="btn-select-action' + blkCls + '" style="border-color: #d4a030;" onclick="game.selectAction(\'block\')">🛡️ Blocken (' + current.lastDamageReceived + ' Schaden)</button>';
                 }
                 actionHtml += '</div>';
             }
@@ -1445,7 +1472,7 @@
                 var cls = '', txt = '';
                 if (d === -1) { cls = 'destroyed'; txt = '💀'; }
                 else if (d === 0) { cls = 'disabled'; txt = '?'; }
-                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : 'kept') : ''; txt = skinData.map[d] || d; }
+                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : 'kept') : (this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.map[d] || d; }
                 var skinStyle = (d > 0 && d !== -1 && skinData.cssClass === 'skin-preview-gotisch') ? ' style="font-family:MedievalSharp,Cinzel,Georgia,serif;"' : (d > 0 && d !== -1 && skinData.cssClass === 'skin-preview-strich') ? ' style="font-size:0.7em;letter-spacing:1px;"' : '';
                 diceHtml += '<div style="display:inline-block;text-align:center;margin:0 5px;">';
                 diceHtml += '<div class="dice ' + cls + '"' + skinStyle + ' onclick="game.toggleDiceKeep(' + i + ')">' + txt + '</div>';
@@ -2259,6 +2286,9 @@
                 this.sendOnlineAction({ type: 'selectAction', actionType: actionType });
                 return;
             }
+            for (var i = 0; i < this.diceKept.length; i++) {
+                if (this.diceKept[i] && !this.diceLocked[i]) this.diceKept[i] = false;
+            }
             this.actionSelected = actionType;
             this.render();
         };
@@ -2311,6 +2341,86 @@
             this.restartUsed = true;
             showScroll('♻️ Selber-Neustart! ' + count + ' Würfel komplett neu gewürfelt!', '♻️');
             this.render();
+        };
+
+        // ===== EFFEKTE =====
+        Game.prototype.showScreenShake = function() {
+            var container = document.getElementById('gameContainer');
+            if (!container) return;
+            container.classList.add('screen-shake');
+            var flash = document.createElement('div');
+            flash.className = 'attack-flash';
+            document.body.appendChild(flash);
+            setTimeout(function() {
+                container.classList.remove('screen-shake');
+                if (flash.parentNode) flash.parentNode.removeChild(flash);
+            }, 500);
+        };
+
+        Game.prototype.showSparkles = function() {
+            var sparkleDiv = document.createElement('div');
+            sparkleDiv.className = 'sparkle-container';
+            document.body.appendChild(sparkleDiv);
+            for (var i = 0; i < 25; i++) {
+                var s = document.createElement('div');
+                s.className = 'sparkle';
+                s.style.left = (10 + Math.random() * 80) + '%';
+                s.style.top = (10 + Math.random() * 40) + '%';
+                s.style.animationDelay = (Math.random() * 0.6) + 's';
+                s.style.animationDuration = (1 + Math.random() * 1) + 's';
+                sparkleDiv.appendChild(s);
+            }
+            setTimeout(function() {
+                if (sparkleDiv.parentNode) sparkleDiv.parentNode.removeChild(sparkleDiv);
+            }, 2500);
+        };
+
+        Game.prototype.isDiceEligible = function(idx) {
+            if (!this.actionSelected) return false;
+            var d = this.currentDice[idx];
+            if (d <= 0 || d === -1) return false;
+            if (this.diceKept[idx]) return false;
+            var current = this.getCurrentPlayer();
+
+            if (this.actionSelected === 'attack') {
+                var hasHealMgr = this.playerHasEffect(current, CharacterType.Quacksalber, 1);
+                if (hasHealMgr && d === 1) return true;
+                var hasDoppel = this.playerHasEffect(current, CharacterType.Soldat, 3);
+                var hasKriegsmeister = this.playerHasEffect(current, CharacterType.Soldat, 1);
+                var hasFuenfer = this.playerHasEffect(current, CharacterType.Rebell, 3);
+                var keptVals = [];
+                for (var i = 0; i < this.currentDice.length; i++) {
+                    if (this.diceKept[i] && this.currentDice[i] > 0) {
+                        if (hasHealMgr && this.currentDice[i] === 1) continue;
+                        var kv = (hasFuenfer && this.currentDice[i] === 5) ? 6 : this.currentDice[i];
+                        if (keptVals.indexOf(kv) === -1) keptVals.push(kv);
+                    }
+                }
+                var effVal = (hasFuenfer && d === 5) ? 6 : d;
+                if (hasDoppel || hasKriegsmeister) {
+                    return keptVals.length < 2 || keptVals.indexOf(effVal) !== -1;
+                }
+                return keptVals.length === 0 || keptVals.indexOf(effVal) !== -1;
+            }
+            if (this.actionSelected === 'heal') {
+                var hasZweier = this.playerHasEffect(current, CharacterType.Taschendieb, 1);
+                return d === 1 || (hasZweier && d === 2);
+            }
+            if (this.actionSelected === 'ability') {
+                return true;
+            }
+            if (this.actionSelected === 'block') {
+                var keptValsB = [];
+                for (var j = 0; j < this.currentDice.length; j++) {
+                    if (this.diceKept[j] && this.currentDice[j] > 0) {
+                        if (keptValsB.indexOf(this.currentDice[j]) === -1) keptValsB.push(this.currentDice[j]);
+                    }
+                }
+                var hasDoppelB = this.playerHasEffect(current, CharacterType.Soldat, 3);
+                if (hasDoppelB) return true;
+                return keptValsB.length === 0 || keptValsB.indexOf(d) !== -1;
+            }
+            return false;
         };
 
         // ===== WÜRFELN =====
@@ -2530,6 +2640,7 @@
                 msg += '\n💊 Heilungs-Manager*in: +' + healFromManager + ' HP, +1 SP!';
             }
 
+            this.showScreenShake();
             showScroll(msg, '⚔️');
             if (!this.checkWinCondition()) { this.actionSelected = null; var self = this; afterScroll(function() { self.endTurn(); }); }
         };
@@ -2593,6 +2704,7 @@
                     }
                 }
                 current.sp += sp;
+                this.showSparkles();
                 showScroll('⭐ +' + fp + ' FP, +' + sp + ' SP gesammelt!', '⭐');
             } else {
                 showScroll('Keine Punkte mit dieser Markierung.', '⚠️');
@@ -3085,6 +3197,7 @@
 
         // Online-Würfeln mit Server-Werten
         Game.prototype._onlineRollDice = function(diceValues) {
+            if (!diceValues || !diceValues.length) return;
             if (this.rollsRemaining <= 0) return;
             if (this.rollsRemaining < 3 && !this.actionSelected) return;
             for (var i = 0; i < this.diceKept.length; i++) {
@@ -3093,7 +3206,7 @@
             var vi = 0;
             for (var i = 0; i < this.currentDice.length; i++) {
                 if (!this.diceKept[i] && this.currentDice[i] !== -1) {
-                    this.currentDice[i] = diceValues[vi++];
+                    this.currentDice[i] = (vi < diceValues.length) ? diceValues[vi++] : 1;
                 }
             }
             this.rollsRemaining--;
@@ -3101,7 +3214,7 @@
             if (this.gegnerZwangRoll === rollNum) {
                 for (var j = 0; j < this.currentDice.length; j++) {
                     if (!this.diceKept[j] && this.currentDice[j] !== -1) {
-                        this.currentDice[j] = diceValues[vi++] || (Math.floor(Math.random() * 6) + 1);
+                        this.currentDice[j] = (vi < diceValues.length) ? diceValues[vi++] : 1;
                     }
                 }
                 showScroll('🔮 Gegner*in-Zwang! Wurf ' + rollNum + ' wurde erzwungen wiederholt!', '🔮');
@@ -3128,6 +3241,9 @@
         };
 
         Game.prototype._onlineSelectAction = function(actionType) {
+            for (var i = 0; i < this.diceKept.length; i++) {
+                if (this.diceKept[i] && !this.diceLocked[i]) this.diceKept[i] = false;
+            }
             this.actionSelected = actionType;
             this.render();
         };
