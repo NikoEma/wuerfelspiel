@@ -664,7 +664,93 @@
                     }
                 });
             },
-            toggle: function() { this.muted = !this.muted; return this.muted; }
+            toggle: function() { this.muted = !this.muted; if (this.muted) Music.stop(); else Music._restart(); return this.muted; }
+        };
+
+        // ===== MUSIK-SYSTEM =====
+        var Music = {
+            ctx: null, current: null, _nodes: [], _timer: null, _track: null,
+            _getCtx: function() {
+                if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} }
+                return this.ctx;
+            },
+            stop: function() {
+                if (this._timer) { clearInterval(this._timer); this._timer = null; }
+                for (var i = 0; i < this._nodes.length; i++) {
+                    try { this._nodes[i].gain.gain.exponentialRampToValueAtTime(0.001, (this.ctx ? this.ctx.currentTime : 0) + 0.3); } catch(e) {}
+                }
+                this._nodes = []; this.current = null;
+            },
+            _restart: function() { if (this._track) this.play(this._track); },
+            play: function(track) {
+                this._track = track;
+                if (SFX.muted) return;
+                if (this.current === track) return;
+                this.stop();
+                var ctx = this._getCtx();
+                if (!ctx) return;
+                if (ctx.state === 'suspended') ctx.resume();
+                this.current = track;
+                if (track === 'lobby') this._playLobby(ctx);
+                else if (track === 'battle') this._playBattle(ctx);
+            },
+            _playLobby: function(ctx) {
+                var notes = [220, 261.6, 329.6, 392, 329.6, 261.6, 293.7, 349.2, 440, 349.2, 293.7, 261.6];
+                var bass = [110, 130.8, 146.8, 164.8];
+                var idx = 0, bIdx = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.04; mg.connect(ctx.destination);
+                self._nodes.push({ gain: mg });
+                function tick() {
+                    if (SFX.muted || self.current !== 'lobby') return;
+                    var f = notes[idx % notes.length];
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sine'; o.frequency.value = f;
+                    g.gain.value = 0.8; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.7);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.75);
+                    var o2 = ctx.createOscillator(), g2 = ctx.createGain();
+                    o2.type = 'triangle'; o2.frequency.value = f * 1.5;
+                    g2.gain.value = 0.3; g2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                    o2.connect(g2); g2.connect(mg); o2.start(); o2.stop(ctx.currentTime + 0.55);
+                    if (idx % 4 === 0) {
+                        var ob = ctx.createOscillator(), gb = ctx.createGain();
+                        ob.type = 'sine'; ob.frequency.value = bass[bIdx % bass.length];
+                        gb.gain.value = 1.0; gb.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
+                        ob.connect(gb); gb.connect(mg); ob.start(); ob.stop(ctx.currentTime + 1.3); bIdx++;
+                    }
+                    idx++;
+                }
+                tick(); self._timer = setInterval(tick, 500);
+            },
+            _playBattle: function(ctx) {
+                var melody = [293.7, 349.2, 440, 392, 349.2, 293.7, 261.6, 293.7, 349.2, 392, 440, 523.3, 440, 392, 349.2, 293.7];
+                var bass = [146.8, 146.8, 174.6, 164.8];
+                var idx = 0, bIdx = 0, beat = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.035; mg.connect(ctx.destination);
+                self._nodes.push({ gain: mg });
+                function tick() {
+                    if (SFX.muted || self.current !== 'battle') return;
+                    var f = melody[idx % melody.length];
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'square'; o.frequency.value = f;
+                    g.gain.value = 0.5; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.28);
+                    if (beat % 2 === 0) {
+                        var buf = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+                        var d = buf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = (Math.random()*2-1)*0.4;
+                        var n = ctx.createBufferSource(), ng = ctx.createGain();
+                        n.buffer = buf; ng.gain.value = 0.6; ng.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.06);
+                        n.connect(ng); ng.connect(mg); n.start(); n.stop(ctx.currentTime + 0.06);
+                    }
+                    if (beat % 4 === 0) {
+                        var ob = ctx.createOscillator(), gb = ctx.createGain();
+                        ob.type = 'sawtooth'; ob.frequency.value = bass[bIdx % bass.length];
+                        gb.gain.value = 0.7; gb.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                        ob.connect(gb); gb.connect(mg); ob.start(); ob.stop(ctx.currentTime + 0.55); bIdx++;
+                    }
+                    idx++; beat++;
+                }
+                tick(); self._timer = setInterval(tick, 300);
+            }
         };
 
         var _scrollQueue = [];
@@ -763,6 +849,7 @@
         // ===== GAME =====
         function Game() {
             this.state = GameState.MainMenu;
+            Music.play('lobby');
             this.player1 = new Player('Spieler*in 1');
             this.player2 = new Player('KI', true);
             this.currentPlayerIndex = 0;
@@ -1878,7 +1965,7 @@
                 if (this.socket) { this.socket.disconnect(); this.socket = null; }
                 this.roomCode = '';
             }
-            this.state = GameState.MainMenu; this.render();
+            this.state = GameState.MainMenu; Music.play('lobby'); this.render();
         };
         Game.prototype.showStatistics = function() { this.state = GameState.Statistics; this.render(); };
         Game.prototype.showAchievements = function() { this.state = GameState.Achievements; this.render(); };
@@ -2315,6 +2402,7 @@
             this.initDice();
             this.applyPostDiceEffects();
             this.state = GameState.Playing;
+            Music.play('battle');
             this.render();
         };
 
@@ -2974,6 +3062,7 @@
             // 1. Aktiver Spieler: Gegner auf 0 HP gebracht?
             if (opponent.health <= 0) {
                 this.state = GameState.GameOver;
+                Music.stop();
                 SFX.victory();
                 showScroll('💀 Elimination! ' + current.name + ' besiegt ' + opponent.name + '!', '💀');
                 this.render();
@@ -2982,6 +3071,7 @@
             // 2. Aktiver Spieler: 60 SP erreicht?
             if (current.sp >= 60) {
                 this.state = GameState.GameOver;
+                Music.stop();
                 SFX.victory();
                 showScroll('🌟 Transzendenz-Sieg! ' + current.name + ' erreicht 60 SP!', '🌟');
                 this.render();
@@ -2990,6 +3080,7 @@
             // 3. Inaktiver Spieler: 60 SP erreicht? (z.B. durch passiven SP-Gain)
             if (opponent.sp >= 60) {
                 this.state = GameState.GameOver;
+                Music.stop();
                 SFX.victory();
                 showScroll('🌟 Transzendenz-Sieg! ' + opponent.name + ' erreicht 60 SP!', '🌟');
                 this.render();
@@ -2998,6 +3089,7 @@
             // 4. Aktiver Spieler auf 0 HP? (z.B. durch Vergeltung)
             if (current.health <= 0) {
                 this.state = GameState.GameOver;
+                Music.stop();
                 SFX.defeat();
                 showScroll('💀 Elimination! ' + opponent.name + ' besiegt ' + current.name + '!', '💀');
                 this.render();
