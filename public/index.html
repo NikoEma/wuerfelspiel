@@ -138,8 +138,11 @@
             90% { transform: translate(-1px, 1px); }
         }
         .screen-shake { animation: screenShake 0.5s ease-out; }
-        .attack-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,60,60,0.3) 0%, rgba(255,60,60,0) 70%); z-index: 1999; pointer-events: none; animation: attackFlashAnim 0.4s ease-out forwards; }
-        @keyframes attackFlashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
+        .attack-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1999; pointer-events: none; animation: attackFlashAnim 0.35s ease-out forwards; }
+        .attack-flash svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .attack-flash .bolt { fill: none; stroke: #ff3c3c; stroke-width: 4; filter: drop-shadow(0 0 12px #ff3c3c) drop-shadow(0 0 30px rgba(255,60,60,0.6)); stroke-dasharray: 1200; stroke-dashoffset: 1200; animation: boltDraw 0.25s ease-out forwards; }
+        @keyframes boltDraw { 0% { stroke-dashoffset: 1200; } 100% { stroke-dashoffset: 0; } }
+        @keyframes attackFlashAnim { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
         .ripple-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1998; overflow: hidden; }
         .ripple-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 60px; height: 60px; border-radius: 50%; border: 3px solid #d4a030; box-shadow: 0 0 8px rgba(212,160,48,0.5), inset 0 0 8px rgba(212,160,48,0.15); animation: rippleExpand 1.6s ease-out forwards; }
         @keyframes rippleExpand {
@@ -2361,6 +2364,7 @@
             container.classList.add('screen-shake');
             var flash = document.createElement('div');
             flash.className = 'attack-flash';
+            flash.innerHTML = '<svg viewBox="0 0 400 800" preserveAspectRatio="none"><path class="bolt" d="M180 0 L160 180 L220 200 L140 420 L210 440 L120 800"/></svg>';
             document.body.appendChild(flash);
             setTimeout(function() {
                 container.classList.remove('screen-shake');
