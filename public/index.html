@@ -285,6 +285,37 @@
         body.rg-mode .player-color-green { color: #4488cc; }
         body.rg-mode .player-color-red { color: #e07020; }
         body.rg-mode .btn-surrender { border-color: #e07020; }
+        /* Big Font Mode */
+        body.bigfont-mode { font-size: 1.45em; }
+        body.bigfont-mode .btn-main { font-size: 0.9em; }
+        body.bigfont-mode .screen-title, body.bigfont-mode .meta-title { font-size: 1.15em; }
+        body.bigfont-mode .a11y-panel-title { font-size: 0.7em; }
+        body.bigfont-mode .dice { font-size: 1.5em; }
+        body.bigfont-mode .info-rule { font-size: 1.25em; }
+        body.bigfont-mode .info-title { font-size: 0.75em; }
+        body.bigfont-mode .btn-action, body.bigfont-mode .btn-select-action { font-size: 1.25em; }
+        body.bigfont-mode .stat-label, body.bigfont-mode .stat-value { font-size: 1.2em; }
+        body.bigfont-mode .player-name { font-size: 0.95em; }
+        body.bigfont-mode .character-name { font-size: 1em; }
+        body.bigfont-mode .current-player { font-size: 1.1em; }
+        body.bigfont-mode .opponent-bar .opp-name { font-size: 0.85em; }
+        body.bigfont-mode .opponent-bar .opp-stat { font-size: 1.15em; }
+        body.bigfont-mode .difficulty-desc { font-size: 1.15em; }
+        body.bigfont-mode .achievement-name { font-size: 0.75em; }
+        body.bigfont-mode .achievement-desc { font-size: 1.15em; }
+        body.bigfont-mode .skin-name { font-size: 0.8em; }
+        body.bigfont-mode .profile-name { font-size: 0.8em; }
+        body.bigfont-mode .stat-section-title { font-size: 0.85em; }
+        body.bigfont-mode .a11y-option-label { font-size: 1.3em; }
+        body.bigfont-mode .a11y-option-desc { font-size: 1.05em; }
+        body.bigfont-mode .scroll-text { font-size: 1.2em; }
+        body.bigfont-mode .scroll-btn { font-size: 0.9em; }
+        body.bigfont-mode .ability-section { font-size: 1.1em; }
+        body.bigfont-mode [style*="font-size:0.7em"], body.bigfont-mode [style*="font-size: 0.7em"] { font-size: 0.95em !important; }
+        body.bigfont-mode [style*="font-size:0.75em"], body.bigfont-mode [style*="font-size: 0.75em"] { font-size: 1em !important; }
+        body.bigfont-mode [style*="font-size:0.8em"], body.bigfont-mode [style*="font-size: 0.8em"] { font-size: 1.05em !important; }
+        body.bigfont-mode [style*="font-size:0.85em"], body.bigfont-mode [style*="font-size: 0.85em"] { font-size: 1.1em !important; }
+        body.bigfont-mode [style*="font-size:0.9em"], body.bigfont-mode [style*="font-size: 0.9em"] { font-size: 1.1em !important; }
     </style>
 </head>
 <body>
@@ -342,6 +373,10 @@
             <div class="a11y-checkbox" id="a11yCheckRg"></div>
             <div><div class="a11y-option-label">Rot-Grün-Schwäche</div><div class="a11y-option-desc">Rot→Orange, Grün→Blau</div></div>
         </div>
+        <div class="a11y-option" onclick="toggleA11yMode('bigfont')">
+            <div class="a11y-checkbox" id="a11yCheckBigfont"></div>
+            <div><div class="a11y-option-label">Größere Schrift</div><div class="a11y-option-desc">Alle Texte vergrößern</div></div>
+        </div>
     </div>
 
     <script>
@@ -351,7 +386,7 @@
                 var data = localStorage.getItem('wuerfelspiel_accessibility');
                 if (data) return JSON.parse(data);
             } catch(e) {}
-            return { lrs: false, colorblind: false, rg: false };
+            return { lrs: false, colorblind: false, rg: false, bigfont: false };
         }
 
         function saveA11ySettings(settings) {
@@ -363,6 +398,7 @@
             if (settings.lrs) b.classList.add('lrs-mode'); else b.classList.remove('lrs-mode');
             if (settings.colorblind) b.classList.add('colorblind-mode'); else b.classList.remove('colorblind-mode');
             if (settings.rg) b.classList.add('rg-mode'); else b.classList.remove('rg-mode');
+            if (settings.bigfont) b.classList.add('bigfont-mode'); else b.classList.remove('bigfont-mode');
             updateA11yCheckboxes(settings);
         }
 
@@ -373,6 +409,8 @@
             if (lrsEl) { lrsEl.className = 'a11y-checkbox' + (settings.lrs ? ' checked' : ''); lrsEl.textContent = settings.lrs ? '✓' : ''; }
             if (cbEl) { cbEl.className = 'a11y-checkbox' + (settings.colorblind ? ' checked' : ''); cbEl.textContent = settings.colorblind ? '✓' : ''; }
             if (rgEl) { rgEl.className = 'a11y-checkbox' + (settings.rg ? ' checked' : ''); rgEl.textContent = settings.rg ? '✓' : ''; }
+            var bfEl = document.getElementById('a11yCheckBigfont');
+            if (bfEl) { bfEl.className = 'a11y-checkbox' + (settings.bigfont ? ' checked' : ''); bfEl.textContent = settings.bigfont ? '✓' : ''; }
         }
 
         function toggleA11yPanel() {
@@ -1650,9 +1688,9 @@
                 var abils = CHARACTER_ABILITIES[i];
                 var abilList = '';
                 for (var a = 0; a < abils.length; a++) {
-                    abilList += '<div style="font-size:0.7em;color:#8877aa;margin:2px 0;text-align:left;">' +
-                        abils[a].name[2] + ' <span style="color:#7a6b99;">(' + fpThresholds[a] + ' FP)</span><br>' +
-                        '<span style="color:#8877aa;font-size:0.9em;">' + abils[a].desc[2] + '</span></div>';
+                    abilList += '<div style="font-size:0.7em;color:#e0d6f0;margin:2px 0;text-align:left;text-shadow:0 0 4px rgba(212,160,48,0.3);">' +
+                        abils[a].name[2] + ' <span style="color:#c8b8e0;">(' + fpThresholds[a] + ' FP)</span><br>' +
+                        '<span style="color:#d0c4ea;font-size:0.9em;">' + abils[a].desc[2] + '</span></div>';
                 }
                 h += '<div class="character-card"><div class="character-image"><img src="' + chars[i].img + '" alt="' + chars[i].name + '"></div>' +
                     '<div class="character-name">' + chars[i].name + '</div>' +
@@ -1834,9 +1872,9 @@
                 var name = getGenderedText(ab.name, g);
                 if (player.abilityUnlocked[i]) {
                     var desc = getGenderedText(ab.desc, g);
-                    parts.push('<span style="color:#d4a030;">' + name + ' ⭐ <span style="color:#8877aa;font-size:0.9em;">(' + desc + ')</span></span>');
+                    parts.push('<span style="color:#d4a030;">' + name + ' ⭐ <span style="color:#d0c4ea;font-size:0.9em;">(' + desc + ')</span></span>');
                 } else {
-                    parts.push('<span style="color:#7a6b99;">' + name + '</span>');
+                    parts.push('<span style="color:#c8b8e0;">' + name + '</span>');
                 }
             }
             return parts.join(' | ');
@@ -1855,10 +1893,10 @@
                 if (player.abilityUnlocked[i]) {
                     html += '<div style="color: #d4a030; padding: 3px 5px; margin: 2px 0; background-color: rgba(212,160,48,0.1); border-left: 3px solid #d4a030;">' +
                         name + ' ⭐' +
-                        '<div style="color: #8877aa; font-size: 0.8em; margin-top: 1px;">' + desc + '</div></div>';
+                        '<div style="color: #d0c4ea; font-size: 0.8em; margin-top: 1px;">' + desc + '</div></div>';
                 } else {
-                    html += '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">' + name + ' (' + player.abilityProgress[i] + '/' + thresholds[i] + ')' +
-                        '<div style="color: #6b5b8d; font-size: 0.75em; margin-top: 1px;">' + desc + '</div></div>';
+                    html += '<div style="color: #c8b8e0; padding: 3px 5px; margin: 2px 0; text-shadow: 0 0 3px rgba(200,184,224,0.15);">' + name + ' (' + player.abilityProgress[i] + '/' + thresholds[i] + ')' +
+                        '<div style="color: #b8a8d4; font-size: 0.75em; margin-top: 1px;">' + desc + '</div></div>';
                 }
             }
             // Kopierte Fähigkeit anzeigen
