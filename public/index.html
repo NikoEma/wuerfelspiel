@@ -150,15 +150,22 @@
             60% { opacity: 0.6; }
             100% { transform: translate(-50%, -50%) scale(12); opacity: 0; }
         }
-        .heal-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(76,175,80,0.35) 0%, rgba(76,175,80,0) 70%); z-index: 1999; pointer-events: none; animation: healFlashAnim 0.6s ease-out forwards; }
-        @keyframes healFlashAnim { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+        .heal-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(76,175,80,0.45) 0%, rgba(46,125,50,0.2) 50%, rgba(76,175,80,0) 80%); z-index: 1999; pointer-events: none; animation: healFlashAnim 0.8s ease-out forwards; }
+        @keyframes healFlashAnim { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
         .heal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1998; overflow: hidden; }
-        .heal-particle { position: absolute; bottom: -20px; font-size: 1.4em; animation: healRise 2s ease-out forwards; }
-        @keyframes healRise {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            15% { opacity: 1; transform: translateY(-40px) scale(1); }
-            80% { opacity: 0.8; }
-            100% { transform: translateY(-320px) scale(0.3); opacity: 0; }
+        .heal-particle { position: absolute; font-size: 1.6em; animation: healFloat 2.2s ease-out forwards; }
+        @keyframes healFloat {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            15% { transform: scale(1.2) rotate(20deg); opacity: 1; }
+            50% { transform: scale(1) rotate(-10deg); opacity: 0.9; }
+            100% { transform: scale(0.2) rotate(40deg) translateY(-80px); opacity: 0; }
+        }
+        .heal-glitter { position: absolute; width: 5px; height: 5px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 6px #4caf50, 0 0 14px rgba(76,175,80,0.6); animation: glitterPulse 1.4s ease-out forwards; }
+        @keyframes glitterPulse {
+            0% { transform: scale(0); opacity: 0; }
+            20% { transform: scale(1.5); opacity: 1; }
+            60% { opacity: 0.7; }
+            100% { transform: scale(0); opacity: 0; }
         }
         .meta-screen { max-width: 700px; margin: 30px auto; padding: 25px; background: #141020; border: 3px solid #3d2d66; color: #d4c8e0; font-family: 'VT323', monospace; box-shadow: 4px 4px 0 #000; }
         .meta-title { text-align: center; font-family: 'Press Start 2P', monospace; font-size: 1.1em; color: #d4a030; margin-bottom: 20px; text-shadow: 2px 2px 0 #000; line-height: 1.4; }
@@ -2376,21 +2383,31 @@
             var flash = document.createElement('div');
             flash.className = 'heal-flash';
             document.body.appendChild(flash);
-            setTimeout(function() { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 700);
+            setTimeout(function() { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 900);
             var container = document.createElement('div');
             container.className = 'heal-container';
-            var symbols = ['💚', '✚', '❤️‍🩹', '✦', '💚', '✚'];
-            for (var i = 0; i < 15; i++) {
+            var symbols = ['💚', '✚', '❤️‍🩹', '✦', '💚', '✚', '✨', '💚'];
+            for (var i = 0; i < 35; i++) {
                 var p = document.createElement('div');
                 p.className = 'heal-particle';
                 p.textContent = symbols[i % symbols.length];
-                p.style.left = (10 + Math.random() * 80) + '%';
-                p.style.animationDelay = (Math.random() * 0.8) + 's';
-                p.style.animationDuration = (1.5 + Math.random() * 1) + 's';
+                p.style.left = (Math.random() * 96) + '%';
+                p.style.top = (Math.random() * 90) + '%';
+                p.style.animationDelay = (Math.random() * 1) + 's';
+                p.style.animationDuration = (1.5 + Math.random() * 1.2) + 's';
                 container.appendChild(p);
             }
+            for (var j = 0; j < 40; j++) {
+                var g = document.createElement('div');
+                g.className = 'heal-glitter';
+                g.style.left = (Math.random() * 98) + '%';
+                g.style.top = (Math.random() * 98) + '%';
+                g.style.animationDelay = (Math.random() * 1.2) + 's';
+                g.style.animationDuration = (0.8 + Math.random() * 1) + 's';
+                container.appendChild(g);
+            }
             document.body.appendChild(container);
-            setTimeout(function() { if (container.parentNode) container.parentNode.removeChild(container); }, 3000);
+            setTimeout(function() { if (container.parentNode) container.parentNode.removeChild(container); }, 3500);
         };
 
         Game.prototype.showSparkles = function() {
