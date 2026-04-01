@@ -572,16 +572,26 @@
             },
             roll: function() {
                 this._play(function(ctx) {
-                    for (var i = 0; i < 5; i++) {
-                        var o = ctx.createOscillator(), g = ctx.createGain();
-                        o.type = 'square';
-                        o.frequency.value = 200 + Math.random() * 400;
-                        g.gain.value = 0.08;
-                        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06 + i * 0.06);
-                        o.connect(g); g.connect(ctx.destination);
-                        o.start(ctx.currentTime + i * 0.06);
-                        o.stop(ctx.currentTime + 0.06 + i * 0.06);
+                    for (var i = 0; i < 12; i++) {
+                        var dur = 0.02 + Math.random() * 0.03;
+                        var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+                        var dd = buf.getChannelData(0);
+                        for (var j = 0; j < dd.length; j++) dd[j] = (Math.random() * 2 - 1);
+                        var src = ctx.createBufferSource(), gn = ctx.createGain();
+                        src.buffer = buf;
+                        var hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2000 + Math.random() * 3000;
+                        gn.gain.value = 0.06 + Math.random() * 0.04;
+                        gn.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.045 + dur + 0.02);
+                        src.connect(hp); hp.connect(gn); gn.connect(ctx.destination);
+                        src.start(ctx.currentTime + i * 0.045);
+                        src.stop(ctx.currentTime + i * 0.045 + dur + 0.03);
                     }
+                    var thud = ctx.createOscillator(), tg = ctx.createGain();
+                    thud.type = 'sine'; thud.frequency.value = 80;
+                    thud.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.6);
+                    tg.gain.value = 0.08; tg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
+                    thud.connect(tg); tg.connect(ctx.destination);
+                    thud.start(ctx.currentTime + 0.45); thud.stop(ctx.currentTime + 0.65);
                 });
             },
             attack: function() {
@@ -734,34 +744,48 @@
                 tick(); self._timer = setInterval(tick, 500);
             },
             _playBattle: function(ctx) {
-                var melody = [293.7, 349.2, 440, 392, 349.2, 293.7, 261.6, 293.7, 349.2, 392, 440, 523.3, 440, 392, 349.2, 293.7];
-                var bass = [146.8, 146.8, 174.6, 164.8];
-                var idx = 0, bIdx = 0, beat = 0, self = this;
-                var mg = ctx.createGain(); mg.gain.value = 0.035; mg.connect(ctx.destination);
+                var phraseA = [293.7, 349.2, 440, 523.3, 440, 349.2, 392, 440, 523.3, 587.3, 523.3, 440, 392, 349.2, 293.7, 261.6];
+                var phraseB = [329.6, 392, 440, 392, 349.2, 329.6, 293.7, 349.2, 392, 440, 523.3, 587.3, 659.3, 587.3, 523.3, 440];
+                var bassA = [146.8, 174.6, 146.8, 130.8];
+                var bassB = [164.8, 146.8, 174.6, 196];
+                var idx = 0, bIdx = 0, beat = 0, phrase = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.03; mg.connect(ctx.destination);
                 self._nodes.push({ gain: mg });
                 function tick() {
                     if (SFX.muted || self.current !== 'battle') return;
-                    var f = melody[idx % melody.length];
+                    var mel = (phrase % 2 === 0) ? phraseA : phraseB;
+                    var bas = (phrase % 2 === 0) ? bassA : bassB;
+                    var f = mel[idx % mel.length];
                     var o = ctx.createOscillator(), g = ctx.createGain();
-                    o.type = 'square'; o.frequency.value = f;
-                    g.gain.value = 0.5; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
-                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.28);
-                    if (beat % 2 === 0) {
-                        var buf = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
-                        var d = buf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = (Math.random()*2-1)*0.4;
+                    o.type = (phrase % 2 === 0) ? 'square' : 'triangle';
+                    o.frequency.value = f;
+                    g.gain.value = 0.45; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.24);
+                    if (beat % 2 === 0 || (phrase % 2 === 1 && beat % 3 === 0)) {
+                        var pLen = (beat % 4 === 0) ? 0.06 : 0.035;
+                        var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * pLen), ctx.sampleRate);
+                        var d = buf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * ((beat % 4 === 0) ? 0.5 : 0.3);
                         var n = ctx.createBufferSource(), ng = ctx.createGain();
-                        n.buffer = buf; ng.gain.value = 0.6; ng.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.06);
-                        n.connect(ng); ng.connect(mg); n.start(); n.stop(ctx.currentTime + 0.06);
+                        n.buffer = buf; ng.gain.value = (beat % 4 === 0) ? 0.7 : 0.4;
+                        ng.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + pLen + 0.01);
+                        n.connect(ng); ng.connect(mg); n.start(); n.stop(ctx.currentTime + pLen + 0.02);
                     }
                     if (beat % 4 === 0) {
                         var ob = ctx.createOscillator(), gb = ctx.createGain();
-                        ob.type = 'sawtooth'; ob.frequency.value = bass[bIdx % bass.length];
-                        gb.gain.value = 0.7; gb.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-                        ob.connect(gb); gb.connect(mg); ob.start(); ob.stop(ctx.currentTime + 0.55); bIdx++;
+                        ob.type = 'sawtooth'; ob.frequency.value = bas[bIdx % bas.length];
+                        gb.gain.value = 0.6; gb.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+                        ob.connect(gb); gb.connect(mg); ob.start(); ob.stop(ctx.currentTime + 0.48); bIdx++;
+                    }
+                    if (beat % 8 === 4) {
+                        var oa = ctx.createOscillator(), ga = ctx.createGain();
+                        oa.type = 'sine'; oa.frequency.value = f * 2;
+                        ga.gain.value = 0.25; ga.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                        oa.connect(ga); ga.connect(mg); oa.start(); oa.stop(ctx.currentTime + 0.18);
                     }
                     idx++; beat++;
+                    if (idx >= mel.length) { idx = 0; bIdx = 0; phrase++; }
                 }
-                tick(); self._timer = setInterval(tick, 300);
+                tick(); self._timer = setInterval(tick, 280);
             }
         };
 
