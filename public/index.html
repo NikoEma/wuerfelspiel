@@ -150,21 +150,21 @@
             90% { transform: translate(-1px, 1px); }
         }
         .screen-shake { animation: screenShake 0.5s ease-out; }
-        .attack-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1999; pointer-events: none; animation: attackFlashAnim 0.35s ease-out forwards; }
+        .attack-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2010; pointer-events: none; animation: attackFlashAnim 0.35s ease-out forwards; }
         .attack-flash svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         .attack-flash .bolt { fill: none; stroke: #ff3c3c; stroke-width: 4; filter: drop-shadow(0 0 12px #ff3c3c) drop-shadow(0 0 30px rgba(255,60,60,0.6)); stroke-dasharray: 1200; stroke-dashoffset: 1200; animation: boltDraw 0.25s ease-out forwards; }
         @keyframes boltDraw { 0% { stroke-dashoffset: 1200; } 100% { stroke-dashoffset: 0; } }
         @keyframes attackFlashAnim { 0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; } }
-        .ripple-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1998; overflow: hidden; }
+        .ripple-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2010; overflow: hidden; }
         .ripple-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 60px; height: 60px; border-radius: 50%; border: 3px solid #d4a030; box-shadow: 0 0 8px rgba(212,160,48,0.5), inset 0 0 8px rgba(212,160,48,0.15); animation: rippleExpand 1.6s ease-out forwards; }
         @keyframes rippleExpand {
             0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
             60% { opacity: 0.6; }
             100% { transform: translate(-50%, -50%) scale(12); opacity: 0; }
         }
-        .heal-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(76,175,80,0.45) 0%, rgba(46,125,50,0.2) 50%, rgba(76,175,80,0) 80%); z-index: 1999; pointer-events: none; animation: healFlashAnim 0.8s ease-out forwards; }
+        .heal-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(76,175,80,0.45) 0%, rgba(46,125,50,0.2) 50%, rgba(76,175,80,0) 80%); z-index: 2010; pointer-events: none; animation: healFlashAnim 0.8s ease-out forwards; }
         @keyframes healFlashAnim { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
-        .heal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1998; overflow: hidden; }
+        .heal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2010; overflow: hidden; }
         .heal-particle { position: absolute; font-size: 1.6em; animation: healFloat 2.2s ease-out forwards; }
         @keyframes healFloat {
             0% { transform: scale(0) rotate(0deg); opacity: 0; }
@@ -923,7 +923,6 @@
         // ===== GAME =====
         function Game() {
             this.state = GameState.MainMenu;
-            Music.play('lobby');
             this.player1 = new Player('Spieler*in 1');
             this.player2 = new Player('KI', true);
             this.currentPlayerIndex = 0;
@@ -941,6 +940,10 @@
             this.selectingForPlayer = 1;
             this.trainingMode = false;
             this.container = document.getElementById('gameContainer');
+            // Lobby-Musik beim ersten Klick starten (AudioContext braucht User-Geste)
+            var startMusic = function() { Music.play('lobby'); document.removeEventListener('click', startMusic); document.removeEventListener('touchstart', startMusic); };
+            document.addEventListener('click', startMusic);
+            document.addEventListener('touchstart', startMusic);
             // Online Multiplayer
             this.onlineMode = false;
             this.myPlayerNumber = 0;
@@ -2997,8 +3000,11 @@
             }
 
             this.showScreenShake();
-            showScroll(msg, '⚔️');
-            if (!this.checkWinCondition()) { this.actionSelected = null; var self = this; afterScroll(function() { self.endTurn(); }); }
+            var self = this;
+            setTimeout(function() {
+                showScroll(msg, '⚔️');
+                if (!self.checkWinCondition()) { self.actionSelected = null; afterScroll(function() { self.endTurn(); }); }
+            }, 400);
         };
 
         Game.prototype.performHeal = function(count) {
@@ -3012,8 +3018,11 @@
                 healMsg += '\n💊 +1 SP durch Heilung!';
             }
             this.showHealEffect();
-            showScroll(healMsg, '💚');
-            if (!this.checkWinCondition()) { this.actionSelected = null; var self = this; afterScroll(function() { self.endTurn(); }); }
+            var self = this;
+            setTimeout(function() {
+                showScroll(healMsg, '💚');
+                if (!self.checkWinCondition()) { self.actionSelected = null; afterScroll(function() { self.endTurn(); }); }
+            }, 400);
         };
 
         Game.prototype.collectAbilityPoints = function() {
@@ -3062,7 +3071,10 @@
                 }
                 current.sp += sp;
                 this.showSparkles();
-                showScroll('⭐ +' + fp + ' FP, +' + sp + ' SP gesammelt!', '⭐');
+                var fpV = fp, spV = sp;
+                setTimeout(function() {
+                    showScroll('⭐ +' + fpV + ' FP, +' + spV + ' SP gesammelt!', '⭐');
+                }, 400);
             } else {
                 showScroll('Keine Punkte mit dieser Markierung.', '⚠️');
             }
