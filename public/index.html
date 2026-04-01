@@ -57,8 +57,20 @@
         .ability-section { margin-top: 10px; font-size: 0.9em; border-top: 2px solid #3d2d66; padding-top: 8px; }
         .dice-container { display: flex; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
         .dice { width: 65px; height: 65px; background-color: #e8dce8; color: #141020; border: 3px solid #3d2d66; display: flex; align-items: center; justify-content: center; font-size: 2.2em; font-weight: bold; cursor: pointer; transition: border-color 0.15s; font-family: 'VT323', monospace; box-shadow: 3px 3px 0 #000; }
-        @keyframes diceRoll { 0% { transform: rotateX(0deg) rotateY(0deg) scale(1); } 25% { transform: rotateX(90deg) rotateY(45deg) scale(0.85); } 50% { transform: rotateX(180deg) rotateY(90deg) scale(0.9); } 75% { transform: rotateX(270deg) rotateY(135deg) scale(0.85); } 100% { transform: rotateX(360deg) rotateY(180deg) scale(1); } }
-        .dice.rolling { animation: diceRoll 0.4s ease-out; }
+        @keyframes diceRoll {
+            0% { transform: translate(0, 0) rotateX(0deg) rotateZ(0deg) scale(1); }
+            10% { transform: translate(2px, -12px) rotateX(72deg) rotateZ(20deg) scale(0.85); }
+            20% { transform: translate(-3px, -18px) rotateX(144deg) rotateZ(-15deg) scale(0.8); }
+            30% { transform: translate(4px, -10px) rotateX(216deg) rotateZ(25deg) scale(0.85); }
+            40% { transform: translate(-2px, -6px) rotateX(288deg) rotateZ(-10deg) scale(0.9); }
+            50% { transform: translate(3px, -14px) rotateX(360deg) rotateZ(18deg) scale(0.82); }
+            60% { transform: translate(-1px, -8px) rotateX(432deg) rotateZ(-12deg) scale(0.88); }
+            70% { transform: translate(2px, -4px) rotateX(504deg) rotateZ(8deg) scale(0.92); }
+            80% { transform: translate(-1px, -2px) rotateX(576deg) rotateZ(-5deg) scale(0.96); }
+            90% { transform: translate(0, -1px) rotateX(648deg) rotateZ(2deg) scale(0.98); }
+            100% { transform: translate(0, 0) rotateX(720deg) rotateZ(0deg) scale(1); }
+        }
+        .dice.rolling { animation: diceRoll 0.7s cubic-bezier(0.2, 0.8, 0.3, 1); }
         .dice:hover { border-color: #d4a030; }
         .dice.kept { background-color: #d4a030; border-color: #d4a030; color: #0a0814; box-shadow: 3px 3px 0 #000, 0 0 8px rgba(212,160,48,0.4); }
         .dice.locked { opacity: 0.85; cursor: not-allowed; }
@@ -1194,7 +1206,7 @@
                 this.render();
                 var diceEls = document.querySelectorAll('.dice:not(.kept):not(.locked)');
                 for (var d = 0; d < diceEls.length; d++) { diceEls[d].classList.add('rolling'); }
-                setTimeout(function() { var els = document.querySelectorAll('.dice.rolling'); for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); } }, 400);
+                setTimeout(function() { var els = document.querySelectorAll('.dice.rolling'); for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); } }, 700);
             } else if (this.tutorialPhase === 'action-selected' && this.tutorialRollsRemaining > 0) {
                 // Zweiter oder dritter Wurf: gesperrte Würfel beibehalten
                 for (var i = 0; i < this.tutorialDiceKept.length; i++) {
@@ -1212,7 +1224,7 @@
                 this.render();
                 var diceEls2 = document.querySelectorAll('.dice:not(.kept):not(.locked)');
                 for (var d2 = 0; d2 < diceEls2.length; d2++) { diceEls2[d2].classList.add('rolling'); }
-                setTimeout(function() { var els = document.querySelectorAll('.dice.rolling'); for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); } }, 400);
+                setTimeout(function() { var els = document.querySelectorAll('.dice.rolling'); for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); } }, 700);
             }
         };
 
@@ -2740,13 +2752,27 @@
             // Würfel-Sound
             SFX.roll();
 
-            // Würfel-Animation nach Wurf
+            // Würfel-Animation: Zahlen durchwürfeln + Tumble
             var diceEls = document.querySelectorAll('.dice:not(.kept):not(.locked):not(.destroyed):not(.disabled)');
+            var activeSkin = loadMetaData().selectedSkin || 'standard';
+            var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
             for (var a = 0; a < diceEls.length; a++) { diceEls[a].classList.add('rolling'); }
+            var cycleCount = 0, maxCycles = 8;
+            var cycleTimer = setInterval(function() {
+                cycleCount++;
+                for (var c = 0; c < diceEls.length; c++) {
+                    var rv = Math.floor(Math.random() * 6) + 1;
+                    diceEls[c].textContent = skinData.map[rv] || rv;
+                }
+                if (cycleCount >= maxCycles) {
+                    clearInterval(cycleTimer);
+                    if (typeof game !== 'undefined') game.render();
+                }
+            }, 70);
             setTimeout(function() {
                 var els = document.querySelectorAll('.dice.rolling');
                 for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); }
-            }, 400);
+            }, 700);
         };
 
         // ===== AKTIONEN AUSFÜHREN =====
@@ -3497,12 +3523,27 @@
                 showScroll('🔮 Gegner*in-Zwang! Wurf ' + rollNum + ' wurde erzwungen wiederholt!', '🔮');
             }
             this.render();
+            SFX.roll();
             var diceEls = document.querySelectorAll('.dice:not(.kept):not(.locked):not(.destroyed):not(.disabled)');
+            var activeSkin = loadMetaData().selectedSkin || 'standard';
+            var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
             for (var a = 0; a < diceEls.length; a++) { diceEls[a].classList.add('rolling'); }
+            var cycleCount = 0, maxCycles = 8;
+            var cycleTimer = setInterval(function() {
+                cycleCount++;
+                for (var c = 0; c < diceEls.length; c++) {
+                    var rv = Math.floor(Math.random() * 6) + 1;
+                    diceEls[c].textContent = skinData.map[rv] || rv;
+                }
+                if (cycleCount >= maxCycles) {
+                    clearInterval(cycleTimer);
+                    if (typeof game !== 'undefined') game.render();
+                }
+            }, 70);
             setTimeout(function() {
                 var els = document.querySelectorAll('.dice.rolling');
                 for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); }
-            }, 400);
+            }, 700);
         };
 
         Game.prototype._onlineToggleDiceKeep = function(idx) {
