@@ -26,19 +26,19 @@ Es gibt zwei alternative Wege zum Sieg:
 | Siegweg | Bedingung | Beschreibung |
 |---|---|---|
 | 💀 **Elimination** | Gegner auf 0 HP | Klassischer Kampfsieg durch Angriffe |
-| 🌟 **Transzendenz** | 60 SP erreichen | Alternativer Sieg durch Punktesammlung |
+| 🌟 **Transzendenz** | 40 SP erreichen | Alternativer Sieg durch Punktesammlung |
 
 **Priorität bei gleichzeitigem Sieg:** Der aktive Spieler hat Vorrang. Prüfreihenfolge:
 1. Gegner auf 0 HP → aktiver Spieler gewinnt (Elimination)
-2. Aktiver Spieler ≥60 SP → aktiver Spieler gewinnt (Transzendenz)
-3. Gegner ≥60 SP → Gegner gewinnt (z.B. durch passiven SP-Gain)
+2. Aktiver Spieler ≥40 SP → aktiver Spieler gewinnt (Transzendenz)
+3. Gegner ≥40 SP → Gegner gewinnt (z.B. durch passiven SP-Gain)
 4. Aktiver Spieler auf 0 HP → Gegner gewinnt (z.B. durch Vergeltung)
 
 ---
 
 ## Grundmechanik
 
-- Jeder Spieler startet mit **100 HP**, **0 FP** (Fähigkeitspunkte), **0 SP** (Siegpunkte).
+- Jeder Spieler startet mit **100 HP**, **5 FP** (Fähigkeitspunkte), **0 SP** (Siegpunkte).
 - Pro Zug hat der Spieler **3 Würfe** mit **6 Würfeln** (Bonuswürfel durch Fähigkeiten/SP möglich).
 - Nach jedem Wurf können Würfel **markiert (gehalten)** werden — markierte Würfel werden bei weiteren Würfen nicht erneut geworfen.
 - Nach dem Würfeln wählt der Spieler eine von vier **Aktionen** und bestätigt sie.
@@ -58,12 +58,12 @@ Beim Sammeln (⭐-Aktion) geben bestimmte Würfelkombinationen sowohl FP als auc
 
 | Kombination | FP | SP | Beschreibung |
 |---|---|---|---|
-| 3er-Pasch | 2 | 2 | 3 gleiche Würfel |
-| Zweierpasch | 2 | 3 | Zwei verschiedene Paare |
-| 4er-Pasch | 3 | 4 | 4 gleiche Würfel |
-| Kleine Straße | 3 | 5 | 5 aufeinanderfolgende Werte |
-| Große Straße | 4 | 8 | 1-2-3-4-5-6 |
-| 6× gleich | 6 | 15 | Alle 6 Würfel gleich |
+| 3er-Pasch | 2 | 3 | 3 gleiche Würfel |
+| Zweierpasch | 2 | 4 | Zwei verschiedene Paare |
+| 4er-Pasch | 3 | 5 | 4 gleiche Würfel |
+| Kleine Straße | 3 | 6 | 5 aufeinanderfolgende Werte |
+| Große Straße | 4 | 10 | 1-2-3-4-5-6 |
+| 6× gleich | 6 | 18 | Alle 6 Würfel gleich |
 
 **FP** schalten Fähigkeiten frei. **SP** zählen für den Transzendenz-Sieg.
 
@@ -78,7 +78,21 @@ Beim Sammeln (⭐-Aktion) geben bestimmte Würfelkombinationen sowohl FP als auc
 
 ### SP-Schwelle
 
-Bei **50 SP** erhält der Spieler **+1 permanenten Bonuswürfel** (7 statt 6 Würfel).
+Bei **35 SP** erhält der Spieler **+1 permanenten Bonuswürfel** (7 statt 6 Würfel).
+
+### Erschöpfungs-System
+
+Aufeinanderfolgende Angriffe führen zu Erschöpfung:
+
+| Aufeinanderfolgende Angriffe | Effekt |
+|---|---|
+| 1 | Kein Malus |
+| 2 | -1 Würfel |
+| 3+ | -2 Würfel |
+
+- Minimum: 3 Würfel (egal wie erschöpft)
+- Heilen, Blocken oder Fähigkeitspunkte sammeln setzt den Zähler auf 0 zurück
+- Erschöpfung wird visuell im Kampfbildschirm angezeigt (⚡-Icons)
 
 ---
 
@@ -109,13 +123,13 @@ Fokus: Verteidigung, passive Schadenszufügung und Würfelmanipulation.
 **SP-Synergie:** Kriegsstrateg*in generiert +1 SP pro eigener Runde (passiv).
 
 ### 🗝️ Taschendieb*in — Ressourcen-Spezialist
-Fokus: Mehr Punkte pro Sammlung, Heilflexibilität und das Kopieren gegnerischer Fähigkeiten.
+Fokus: Mehr Punkte pro Sammlung, Heilflexibilität und Ressourcen-Raub.
 
 | # | Fähigkeit | Effekt |
 |---|---|---|
 | 1 | 💰 Punkt-Bonus | +1 FP und +1 SP pro Sammelaktion |
 | 2 | ✨ Zweier-Magisch | 2er-Würfel können auch zum Heilen verwendet werden |
-| 3 | 🎭 Fähigkeits-Kopie | Kopiert beim Freischalten eine freigeschaltete Gegner-Fähigkeit |
+| 3 | 💰 Ressourcen-Raub | Bei ⭐-Sammlung: Gegner verliert 2 FP |
 | 4 | 💣 Würfel-Zerstörer*in | Zerstört zu Zugbeginn 1 zufälligen Gegner-Würfel |
 
 **SP-Synergie:** Punkt-Bonus steigert jede Sammlung um +1 SP.

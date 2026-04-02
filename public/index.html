@@ -396,19 +396,20 @@
         </div>
         <div style="margin-bottom: 8px;">
             <div class="info-title" style="margin: 0 0 5px 0; font-size: 0.9em;">⭐ FP + SP:</div>
-            <div class="info-rule">3er-Pasch = +2 FP, +2 SP</div>
-            <div class="info-rule">2×Pasch = +2 FP, +3 SP</div>
-            <div class="info-rule">4er-Pasch = +3 FP, +4 SP</div>
-            <div class="info-rule">Kl. Straße = +3 FP, +5 SP</div>
-            <div class="info-rule">Gr. Straße = +4 FP, +8 SP</div>
-            <div class="info-rule">6× gleich = +6 FP, +15 SP</div>
+            <div class="info-rule">3er-Pasch = +2 FP, +3 SP</div>
+            <div class="info-rule">2×Pasch = +2 FP, +4 SP</div>
+            <div class="info-rule">4er-Pasch = +3 FP, +5 SP</div>
+            <div class="info-rule">Kl. Straße = +3 FP, +6 SP</div>
+            <div class="info-rule">Gr. Straße = +4 FP, +10 SP</div>
+            <div class="info-rule">6× gleich = +6 FP, +18 SP</div>
             <div class="info-rule" style="margin-top: 4px; color: #d4a030;">FP → Fähigkeiten (10/20/30/40)</div>
-            <div class="info-rule" style="color: #d4a030;">SP 60 = 🌟 Transzendenz!</div>
+            <div class="info-rule" style="color: #d4a030;">SP 40 = 🌟 Transzendenz!</div>
+            <div class="info-rule" style="margin-top: 4px; color: #e09030;">⚡ Erschöpfung: 2×⚔=-1🎲, 3×⚔=-2🎲</div>
         </div>
         <div style="margin-bottom: 8px;">
             <div class="info-title" style="margin: 0 0 5px 0; font-size: 0.9em;">🏆 Sieg:</div>
             <div class="info-rule">💀 Gegner auf 0 HP</div>
-            <div class="info-rule">🌟 60 SP erreichen</div>
+            <div class="info-rule">🌟 40 SP erreichen</div>
         </div>
     </div>
 
@@ -652,7 +653,7 @@
             2: [
                 { name: ['💰 Punkt-Bonus', '💰 Punkt-Bonus', '💰 Punkt-Bonus'], desc: ['+1 FP und +1 SP pro Sammlung', '+1 FP und +1 SP pro Sammlung', '+1 FP und +1 SP pro Sammlung'] },
                 { name: ['✨ Zweier-Magisch', '✨ Zweier-Magisch', '✨ Zweier-Magisch'], desc: ['2er können auch heilen (wie 1er)', '2er können auch heilen (wie 1er)', '2er können auch heilen (wie 1er)'] },
-                { name: ['🎭 Fähigkeits-Kopie', '🎭 Fähigkeits-Kopie', '🎭 Fähigkeits-Kopie'], desc: ['Kopiert pro Runde zufällig eine Gegner-Fähigkeit', 'Kopiert pro Runde zufällig eine Gegnerin-Fähigkeit', 'Kopiert pro Runde zufällig eine Gegner*in-Fähigkeit'] },
+                { name: ['💰 Ressourcen-Raub', '💰 Ressourcen-Raub', '💰 Ressourcen-Raub'], desc: ['Bei ⭐ Sammlung: Gegner verliert 2 FP', 'Bei ⭐ Sammlung: Gegnerin verliert 2 FP', 'Bei ⭐ Sammlung: Gegner*in verliert 2 FP'] },
                 { name: ['💣 Würfel-Zerstörer', '💣 Würfel-Zerstörerin', '💣 Würfel-Zerstörer*in'], desc: ['Zerstört 1 Gegner-Würfel pro Zug', 'Zerstört 1 Gegnerin-Würfel pro Zug', 'Zerstört 1 Gegner*in-Würfel pro Zug'] }
             ],
             3: [
@@ -974,8 +975,9 @@
             this.isAI = isAI || false;
             this.bonusDice = 0;
             this.lastDamageReceived = 0;
-            this.fp = 0; // Fähigkeitspunkte
+            this.fp = 5; // Fähigkeitspunkte (Start: 5)
             this.sp = 0; // Siegpunkte
+            this.consecutiveAttacks = 0; // Erschöpfungs-Tracker
         }
         Player.prototype.getCharacterName = function() {
             var names = {};
@@ -1003,13 +1005,14 @@
         };
         Player.prototype.reset = function() {
             this.health = 100;
-            this.abilityProgress = [0, 0, 0, 0];
+            this.abilityProgress = [5, 0, 0, 0];
             this.abilityUnlocked = [false, false, false, false];
             this.currentAbilityIndex = 0;
             this.bonusDice = 0;
             this.lastDamageReceived = 0;
-            this.fp = 0;
+            this.fp = 5;
             this.sp = 0;
+            this.consecutiveAttacks = 0;
         };
         Player.prototype.hasAbility = function(idx) {
             return this.abilityUnlocked[idx] === true;
@@ -1060,12 +1063,9 @@
         Game.prototype.getCurrentPlayer = function() { return this.currentPlayerIndex === 0 ? this.player1 : this.player2; };
         Game.prototype.getOpponent = function() { return this.currentPlayerIndex === 0 ? this.player2 : this.player1; };
 
-        // Prüft ob ein Spieler eine Fähigkeit hat (nativ ODER kopiert via Fähigkeits-Kopie)
+        // Prüft ob ein Spieler eine Fähigkeit hat (nativ)
         Game.prototype.playerHasEffect = function(player, charType, abilityIdx) {
             if (player.character === charType && player.hasAbility(abilityIdx)) return true;
-            if (this.copiedAbility && player.character === CharacterType.Taschendieb && player.hasAbility(2)) {
-                return this.copiedAbility.character === charType && this.copiedAbility.index === abilityIdx;
-            }
             return false;
         };
 
@@ -1074,6 +1074,11 @@
             var count = 6;
             if (this.playerHasEffect(current, CharacterType.Soldat, 0)) count++;
             count += current.bonusDice;
+            // Erschöpfungs-Malus: aufeinanderfolgende Angriffe kosten Würfel
+            var exhaustion = 0;
+            if (current.consecutiveAttacks >= 3) exhaustion = 2;
+            else if (current.consecutiveAttacks >= 2) exhaustion = 1;
+            count = Math.max(3, count - exhaustion);
             return count;
         };
 
@@ -1130,19 +1135,7 @@
         Game.prototype.applyPreDiceEffects = function() {
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
-            // Taschendieb Fähigkeits-Kopie: zufällige Gegner-Fähigkeit kopieren
             this.copiedAbility = null;
-            if (current.character === CharacterType.Taschendieb && current.hasAbility(2)) {
-                var unlocked = [];
-                for (var i = 0; i < 4; i++) {
-                    if (opponent.hasAbility(i)) unlocked.push(i);
-                }
-                if (unlocked.length > 0) {
-                    var rand = this.onlineMode ? this.getOnlineRandom() : Math.random();
-                    var randIdx = unlocked[Math.floor(rand * unlocked.length)];
-                    this.copiedAbility = { character: opponent.character, index: randIdx };
-                }
-            }
         };
 
         Game.prototype.applyPostDiceEffects = function() {
@@ -1172,11 +1165,7 @@
                 this.gegnerZwangRoll = Math.floor(rand3 * 3) + 1;
             }
 
-            // Fähigkeits-Kopie Nachricht
-            if (this.copiedAbility) {
-                var copiedInfo = CHARACTER_ABILITIES[this.copiedAbility.character][this.copiedAbility.index];
-                messages.push('🎭 Kopiert: ' + getGenderedText(copiedInfo.name, current.gender));
-            }
+            // Fähigkeits-Kopie Nachricht (entfernt — Ressourcen-Raub stattdessen)
 
             if (messages.length > 0) showScroll(messages.join('\n'), '⭐');
         };
@@ -1307,17 +1296,17 @@
                         roll2Done: 'Zweiter Wurf — noch eine <strong>4</strong>! Jetzt 3× die 4 (3er-Pasch = 2 SP). Behalte alle drei 4er und versuche noch eine!<br><br>👉 <strong>Markiere die neue 4</strong> und klick auf <strong>„🎲 Würfeln (1)"!</strong>',
                         roll3Done: 'Letzter Wurf — noch eine <strong>4</strong>! 4× die 4 = <strong>4er-Pasch = +3 FP und +4 SP</strong>! Markiere jetzt alle vier 4er.<br><br>👉 <strong>Markiere die vierte 4!</strong>',
                         diceMarked: 'Vier 4er markiert — ein <strong>4er-Pasch = +3 FP und +4 SP</strong>!<br><br>👉 <strong>Klick auf „✅ Aktion bestätigen"!</strong>',
-                        result: '<strong>4er-Pasch = +3 FP und +4 SP!</strong><br><br>📊 <strong>FP (Fähigkeitspunkte):</strong> Dein Fortschritt: <strong>3/10</strong> zur ersten Fähigkeit ("⚡ Extrawürfel").<br>📊 <strong>SP (Siegpunkte):</strong> Du hast jetzt <strong>4/60 SP</strong>. Bei <strong>60 SP</strong> gewinnst du sofort — ein <strong>🌟 Transzendenz-Sieg</strong>!<br><br>💡 Es gibt <strong>2 Wege zu gewinnen</strong>:<br>💀 <strong>Elimination</strong>: Senke die HP deines Gegners auf 0.<br>🌟 <strong>Transzendenz</strong>: Sammle 60 SP durch ⭐ Fähigkeitspunkte-Kombinationen!',
+                        result: '<strong>4er-Pasch = +3 FP und +5 SP!</strong><br><br>📊 <strong>FP (Fähigkeitspunkte):</strong> Dein Fortschritt: <strong>8/10</strong> zur ersten Fähigkeit ("⚡ Extrawürfel"). Mit Start-FP 5 + 3 FP = 8 FP!<br>📊 <strong>SP (Siegpunkte):</strong> Du hast jetzt <strong>5/40 SP</strong>. Bei <strong>40 SP</strong> gewinnst du sofort — ein <strong>🌟 Transzendenz-Sieg</strong>!<br><br>💡 Es gibt <strong>2 Wege zu gewinnen</strong>:<br>💀 <strong>Elimination</strong>: Senke die HP deines Gegners auf 0.<br>🌟 <strong>Transzendenz</strong>: Sammle 40 SP durch ⭐ Fähigkeitspunkte-Kombinationen!',
                         kiTurn: 'Die KI würfelt 3× die 6 und greift an: <strong>18 Schaden!</strong> Du hast jetzt <strong>82 HP</strong>. Ein harter Treffer!'
                     },
                     tips: {
                         preRoll: 'Fähigkeiten machen dich langfristig stärker. Jede*r Spieler*in hat 4 einzigartige Fähigkeiten!',
-                        rolled: 'Bei ⭐ bekommst du FP (für Fähigkeiten) UND SP (Siegpunkte)! SP-Tabelle: 3er-Pasch = 2, Zweierpasch = 3, 4er-Pasch = 4, Kl. Straße = 5, Gr. Straße = 8, 6× gleich = 15!',
+                        rolled: 'Bei ⭐ bekommst du FP (für Fähigkeiten) UND SP (Siegpunkte)! SP-Tabelle: 3er-Pasch = 3, Zweierpasch = 4, 4er-Pasch = 5, Kl. Straße = 6, Gr. Straße = 10, 6× gleich = 18!',
                         keep1: 'Über 3 Würfe kannst du systematisch eine Kombination aufbauen — genau wie beim echten Spiel!',
-                        roll2Done: 'SP-Tabelle: 3er-Pasch = 2 SP, Zweierpasch = 3 SP, 4er-Pasch = 4 SP, Kl. Straße = 5 SP, Gr. Straße = 8 SP, 6× gleich = 15 SP. FP je nach Kombi: 2–6 FP dazu!',
+                        roll2Done: 'SP-Tabelle: 3er-Pasch = 3 SP, Zweierpasch = 4 SP, 4er-Pasch = 5 SP, Kl. Straße = 6 SP, Gr. Straße = 10 SP, 6× gleich = 18 SP. FP je nach Kombi: 2–6 FP dazu!',
                         roll3Done: 'Alternativ: 4×4 als Angriff wäre 16 Schaden gewesen! Überlege immer: Sofortiger Schaden oder langfristige Fähigkeiten?',
                         diceMarked: '',
-                        result: 'SP (Siegpunkte) bringen dich zum 🌟 Transzendenz-Sieg bei 60 SP! FP schalten Fähigkeiten frei. Beides kommt nur durch ⭐!',
+                        rolled: 'SP (Siegpunkte) bringen dich zum 🌟 Transzendenz-Sieg bei 40 SP! FP schalten Fähigkeiten frei. Beides kommt nur durch ⭐!',
                         kiTurn: ''
                     }
                 },
@@ -1519,10 +1508,11 @@
                     '💚 <strong>Heilen</strong>: Markiere 1er. Jede 1 = 5 HP.<br>' +
                     '⭐ <strong>Fähigkeitspunkte</strong>: Sammle Punkte mit Kombinationen (Pasch, Straße).<br>' +
                     '&nbsp;&nbsp;&nbsp;→ <strong>FP</strong>: Je nach Kombi (2–6) — schaltet Fähigkeiten frei (10/20/30/40 FP).<br>' +
-                    '&nbsp;&nbsp;&nbsp;→ <strong>SP</strong>: Je nach Kombi (2–15) — Siegpunkte für den Transzendenz-Sieg.<br><br>' +
+                    '&nbsp;&nbsp;&nbsp;→ <strong>SP</strong>: Je nach Kombi (3–18) — Siegpunkte für den Transzendenz-Sieg.<br><br>' +
                     '🏆 <strong>2 Siegbedingungen</strong>:<br>' +
                     '&nbsp;&nbsp;💀 <strong>Elimination</strong>: Senke den Gegner auf 0 HP.<br>' +
-                    '&nbsp;&nbsp;🌟 <strong>Transzendenz</strong>: Sammle 60 SP durch ⭐-Kombinationen!<br><br>' +
+                    '&nbsp;&nbsp;🌟 <strong>Transzendenz</strong>: Sammle 40 SP durch ⭐-Kombinationen!<br><br>' +
+                    '⚡ <strong>Erschöpfung</strong>: Wiederholte Angriffe kosten Würfel! (2×⚔ = -1, 3×⚔ = -2).<br>' +
                     '🎲 Du hast <strong>3 Würfe pro Zug</strong>! Behalte nach jedem Wurf die besten Würfel und würfle den Rest nochmal.<br>' +
                     '🔒 Behaltene Würfel werden gesperrt und bleiben bei allen weiteren Würfen erhalten.<br>' +
                     '⭐ Jede*r Spieler*in hat 4 einzigartige Fähigkeiten — aktiviere sie durch Anklicken!<br>' +
@@ -1545,12 +1535,12 @@
                     '<strong>Szenario:</strong> Du spielst als 🪖 Soldat*in gegen die KI (⚔ Rebell*in). Beide starten mit 100 HP und 0 SP.<br><br>' +
                     '🏆 <strong>2 Wege zum Sieg:</strong><br>' +
                     '&nbsp;&nbsp;💀 <strong>Elimination</strong>: Bringe den Gegner auf 0 HP.<br>' +
-                    '&nbsp;&nbsp;🌟 <strong>Transzendenz</strong>: Sammle 60 SP (Siegpunkte) durch ⭐ Fähigkeitspunkte-Kombinationen!');
+                    '&nbsp;&nbsp;🌟 <strong>Transzendenz</strong>: Sammle 40 SP (Siegpunkte) durch ⭐ Fähigkeitspunkte-Kombinationen!');
                 // Player panels preview
                 h += '<div class="players-container">' +
                     '<div class="player-panel player1"><div class="player-name player-color-green">🪖 Du — Soldat*in</div>' +
                     '<div class="player-hp">HP: 100/100</div>' +
-                    '<div class="player-fp-sp">SP: <b>0/60</b></div>' +
+                    '<div class="player-fp-sp">SP: <b>0/40</b></div>' +
                     '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width:0%"></div></div>' +
                     '<div class="hp-bar"><div class="hp-fill" style="width: 100%"></div></div>' +
                     '<div class="ability-section"><div style="font-size: 0.9em;">' +
@@ -1560,7 +1550,7 @@
                     '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎪 Doppelwertung (0/40)</div></div></div></div>' +
                     '<div class="player-panel player2"><div class="player-name player-color-red">⚔ KI — Rebell*in</div>' +
                     '<div class="player-hp">HP: 100/100</div>' +
-                    '<div class="player-fp-sp">SP: <b>0/60</b></div>' +
+                    '<div class="player-fp-sp">SP: <b>0/40</b></div>' +
                     '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width:0%"></div></div>' +
                     '<div class="hp-bar"><div class="hp-fill" style="width: 100%"></div></div>' +
                     '<div class="ability-section"><div style="font-size: 0.9em;">' +
@@ -1756,14 +1746,14 @@
             h += '<div class="players-container">' +
                 '<div class="player-panel player1"><div class="player-name player-color-green">' + p1Name + '</div>' +
                 '<div class="player-hp">HP: ' + hp1 + '/100</div>' +
-                '<div class="player-fp-sp">SP: <b>' + sp1 + '/60</b></div>' +
-                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(sp1/60*100)) + '%"></div></div>' +
+                '<div class="player-fp-sp">SP: <b>' + sp1 + '/40</b></div>' +
+                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(sp1/40*100)) + '%"></div></div>' +
                 '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, hp1) + '%"></div></div>' +
                 '<div class="ability-section">' + abilitiesP1 + '</div></div>' +
                 '<div class="player-panel player2"><div class="player-name player-color-red">' + p2Name + '</div>' +
                 '<div class="player-hp">HP: ' + hp2 + '/100</div>' +
-                '<div class="player-fp-sp">SP: <b>' + sp2 + '/60</b></div>' +
-                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(sp2/60*100)) + '%"></div></div>' +
+                '<div class="player-fp-sp">SP: <b>' + sp2 + '/40</b></div>' +
+                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(sp2/40*100)) + '%"></div></div>' +
                 '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, hp2) + '%"></div></div>' +
                 '<div class="ability-section">' + abilitiesP2 + '</div></div></div>' +
                 '<div class="dice-container">' + diceHtml + '</div>' + btns + '</div>';
@@ -1929,6 +1919,17 @@
                 }
             }
 
+            // Erschöpfungs-Anzeige Helper
+            function exhaustionHtml(player) {
+                var ca = player.consecutiveAttacks;
+                if (ca === 0) return '';
+                var icons, color, malus;
+                if (ca >= 3) { icons = '⚡⚡⚡'; color = '#cc4444'; malus = ' -2 Würfel'; }
+                else if (ca === 2) { icons = '⚡⚡'; color = '#e09030'; malus = ' -1 Würfel'; }
+                else { icons = '⚡'; color = '#d4a030'; malus = ''; }
+                return '<div style="font-size:0.75em;color:' + color + ';margin-top:2px;" title="Erschöpfung: ' + ca + ' Angriffe hintereinander">' + icons + ' (' + ca + '/3)' + malus + '</div>';
+            }
+
             this.container.innerHTML =
                 '<div class="battle-screen">' + onlineBanner + '<div class="battle-header">' +
                 '<div class="current-player">Am Zug: ' + current.name + ' (' + diceCount + ' Würfel)</div>' +
@@ -1939,15 +1940,17 @@
                 '<span class="opp-name ' + oppColorClass + '">' + opponent.name + this.getPlayerMedals(opponent) + ' - ' + opponent.getCharacterName() + '</span>' +
                 '<span class="opp-stat">HP: ' + opponent.health + '/100</span>' +
                 '<div class="opp-hp-bar"><div class="opp-hp-fill" style="width:' + Math.max(0, opponent.health) + '%"></div></div>' +
-                '<span class="opp-stat">SP: ' + opponent.sp + '/60</span>' +
-                '<div class="opp-sp-bar"><div class="opp-sp-fill" style="width:' + Math.min(100, Math.round(opponent.sp/60*100)) + '%"></div></div>' +
+                '<span class="opp-stat">SP: ' + opponent.sp + '/40</span>' +
+                '<div class="opp-sp-bar"><div class="opp-sp-fill" style="width:' + Math.min(100, Math.round(opponent.sp/40*100)) + '%"></div></div>' +
+                exhaustionHtml(opponent) +
                 '<div style="width:100%;font-size:0.75em;margin-top:4px;">' + this.getOpponentAbilitySummary(opponent) + '</div>' +
                 '</div>' +
                 '<div class="current-panel"><div class="player-name ' + curColorClass + '">' + current.name + this.getPlayerMedals(current) + ' - ' + current.getCharacterName() + '</div>' +
                 '<div class="player-hp">HP: ' + current.health + '/100</div>' +
-                '<div class="player-fp-sp">SP: <b>' + current.sp + '/60</b></div>' +
-                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(current.sp/60*100)) + '%"></div></div>' +
+                '<div class="player-fp-sp">SP: <b>' + current.sp + '/40</b></div>' +
+                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(current.sp/40*100)) + '%"></div></div>' +
                 '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, current.health) + '%"></div></div>' +
+                exhaustionHtml(current) +
                 '<div class="ability-section">' + this.getAbilityDisplay(current) + '</div></div></div>' +
                 '<div' + interactiveStyle + '><div' + diceGreyStyle + ' class="dice-container">' + diceHtml + '</div>' + btns + '</div>' + alwaysBtns + '</div>';
         };
@@ -2004,22 +2007,13 @@
                         '<div style="color: #b8a8d4; font-size: 0.75em; margin-top: 1px;">' + desc + '</div></div>';
                 }
             }
-            // Kopierte Fähigkeit anzeigen
-            if (this.copiedAbility && player.character === CharacterType.Taschendieb && player.hasAbility(2) && player === this.getCurrentPlayer()) {
-                var ci = CHARACTER_ABILITIES[this.copiedAbility.character][this.copiedAbility.index];
-                var ciName = getGenderedText(ci.name, g);
-                var ciDesc = getGenderedText(ci.desc, g);
-                html += '<div style="color: #fff; padding: 3px 5px; margin: 4px 0; background-color: rgba(180,30,30,0.45); border-left: 3px solid #cc3333;">' +
-                    '🎭 Kopiert: ' + ciName +
-                    '<div style="color: #ddd; font-size: 0.8em;">' + ciDesc + '</div></div>';
-            }
             html += '</div>';
             return html;
         };
 
         Game.prototype.renderGameOver = function() {
-            var isTranszendenz = this.player1.sp >= 60 || this.player2.sp >= 60;
-            var w = isTranszendenz ? (this.player1.sp >= 60 ? this.player1 : this.player2) : (this.player1.health <= 0 ? this.player2 : this.player1);
+            var isTranszendenz = this.player1.sp >= 40 || this.player2.sp >= 40;
+            var w = isTranszendenz ? (this.player1.sp >= 40 ? this.player1 : this.player2) : (this.player1.health <= 0 ? this.player2 : this.player1);
             var loser = (w === this.player1) ? this.player2 : this.player1;
             var winIcon = isTranszendenz ? '🌟' : '💀';
             var winType = isTranszendenz ? '🌟 Transzendenz-Sieg! 🌟' : '💀 Elimination! 💀';
@@ -3026,6 +3020,7 @@
                 showScroll('Markiere mindestens eine 1 zum Heilen!', '⚠️');
                 return;
             }
+            current.consecutiveAttacks = 0;
             this.performHeal(healCount);
         };
 
@@ -3041,6 +3036,7 @@
             }
 
             var blockSum = markedDice.reduce(function(a, b) { return a + b; }, 0);
+            current.consecutiveAttacks = 0;
             if (current.lastDamageReceived > 0 && blockSum >= current.lastDamageReceived) {
                 current.health = Math.min(100, current.health + current.lastDamageReceived);
                 showScroll('🛡️ Blockade erfolgreich! ' + current.lastDamageReceived + ' HP wiederhergestellt!\n(Block: ' + blockSum + ' ≥ Schaden: ' + current.lastDamageReceived + ')', '🛡️');
@@ -3059,6 +3055,7 @@
         Game.prototype.executeAttack = function(baseDamage, healFromManager) {
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
+            current.consecutiveAttacks++;
             var finalDamage = baseDamage;
 
             // Kriegsmeister: +2
@@ -3133,6 +3130,7 @@
         Game.prototype.collectAbilityPoints = function() {
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
+            current.consecutiveAttacks = 0;
             var fp = 0;
             var sp = 0;
             var marked = this.getMarkedDice();
@@ -3145,17 +3143,17 @@
             // Neue Kombinationen
             var validCombo = false;
             // Sechserpasch
-            if (maxCount >= 6) { fp = 6; sp = 15; validCombo = true; }
+            if (maxCount >= 6) { fp = 6; sp = 18; validCombo = true; }
             // Große Straße
-            else if (unique.length === 6 && unique[0] === 1 && unique[5] === 6) { fp = 4; sp = 8; validCombo = true; }
+            else if (unique.length === 6 && unique[0] === 1 && unique[5] === 6) { fp = 4; sp = 10; validCombo = true; }
             // Kleine Straße
-            else if (this.isSmallStraight(unique)) { fp = 3; sp = 5; validCombo = true; }
+            else if (this.isSmallStraight(unique)) { fp = 3; sp = 6; validCombo = true; }
             // 4er-Pasch
-            else if (maxCount >= 4) { fp = 3; sp = 4; validCombo = true; }
+            else if (maxCount >= 4) { fp = 3; sp = 5; validCombo = true; }
             // 3er-Pasch
-            else if (maxCount >= 3) { fp = 2; sp = 2; validCombo = true; }
+            else if (maxCount >= 3) { fp = 2; sp = 3; validCombo = true; }
             // Zweierpasch (zwei verschiedene Paare)
-            else if (groups.length === 2 && groups[0].count === 2 && groups[1].count === 2) { fp = 2; sp = 3; validCombo = true; }
+            else if (groups.length === 2 && groups[0].count === 2 && groups[1].count === 2) { fp = 2; sp = 4; validCombo = true; }
             if (validCombo) {
                 // Taschendieb Fähigkeit 1: +1 FP und +1 SP pro Sammlung
                 if (this.playerHasEffect(current, CharacterType.Taschendieb, 0)) { fp += 1; sp += 1; }
@@ -3168,18 +3166,28 @@
                         var unlockedAb = CHARACTER_ABILITIES[current.character][u];
                         var unlockedName = getGenderedText(unlockedAb.name, current.gender);
                         showScroll('🌟 Neue Fähigkeit freigeschaltet!\n' + unlockedName + ' ⭐', '🌟', 'ability-unlock');
-                        // Fähigkeits-Kopie: erst nach einem Gegner-Zug aktiv
-                        if (current.character === CharacterType.Taschendieb && u === 2) {
-                            this.copyAbilityPending = true;
-                        }
+                    }
+                }
+                // Ressourcen-Raub: Gegner verliert 2 FP bei Sammlung
+                var raubMsg = '';
+                if (this.playerHasEffect(current, CharacterType.Taschendieb, 2)) {
+                    var stolen = Math.min(2, opponent.fp);
+                    if (stolen > 0) {
+                        opponent.fp -= stolen;
+                        // Fähigkeitsfortschritt anpassen
+                        var totalFP = 0;
+                        for (var ap = 0; ap < 4; ap++) totalFP += opponent.abilityProgress[ap];
+                        totalFP = Math.max(0, totalFP - stolen);
+                        opponent.abilityProgress = [Math.min(10, totalFP), Math.max(0, Math.min(10, totalFP - 10)), Math.max(0, Math.min(10, totalFP - 20)), Math.max(0, Math.min(10, totalFP - 30))];
+                        raubMsg = '\n💰 Ressourcen-Raub: ' + opponent.name + ' verliert ' + stolen + ' FP!';
                     }
                 }
                 current.sp += sp;
                 this.showSparkles();
-                var fpV = fp, spV = sp;
+                var fpV = fp, spV = sp, rMsg = raubMsg;
                 var self = this;
                 setTimeout(function() {
-                    showScroll('⭐ +' + fpV + ' FP, +' + spV + ' SP gesammelt!', '⭐');
+                    showScroll('⭐ +' + fpV + ' FP, +' + spV + ' SP gesammelt!' + rMsg, '⭐');
                     self.actionSelected = null;
                     afterScroll(function() { self.endTurn(); });
                 }, 400);
@@ -3276,21 +3284,21 @@
                 this.render();
                 return true;
             }
-            // 2. Aktiver Spieler: 60 SP erreicht?
-            if (current.sp >= 60) {
+            // 2. Aktiver Spieler: 40 SP erreicht?
+            if (current.sp >= 40) {
                 this.state = GameState.GameOver;
                 Music.stop();
                 SFX.victory();
-                showScroll('🌟 Transzendenz-Sieg! ' + current.name + ' erreicht 60 SP!', '🌟');
+                showScroll('🌟 Transzendenz-Sieg! ' + current.name + ' erreicht 40 SP!', '🌟');
                 this.render();
                 return true;
             }
-            // 3. Inaktiver Spieler: 60 SP erreicht? (z.B. durch passiven SP-Gain)
-            if (opponent.sp >= 60) {
+            // 3. Inaktiver Spieler: 40 SP erreicht? (z.B. durch passiven SP-Gain)
+            if (opponent.sp >= 40) {
                 this.state = GameState.GameOver;
                 Music.stop();
                 SFX.victory();
-                showScroll('🌟 Transzendenz-Sieg! ' + opponent.name + ' erreicht 60 SP!', '🌟');
+                showScroll('🌟 Transzendenz-Sieg! ' + opponent.name + ' erreicht 40 SP!', '🌟');
                 this.render();
                 return true;
             }
@@ -3361,13 +3369,6 @@
             this.rerollUsed = false;
             this.restartUsed = false;
 
-            // Fähigkeits-Kopie: Pending aufheben wenn Gegner einmal dran war
-            if (this.copyAbilityPending) {
-                var newCurrent = this.getCurrentPlayer();
-                if (newCurrent.character === CharacterType.Taschendieb && newCurrent.hasAbility(2)) {
-                    this.copyAbilityPending = false;
-                }
-            }
             if (this.onlineMode) this._onlineRandCounter = 0;
             this.applyPreDiceEffects();
             this.initDice();
@@ -3437,14 +3438,14 @@
                 for (var j = 0; j < sorted.length; j++) { groups[sorted[j]] = (groups[sorted[j]] || 0) + 1; }
                 var maxC = 0, pairs = 0;
                 for (var k in groups) { if (groups.hasOwnProperty(k)) { if (groups[k] > maxC) maxC = groups[k]; if (groups[k] >= 2) pairs++; } }
-                if (maxC >= 6) return { fp: 6, sp: 15 };
+                if (maxC >= 6) return { fp: 6, sp: 18 };
                 var unique = [];
                 for (var u = 0; u < sorted.length; u++) { if (unique.indexOf(sorted[u]) === -1) unique.push(sorted[u]); }
-                if (unique.length >= 6 && unique[0] === 1 && unique[5] === 6) return { fp: 4, sp: 8 };
-                if (unique.length >= 5) { for (var s = 0; s <= unique.length - 5; s++) { if (unique[s + 4] - unique[s] === 4) return { fp: 3, sp: 5 }; } }
-                if (maxC >= 4) return { fp: 3, sp: 4 };
-                if (pairs >= 2) return { fp: 2, sp: 3 };
-                if (maxC >= 3) return { fp: 2, sp: 2 };
+                if (unique.length >= 6 && unique[0] === 1 && unique[5] === 6) return { fp: 4, sp: 10 };
+                if (unique.length >= 5) { for (var s = 0; s <= unique.length - 5; s++) { if (unique[s + 4] - unique[s] === 4) return { fp: 3, sp: 6 }; } }
+                if (maxC >= 4) return { fp: 3, sp: 5 };
+                if (pairs >= 2) return { fp: 2, sp: 4 };
+                if (maxC >= 3) return { fp: 2, sp: 3 };
                 return { fp: 0, sp: 0 };
             }
 
@@ -3453,10 +3454,11 @@
             var strategy = 'attack'; // Standard
             var oppCanKill = opp.health <= 0;
             var aiLowHP = ai.health <= 40;
-            var oppCloseSP = opp.sp >= 45;
-            var aiCloseSP = ai.sp >= 45;
+            var oppCloseSP = opp.sp >= 30;
+            var aiCloseSP = ai.sp >= 30;
             var aiNeedsAbility = ai.currentAbilityIndex < 4;
             var fpToNextAbility = aiNeedsAbility ? (10 - ai.abilityProgress[ai.currentAbilityIndex]) : 999;
+            var aiExhausted = ai.consecutiveAttacks >= 2; // Erschöpfung berücksichtigen
 
             // Phase 2: Strategisches Würfeln — 3 Würfe mit Auswertung dazwischen
             // Erster Wurf: alle Würfel
@@ -3472,7 +3474,10 @@
 
             // Entscheide Strategie basierend auf erstem Wurf + Spielzustand
             if (analysis.bestDmg >= opp.health && analysis.bestCount >= 2) {
-                strategy = 'attack'; // Kann Gegner töten!
+                strategy = 'attack'; // Kann Gegner töten! (Erschöpfung egal)
+            } else if (aiExhausted && (spCombo.sp >= 3 || analysis.ones >= 2)) {
+                // Erschöpft: Angriff vermeiden wenn möglich
+                strategy = (spCombo.sp >= 3) ? 'ability' : 'heal';
             } else if (aiCloseSP && spCombo.sp >= 5) {
                 strategy = 'ability'; // Nah an SP-Sieg, gute Combo
             } else if (aiLowHP && analysis.ones >= 2) {
@@ -3642,11 +3647,13 @@
                     }
                     opp.lastDamageReceived = finalDmg;
                     opp.health = Math.max(0, opp.health - finalDmg);
+                    ai.consecutiveAttacks++;
                     showScroll('KI greift an: ' + finalDmg + ' Schaden!' + vergeltungMsg, '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
                 } else if (strategy === 'heal' && finalAnalysis.ones > 0) {
                     var healAmt = finalAnalysis.ones * 5;
                     ai.health = Math.min(100, ai.health + healAmt);
+                    ai.consecutiveAttacks = 0;
                     if (self.playerHasEffect(ai, CharacterType.Quacksalber, 1)) {
                         ai.sp += 1;
                     }
@@ -3659,6 +3666,7 @@
                     ai.fp += aiFP;
                     ai.addAbilityPoints(aiFP);
                     ai.sp += aiSP;
+                    ai.consecutiveAttacks = 0;
                     showScroll('KI sammelt +' + aiFP + ' FP, +' + aiSP + ' SP!', '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
                 } else if (hasDice) {
@@ -3679,6 +3687,7 @@
                         if (self.playerHasEffect(ai, CharacterType.Soldat, 1)) eDmg += 2;
                         opp.lastDamageReceived = eDmg;
                         opp.health = Math.max(0, opp.health - eDmg);
+                        ai.consecutiveAttacks++;
                         showScroll('KI greift an: ' + eDmg + ' Schaden!', '🤖');
                         if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
                     } else {
