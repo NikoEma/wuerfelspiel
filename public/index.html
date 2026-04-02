@@ -404,7 +404,7 @@
             <div class="info-rule">6× gleich = +6 FP, +18 SP</div>
             <div class="info-rule" style="margin-top: 4px; color: #d4a030;">FP → Fähigkeiten (10/20/30/40)</div>
             <div class="info-rule" style="color: #d4a030;">SP 40 = 🌟 Transzendenz!</div>
-            <div class="info-rule" style="margin-top: 4px; color: #e09030;">⚡ Erschöpfung: ab 4×⚔ je -1🎲 (min. 1)</div>
+            <div class="info-rule" style="margin-top: 4px; color: #e09030;">⚡ Erschöpfung: ab 3×⚔ je -1🎲 (min. 1)</div>
         </div>
         <div style="margin-bottom: 8px;">
             <div class="info-title" style="margin: 0 0 5px 0; font-size: 0.9em;">🏆 Sieg:</div>
@@ -1074,8 +1074,8 @@
             var count = 6;
             if (this.playerHasEffect(current, CharacterType.Soldat, 0)) count++;
             count += current.bonusDice;
-            // Erschöpfungs-Malus: ab dem 4. Angriff hintereinander (progressiv)
-            var exhaustion = Math.max(0, current.consecutiveAttacks - 3);
+            // Erschöpfungs-Malus: ab dem 3. Angriff hintereinander (progressiv)
+            var exhaustion = Math.max(0, current.consecutiveAttacks - 2);
             count = Math.max(1, count - exhaustion);
             return count;
         };
@@ -1510,7 +1510,7 @@
                     '🏆 <strong>2 Siegbedingungen</strong>:<br>' +
                     '&nbsp;&nbsp;💀 <strong>Elimination</strong>: Senke den Gegner auf 0 HP.<br>' +
                     '&nbsp;&nbsp;🌟 <strong>Transzendenz</strong>: Sammle 40 SP durch ⭐-Kombinationen!<br><br>' +
-                    '⚡ <strong>Erschöpfung</strong>: 3 Angriffe frei, ab dem 4. je -1 Würfel. Nicht-Angriff: +1 zurück (min. 1).<br>' +
+                    '⚡ <strong>Erschöpfung</strong>: 2 Angriffe frei, ab dem 3. je -1 Würfel. Nicht-Angriff: +1 zurück (min. 1).<br>' +
                     '🎲 Du hast <strong>3 Würfe pro Zug</strong>! Behalte nach jedem Wurf die besten Würfel und würfle den Rest nochmal.<br>' +
                     '🔒 Behaltene Würfel werden gesperrt und bleiben bei allen weiteren Würfen erhalten.<br>' +
                     '⭐ Jede*r Spieler*in hat 4 einzigartige Fähigkeiten — aktiviere sie durch Anklicken!<br>' +
@@ -1917,15 +1917,19 @@
                 }
             }
 
-            // Erschöpfungs-Anzeige Helper
+            // Erschöpfungs-Anzeige Helper (immer sichtbar)
             function exhaustionHtml(player) {
                 var ca = player.consecutiveAttacks;
-                if (ca <= 3) return '';
-                var penalty = ca - 3;
-                var icons = '';
-                for (var ei = 0; ei < Math.min(penalty, 6); ei++) icons += '⚡';
-                var color = penalty >= 4 ? '#cc2222' : penalty >= 3 ? '#cc4444' : penalty >= 2 ? '#e09030' : '#d4a030';
-                return '<div style="font-size:0.75em;color:' + color + ';margin-top:2px;" title="Erschöpfung: ' + ca + ' Angriffe hintereinander">' + icons + ' -' + penalty + ' Würfel</div>';
+                var frei = Math.max(0, 2 - ca);
+                var penalty = Math.max(0, ca - 2);
+                if (penalty > 0) {
+                    var icons = '';
+                    for (var ei = 0; ei < Math.min(penalty, 6); ei++) icons += '⚡';
+                    var color = penalty >= 4 ? '#cc2222' : penalty >= 3 ? '#cc4444' : penalty >= 2 ? '#e09030' : '#d4a030';
+                    return '<div style="font-size:0.75em;color:' + color + ';margin-top:2px;" title="Erschöpfung: ' + ca + ' Angriffe hintereinander">' + icons + ' -' + penalty + ' Würfel</div>';
+                }
+                var freiColor = frei === 0 ? '#e0c030' : '#55aa55';
+                return '<div style="font-size:0.75em;color:' + freiColor + ';margin-top:2px;" title="Freischüsse: ' + frei + ' Angriffe ohne Malus">⚔ ' + frei + ' Freischüsse</div>';
             }
 
             this.container.innerHTML =
@@ -3456,7 +3460,7 @@
             var aiCloseSP = ai.sp >= 30;
             var aiNeedsAbility = ai.currentAbilityIndex < 4;
             var fpToNextAbility = aiNeedsAbility ? (10 - ai.abilityProgress[ai.currentAbilityIndex]) : 999;
-            var aiExhausted = ai.consecutiveAttacks >= 3; // Erschöpfung berücksichtigen
+            var aiExhausted = ai.consecutiveAttacks >= 2; // Erschöpfung berücksichtigen
 
             // Phase 2: Strategisches Würfeln — 3 Würfe mit Auswertung dazwischen
             // Erster Wurf: alle Würfel

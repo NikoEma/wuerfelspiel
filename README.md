@@ -86,15 +86,15 @@ Aufeinanderfolgende Angriffe führen zu Erschöpfung:
 
 | Aufeinanderfolgende Angriffe | Effekt |
 |---|---|
-| 1–3 | Kein Malus (3 Freischüsse) |
-| 4 | -1 Würfel |
-| 5 | -2 Würfel |
-| n (n>3) | -(n-3) Würfel |
+| 1–2 | Kein Malus (2 Freischüsse) |
+| 3 | -1 Würfel |
+| 4 | -2 Würfel |
+| n (n>2) | -(n-2) Würfel |
 
 - Minimum: **1 Würfel** (egal wie erschöpft)
 - Nicht-Angriff (Heilen/Blocken/Sammeln): Zähler sinkt um **1** pro Zug
-- Bei Zähler ≤3 → wieder 3 Freischüsse
-- Erschöpfung wird visuell im Kampfbildschirm angezeigt (⚡-Icons)
+- Bei Zähler ≤2 → wieder 2 Freischüsse
+- Erschöpfung wird **immer** im Kampfbildschirm angezeigt (Freischüsse + ⚡-Icons bei Malus)
 
 ---
 
