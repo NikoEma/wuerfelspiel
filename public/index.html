@@ -404,7 +404,7 @@
             <div class="info-rule">6× gleich = +6 FP, +18 SP</div>
             <div class="info-rule" style="margin-top: 4px; color: #d4a030;">FP → Fähigkeiten (10/20/30/40)</div>
             <div class="info-rule" style="color: #d4a030;">SP 40 = 🌟 Transzendenz!</div>
-            <div class="info-rule" style="margin-top: 4px; color: #e09030;">⚡ Erschöpfung: 2×⚔=-1🎲, 3×⚔=-2🎲</div>
+            <div class="info-rule" style="margin-top: 4px; color: #e09030;">⚡ Erschöpfung: ab 4×⚔ je -1🎲 (min. 1)</div>
         </div>
         <div style="margin-bottom: 8px;">
             <div class="info-title" style="margin: 0 0 5px 0; font-size: 0.9em;">🏆 Sieg:</div>
@@ -1074,11 +1074,9 @@
             var count = 6;
             if (this.playerHasEffect(current, CharacterType.Soldat, 0)) count++;
             count += current.bonusDice;
-            // Erschöpfungs-Malus: aufeinanderfolgende Angriffe kosten Würfel
-            var exhaustion = 0;
-            if (current.consecutiveAttacks >= 3) exhaustion = 2;
-            else if (current.consecutiveAttacks >= 2) exhaustion = 1;
-            count = Math.max(3, count - exhaustion);
+            // Erschöpfungs-Malus: ab dem 4. Angriff hintereinander (progressiv)
+            var exhaustion = Math.max(0, current.consecutiveAttacks - 3);
+            count = Math.max(1, count - exhaustion);
             return count;
         };
 
@@ -1512,7 +1510,7 @@
                     '🏆 <strong>2 Siegbedingungen</strong>:<br>' +
                     '&nbsp;&nbsp;💀 <strong>Elimination</strong>: Senke den Gegner auf 0 HP.<br>' +
                     '&nbsp;&nbsp;🌟 <strong>Transzendenz</strong>: Sammle 40 SP durch ⭐-Kombinationen!<br><br>' +
-                    '⚡ <strong>Erschöpfung</strong>: Wiederholte Angriffe kosten Würfel! (2×⚔ = -1, 3×⚔ = -2).<br>' +
+                    '⚡ <strong>Erschöpfung</strong>: 3 Angriffe frei, ab dem 4. je -1 Würfel. Nicht-Angriff: +1 zurück (min. 1).<br>' +
                     '🎲 Du hast <strong>3 Würfe pro Zug</strong>! Behalte nach jedem Wurf die besten Würfel und würfle den Rest nochmal.<br>' +
                     '🔒 Behaltene Würfel werden gesperrt und bleiben bei allen weiteren Würfen erhalten.<br>' +
                     '⭐ Jede*r Spieler*in hat 4 einzigartige Fähigkeiten — aktiviere sie durch Anklicken!<br>' +
@@ -1922,12 +1920,12 @@
             // Erschöpfungs-Anzeige Helper
             function exhaustionHtml(player) {
                 var ca = player.consecutiveAttacks;
-                if (ca === 0) return '';
-                var icons, color, malus;
-                if (ca >= 3) { icons = '⚡⚡⚡'; color = '#cc4444'; malus = ' -2 Würfel'; }
-                else if (ca === 2) { icons = '⚡⚡'; color = '#e09030'; malus = ' -1 Würfel'; }
-                else { icons = '⚡'; color = '#d4a030'; malus = ''; }
-                return '<div style="font-size:0.75em;color:' + color + ';margin-top:2px;" title="Erschöpfung: ' + ca + ' Angriffe hintereinander">' + icons + ' (' + ca + '/3)' + malus + '</div>';
+                if (ca <= 3) return '';
+                var penalty = ca - 3;
+                var icons = '';
+                for (var ei = 0; ei < Math.min(penalty, 6); ei++) icons += '⚡';
+                var color = penalty >= 4 ? '#cc2222' : penalty >= 3 ? '#cc4444' : penalty >= 2 ? '#e09030' : '#d4a030';
+                return '<div style="font-size:0.75em;color:' + color + ';margin-top:2px;" title="Erschöpfung: ' + ca + ' Angriffe hintereinander">' + icons + ' -' + penalty + ' Würfel</div>';
             }
 
             this.container.innerHTML =
@@ -3020,7 +3018,7 @@
                 showScroll('Markiere mindestens eine 1 zum Heilen!', '⚠️');
                 return;
             }
-            current.consecutiveAttacks = 0;
+            current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
             this.performHeal(healCount);
         };
 
@@ -3036,7 +3034,7 @@
             }
 
             var blockSum = markedDice.reduce(function(a, b) { return a + b; }, 0);
-            current.consecutiveAttacks = 0;
+            current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
             if (current.lastDamageReceived > 0 && blockSum >= current.lastDamageReceived) {
                 current.health = Math.min(100, current.health + current.lastDamageReceived);
                 showScroll('🛡️ Blockade erfolgreich! ' + current.lastDamageReceived + ' HP wiederhergestellt!\n(Block: ' + blockSum + ' ≥ Schaden: ' + current.lastDamageReceived + ')', '🛡️');
@@ -3130,7 +3128,7 @@
         Game.prototype.collectAbilityPoints = function() {
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
-            current.consecutiveAttacks = 0;
+            current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
             var fp = 0;
             var sp = 0;
             var marked = this.getMarkedDice();
@@ -3458,7 +3456,7 @@
             var aiCloseSP = ai.sp >= 30;
             var aiNeedsAbility = ai.currentAbilityIndex < 4;
             var fpToNextAbility = aiNeedsAbility ? (10 - ai.abilityProgress[ai.currentAbilityIndex]) : 999;
-            var aiExhausted = ai.consecutiveAttacks >= 2; // Erschöpfung berücksichtigen
+            var aiExhausted = ai.consecutiveAttacks >= 3; // Erschöpfung berücksichtigen
 
             // Phase 2: Strategisches Würfeln — 3 Würfe mit Auswertung dazwischen
             // Erster Wurf: alle Würfel
@@ -3653,7 +3651,7 @@
                 } else if (strategy === 'heal' && finalAnalysis.ones > 0) {
                     var healAmt = finalAnalysis.ones * 5;
                     ai.health = Math.min(100, ai.health + healAmt);
-                    ai.consecutiveAttacks = 0;
+                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
                     if (self.playerHasEffect(ai, CharacterType.Quacksalber, 1)) {
                         ai.sp += 1;
                     }
@@ -3666,7 +3664,7 @@
                     ai.fp += aiFP;
                     ai.addAbilityPoints(aiFP);
                     ai.sp += aiSP;
-                    ai.consecutiveAttacks = 0;
+                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
                     showScroll('KI sammelt +' + aiFP + ' FP, +' + aiSP + ' SP!', '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
                 } else if (hasDice) {
