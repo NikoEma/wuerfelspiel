@@ -177,7 +177,7 @@ Fokus: Würfelkontrolle, Kombination von Angriff und Heilung, und Gegnerbehinder
 
 ### Siegwege im Vergleich
 
-| Aspekt | Elimination (HP-Kill) | Transzendenz (60 SP) |
+| Aspekt | Elimination (HP-Kill) | Transzendenz (40 SP) |
 |---|---|---|
 | Geschwindigkeit | ~12-15 eigene Züge | ~25-30 eigene Züge |
 | Risiko | Gegner heilt/blockt | Gegner greift an, man muss überleben |
@@ -188,12 +188,12 @@ Fokus: Würfelkontrolle, Kombination von Angriff und Heilung, und Gegnerbehinder
 
 | Quelle | SP | Bedingung |
 |---|---|---|
-| 3er-Pasch (häufigste Combo) | 2 | Sammelaktion |
-| Zweierpasch | 3 | Sammelaktion |
-| 4er-Pasch | 4 | Sammelaktion |
-| Kleine Straße | 5 | Sammelaktion |
-| Große Straße | 8 | Sammelaktion (selten) |
-| 6× gleich | 15 | Sammelaktion (extrem selten) |
+| 3er-Pasch (häufigste Combo) | 3 | Sammelaktion |
+| Zweierpasch | 4 | Sammelaktion |
+| 4er-Pasch | 5 | Sammelaktion |
+| Kleine Straße | 6 | Sammelaktion |
+| Große Straße | 10 | Sammelaktion (selten) |
+| 6× gleich | 18 | Sammelaktion (extrem selten) |
 | Kriegsmeister*in (Soldat) | +2 | Pro Angriff ≥12 Schaden |
 | Kriegsstrateg*in (Rebell) | +1 | Passiv jede eigene Runde |
 | Punkt-Bonus (Taschendieb) | +1 | Pro Sammelaktion |
@@ -203,7 +203,7 @@ Fokus: Würfelkontrolle, Kombination von Angriff und Heilung, und Gegnerbehinder
 
 - **Soldat*in**: Hoher Burst-Schaden, gewinnt schnell über Elimination. SP nur als Nebenprodukt bei starken Angriffen.
 - **Rebell*in**: Hybrid — passiver Schaden + SP-Generierung + Verteidigung. Kann beide Siegwege verfolgen.
-- **Taschendieb*in**: Ressourceneffizienz — bekommt mehr pro Sammelaktion, aber braucht Fähigkeits-Kopie für defensive/offensive Flexibilität.
+- **Taschendieb*in**: Ressourceneffizienz — bekommt mehr pro Sammelaktion und schwächt Gegner durch Ressourcen-Raub.
 - **Quacksalber*in**: Würfelkontrolle — kann gleichzeitig angreifen und heilen, dadurch SP generieren, ohne auf Sammeln angewiesen zu sein.
 
 ---
@@ -294,7 +294,7 @@ Die schwere KI nutzt einen mehrstufigen Entscheidungsprozess:
 
 **Strategieentscheidung** berücksichtigt:
 - Kill-Erkennung (Gegner mit einem Angriff besiegbar?)
-- SP-Rennen-Bewusstsein (Gegner nah an 60 SP?)
+- SP-Rennen-Bewusstsein (Gegner nah an 40 SP?)
 - HP-abhängige Heilschwellen
 - Fähigkeits-Freischaltungs-Nähe
 - **Niemals-verschwendeter-Zug**: Fallback-Logik stellt sicher, dass immer eine Aktion ausgeführt wird
