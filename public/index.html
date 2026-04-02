@@ -2203,7 +2203,7 @@
                 var cls = '', txt = '';
                 if (d === -1) { cls = 'destroyed'; txt = '💀'; }
                 else if (d === 0) { cls = 'disabled'; txt = '?'; }
-                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : (this.actionSelected && !this.diceAnimating && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.pipDots ? '' : (skinData.map[d] || d); }
+                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : (this.actionSelected && !this.diceAnimating && this.rollsRemaining === 0 && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.pipDots ? '' : (skinData.map[d] || d); }
                 var skinStyle = '';
                 var usePipDots = d > 0 && d !== -1 && skinData.pipDots;
                 if (d > 0 && d !== -1) {
@@ -2243,7 +2243,7 @@
             if (this.playerHasEffect(current, CharacterType.Quacksalber, 3) && !this.restartUsed && hasRolled) {
                 btns += '<button class="btn-action btn-restart" onclick="game.useRestart()">♻️ Neustart</button>';
             }
-            btns += '<button class="btn-action btn-end-turn" onclick="game.manualEndTurn()">Zug bestätigen</button>';
+
             btns += '</div>';
             var alwaysBtns = '<div class="actions-container" style="margin-top:0;">' +
                 '<button class="btn-action btn-surrender" onclick="game.surrender()">🏳️ Aufgeben</button>' +
@@ -3728,7 +3728,19 @@
             }
             if (!this.actionSelected) return;
             var marked = this.getMarkedDice();
-            if (marked.length === 0) { showScroll('Bitte markiere mindestens einen Würfel!', '⚠️'); return; }
+            if (marked.length === 0) {
+                if (this.actionSelected === 'heal') {
+                    var current = this.getCurrentPlayer();
+                    var hasZweier = this.playerHasEffect(current, CharacterType.Taschendieb, 1);
+                    var healMsg = hasZweier ? 'Keine 1er oder 2er vorhanden — keine Heilung möglich!' : 'Keine 1er vorhanden — keine Heilung möglich!';
+                    showScroll(healMsg, '⚠️');
+                    current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+                    this.actionSelected = null;
+                    var self = this; afterScroll(function() { self.endTurn(); });
+                    return;
+                }
+                showScroll('Bitte markiere mindestens einen Würfel!', '⚠️'); return;
+            }
             switch (this.actionSelected) {
                 case 'attack': this.executeAttackLogic(); break;
                 case 'heal': this.executeHealLogic(); break;
