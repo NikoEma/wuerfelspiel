@@ -2,6 +2,8 @@
 
 Ein rundenbasiertes Würfel-Kampfspiel als Web-App (HTML/CSS/JavaScript) mit mittelalterlichem Fantasy-Theme (DnD-inspiriert).
 
+🌐 **Live spielbar:** https://wuerfelspiel.onrender.com
+
 ---
 
 ## Spielkonzept
@@ -11,7 +13,8 @@ Zwei Spieler (oder ein Spieler gegen KI) treten in einem strategischen Würfeldu
 **Spielmodi:**
 - **Spieler vs. Spieler** (lokaler Multiplayer)
 - **Spieler vs. KI** (3 Schwierigkeitsgrade: Leicht, Mittel, Schwer)
-- **🏋️ Training** (freies Üben gegen KI — ohne Statistik-/Erfolgs-Tracking)
+- **� Online Multiplayer** (Raum erstellen/beitreten über Raumcode, via Socket.IO)
+- **�🏋️ Training** (freies Üben gegen KI — ohne Statistik-/Erfolgs-Tracking)
 - **Tutorial** (interaktive Einführung mit geführten Runden)
 
 ---
@@ -230,16 +233,27 @@ Pergament-Ansicht mit Spielstatistiken des aktiven Profils:
 | ⭐ Veteran(*in) | 25 Spiele absolvieren |
 | 👑 Legende | Alle anderen Erfolge freischalten |
 
+### 🪙 Münzen & Würfel-Shop
+
+Münzen werden durch Siege und Erfolge verdient:
+
+| Quelle | Münzen |
+|---|---|
+| Sieg vs. KI (Leicht) | +10 🪙 |
+| Sieg vs. KI (Mittel) | +13 🪙 |
+| Sieg vs. KI (Schwer) | +15 🪙 |
+| Erfolg freigeschaltet | +20 🪙 |
+
 ### 🎲 Würfel-Skins
 
-4 Würfel-Designs, davon 3 durch Erfolge freischaltbar:
+4 Würfel-Designs, kaufbar im Shop mit Münzen:
 
-| Skin | Darstellung | Freischaltung |
+| Skin | Darstellung | Preis |
 |---|---|---|
-| Standard | 1 2 3 4 5 6 | Immer verfügbar |
-| Gotisch | MedievalSharp-Font | 👑 Legende |
-| Römisch | Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ | 💡 Erleuchtung |
-| Symbole | ⚀ ⚁ ⚂ ⚃ ⚄ ⚅ | ⭐ Veteran(*in) |
+| Standard | 1 2 3 4 5 6 | Gratis |
+| Gotisch | MedievalSharp-Font | 30 🪙 |
+| Strichliste | Strich-Zählung | 60 🪙 |
+| Symbole | ⚀ ⚁ ⚂ ⚃ ⚄ ⚅ | 100 🪙 |
 
 ---
 
@@ -254,9 +268,98 @@ Das Spiel unterstützt drei Geschlechteroptionen (Männlich, Weiblich, Divers). 
 Die KI hat drei Schwierigkeitsgrade:
 - **Leicht**: Zufällige/einfache Entscheidungen
 - **Mittel**: Berücksichtigt HP-Stand und Würfelergebnisse
-- **Schwer**: Optimiert Aktionswahl, nutzt Fähigkeiten strategisch
+- **Schwer**: Strategisches 3-Phasen-System mit vollständiger Spielzustandsanalyse
 
-Die KI wählt automatisch Würfel, Aktionen und Markierungen basierend auf dem aktuellen Spielzustand.
+### Schwere KI — Strategisches Würfeln
+
+Die schwere KI nutzt einen mehrstufigen Entscheidungsprozess:
+
+1. **Analyse nach jedem Wurf**: `analyzeDice()` und `calcSPForDice()` bewerten Angriffsstärke, Heilpotential und SP-Kombinationen
+2. **Strategische Re-Rolls**: Über 3 Würfe hinweg wird die Strategie angepasst — Würfel die zur gewählten Strategie passen, werden behalten
+3. **Finale Anpassung**: Nach dem letzten Wurf wählt die KI die bestmögliche Aktion basierend auf den tatsächlichen Ergebnissen
+
+**Strategieentscheidung** berücksichtigt:
+- Kill-Erkennung (Gegner mit einem Angriff besiegbar?)
+- SP-Rennen-Bewusstsein (Gegner nah an 60 SP?)
+- HP-abhängige Heilschwellen
+- Fähigkeits-Freischaltungs-Nähe
+- **Niemals-verschwendeter-Zug**: Fallback-Logik stellt sicher, dass immer eine Aktion ausgeführt wird
+
+---
+
+## Online Multiplayer
+
+Das Spiel unterstützt Online-Multiplayer über Socket.IO:
+
+1. **Raum erstellen**: Spieler 1 erstellt einen Raum und erhält einen 5-stelligen Raumcode
+2. **Raum beitreten**: Spieler 2 gibt den Code ein und tritt bei
+3. **Synchronisierung**: Alle Aktionen werden über den Server synchronisiert
+4. **Server-seitige Würfel**: Würfelwerte werden serverseitig generiert (Manipulationsschutz)
+5. **Aufgeben**: Beide Spieler können jederzeit aufgeben (🏳️ Aufgeben-Button)
+
+---
+
+## Audio-System
+
+Das gesamte Audio wird per **Web Audio API** im Browser synthetisiert — keine externen Audiodateien nötig.
+
+### 🔊 Sound-Effekte (SFX)
+
+| Sound | Beschreibung |
+|---|---|
+| 🎲 Würfeln | 12 Noise-Bursts + Sinus-Aufprall |
+| ⚔️ Angriff | Sägezahn-Sweep + Noise-Burst |
+| 💚 Heilung | 4-Ton aufsteigende Akkordfolge (C-E-G-C) |
+| ⭐ Sammeln | 4-Ton Dur-Tonleiter (A-D-E-A) |
+| 🖱️ Klick | Rechteck-Welle Beep |
+| 🏆 Sieg | 7-Ton triumphale Fanfare |
+| 💀 Niederlage | 4-Ton absteigende Moll-Folge |
+
+### 🎵 Hintergrundmusik
+
+Prozedural generierte Musik mit Melodie, Bass, Harmonien und Rhythmus:
+
+- **Lobby-Musik**: 4 melodische Phrasen (A→B→A→C→B→D), Glockenspiel-Effekt, Rhythmus-Puls, 480ms Tempo
+- **Kampf-Musik**: Aggressiveres Muster mit Percussion-artigen Noise-Bursts und schnelleren Arpeggios
+- **Stummschalten**: 🔇/🔊 Button im Kampfbildschirm
+
+---
+
+## Visuelle Effekte
+
+| Effekt | Beschreibung | Auslöser |
+|---|---|---|
+| 🎲 Würfel-Animation | 3D-Tumble mit Zahlenflackern (0.7s) | Jeder Wurf |
+| 💥 Bildschirm-Wackeln | ±6px random Offsets (0.5s) | Angriff |
+| ⚡ Blitz-Flash | SVG-Blitz mit Stroke-Animation | Angriff |
+| ✨ Funken/Ripples | 5 Ripple-Ringe mit Skalierung + Glow | Sammeln |
+| 💚 Heil-Effekt | Grüner Flash + 35 Partikel (Herzen, Plus, Sparkles) + 40 Glitter | Heilung |
+| 🌟 Fähigkeits-Unlock | Glow-Animation auf dem Pergament-Scroll | Fähigkeit freigeschaltet |
+| 🟡 Gold-Markierung | Goldener Rahmen + Glow auf markierbaren Würfeln | Aktion gewählt |
+
+---
+
+## Barrierefreiheit
+
+Über den 👓-Button (unten rechts) erreichbar:
+
+| Modus | Beschreibung |
+|---|---|
+| **LRS-Modus** | OpenDyslexic-Schrift, erhöhter Zeilenabstand (1.8), Buchstabenabstand |
+| **Farbenblind-Modus** | Höherer Kontrast (#c0b0d4), dickere Würfelrahmen (4px), stärkere Glow-Effekte |
+| **Rot-Grün-Schwäche** | HP-Balken: Grün→Blau, Rot→Orange; alle UI-Elemente umgefärbt |
+| **Größere Schrift** | Basis-Schriftgröße 1.45em, alle Elemente proportional skaliert |
+
+Einstellungen werden in `localStorage` gespeichert und überdauern Seitenneuladen.
+
+---
+
+## Mobile Unterstützung
+
+Das Spiel ist responsiv und auf allen Geräten spielbar:
+
+- **Tablets** (≤1024px): 2-spaltige Layouts, angepasste Schriftgrößen
+- **Smartphones** (≤600px): 1-spaltige Layouts, 48px Würfel, kompakte Buttons, ein-/ausblendbare Info-Box
 
 ---
 
@@ -264,31 +367,37 @@ Die KI wählt automatisch Würfel, Aktionen und Markierungen basierend auf dem a
 
 | Aspekt | Detail |
 |---|---|
-| **Architektur** | Single-Page HTML-App (~2400 Zeilen) |
+| **Architektur** | Single-Page HTML-App (~7800 Zeilen) |
 | **Sprachen** | HTML, CSS, JavaScript (ES5-kompatibel, kein Framework) |
 | **JS-Stil** | Prototyp-basiert (var, function, .prototype) |
-| **CSS-Theme** | Mittelalter/DnD: Cinzel + Crimson Text Fonts, dunkle Erdtöne, Goldakzente |
-| **UI-Feedback** | Pergament-Scroll-Overlay für alle Spielmeldungen |
-| **Server** | Node.js + Express (optional, für lokales Hosting) |
-| **Port** | 3000 (lokal) |
-| **Offline** | Komplett offline spielbar per Doppelklick auf index.html |
-| **Persistenz** | localStorage (Profile, Statistiken, Erfolge, Skins) |
+| **Fonts** | Cinzel (Titel), VT323 (Body), Press Start 2P (Buttons), MedievalSharp (Gotisch-Skin), OpenDyslexic (LRS) |
+| **CSS-Theme** | Mittelalter/DnD: dunkle Erdtöne, Goldakzente, Partikel-Effekte |
+| **Audio** | Web Audio API — Synthesizer für SFX + prozedurale Hintergrundmusik |
+| **UI-Feedback** | Pergament-Scroll-Overlay mit Warteschlange für Spielmeldungen |
+| **Server** | Node.js + Express + Socket.IO (für Online-Multiplayer) |
+| **Port** | 3000 (lokal) / env PORT (Deployment) |
+| **Deployment** | Render (https://wuerfelspiel.onrender.com) |
+| **Offline** | Komplett offline spielbar per Doppelklick auf index.html (ohne Online-Modus) |
+| **Persistenz** | localStorage (Profile, Statistiken, Erfolge, Skins, Münzen, Barrierefreiheit) |
 
 ---
 
 ## Installation & Start
 
-### Variante 1: Direkt im Browser (ohne Server)
-Doppelklick auf `public/index.html` — fertig.
+### Variante 1: Online spielen
+Einfach öffnen: https://wuerfelspiel.onrender.com
 
-### Variante 2: Mit Node.js-Server
-`ash
+### Variante 2: Direkt im Browser (ohne Server)
+Doppelklick auf `public/index.html` — fertig. (Offline-Modus, kein Online-Multiplayer)
+
+### Variante 3: Mit Node.js-Server (lokal)
+```bash
 npm install
 npm start
-`
-Dann öffnen: http://localhost:3000
+```
+Dann öffnen: http://localhost:3000 (inkl. Online-Multiplayer im LAN)
 
-### Variante 3: Weitergabe an Freunde
+### Variante 4: Weitergabe an Freunde
 1. Ordner `public/` als ZIP komprimieren
 2. ZIP versenden (E-Mail, Cloud, USB)
 3. Empfänger entpackt und öffnet `index.html` im Browser
@@ -299,16 +408,23 @@ Dann öffnen: http://localhost:3000
 
 ```
 Wuerfelspiel_dice/
-├── server.js              # Express-Server (optional)
-├── package.json           # Node.js-Abhängigkeiten
+├── server.js              # Express + Socket.IO Server (Online-Multiplayer)
+├── package.json           # Node.js-Abhängigkeiten (express, socket.io)
 ├── simulate.js            # Simulationsskript
 ├── start_game.bat         # Windows Quick-Start
 ├── README.md              # Diese Dokumentation
 └── public/
-    ├── index.html         # Spielversion (Hauptdatei)
+    ├── index.html         # Komplettes Spiel (HTML + CSS + JS, ~7800 Zeilen)
     ├── README.txt          # Kurzanleitung für Endnutzer
     └── images/            # Charakterbilder (soldat.png, rebell.png, etc.)
 ```
+
+---
+
+## Links
+
+- 🌐 **Live**: https://wuerfelspiel.onrender.com
+- 📦 **GitHub**: https://github.com/NikoEma/wuerfelspiel
 
 ---
 
