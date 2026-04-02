@@ -249,9 +249,9 @@ Pergament-Ansicht mit Spielstatistiken des aktiven Profils:
 | ⭐ Veteran(*in) | 25 Spiele absolvieren |
 | 👑 Legende | Alle anderen Erfolge freischalten |
 
-### 🪙 Münzen & Würfel-Shop
+### 🪙 Münzen & Shop-System
 
-Münzen werden durch Siege und Erfolge verdient:
+Münzen werden durch Siege, Erfolge, Aufträge, Meilensteine und das Glücksrad verdient:
 
 | Quelle | Münzen |
 |---|---|
@@ -259,17 +259,104 @@ Münzen werden durch Siege und Erfolge verdient:
 | Sieg vs. KI (Mittel) | +13 🪙 |
 | Sieg vs. KI (Schwer) | +15 🪙 |
 | Erfolg freigeschaltet | +20 🪙 |
+| Aufträge (Quests) | +15–50 🪙 |
+| Meilensteine | +30–200 🪙 |
+| Tägliches Glücksrad | +10–500 🪙 |
 
-### 🎲 Würfel-Skins
+Der **Shop** (🛒) bietet 6 rein kosmetische Kategorien:
 
-4 Würfel-Designs, kaufbar im Shop mit Münzen:
+### 🎲 Würfel-Skins (13 Designs)
 
 | Skin | Darstellung | Preis |
 |---|---|---|
 | Standard | 1 2 3 4 5 6 | Gratis |
 | Gotisch | MedievalSharp-Font | 30 🪙 |
 | Strichliste | Strich-Zählung | 60 🪙 |
-| Symbole | ⚀ ⚁ ⚂ ⚃ ⚄ ⚅ | 100 🪙 |
+| Symbole | CSS Pip-Dots | 100 🪙 |
+| Runen | ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ | 50 🪙 |
+| Kristall | Glitzer-Effekt | 80 🪙 |
+| Knochen | Skelett-Look | 100 🪙 |
+| Feuer 🔥 | Flammen-Glow | 150 🪙 |
+| Eis ❄️ | Frost-Effekt | 150 🪙 |
+| Nekromant 💀 | Dunkle Aura | 200 🪙 |
+| Himmelsschmiede ⚒️ | Gold-Glanz | 300 🪙 |
+| Void 🕳️ | Schwarzloch-Look | 500 🪙 |
+| Regenbogen 🌈 | Animierter Farbwechsel | 1000 🪙 ⭐ |
+
+### 🎯 Tisch-Designs (7 Designs)
+
+| Design | Beschreibung | Preis |
+|---|---|---|
+| Standard | Klassisches Spielfeld | Gratis |
+| Taverne 🍺 | Holz- und Kerzenlicht | 50 🪙 |
+| Wald 🌲 | Moos und Blätter | 80 🪙 |
+| Kerker ⛓️ | Stein und Fackelschein | 100 🪙 |
+| Sternenhimmel ✨ | Kosmischer Hintergrund | 150 🪙 |
+| Drachenhort 🐉 | Gold und Schuppen | 200 🪙 |
+| Thronsaal 👑 | Königlicher Prunk | 500 🪙 ⭐ |
+
+### 🖼️ Profilrahmen (7 Rahmen)
+
+| Rahmen | Beschreibung | Preis |
+|---|---|---|
+| Standard | Einfacher Rahmen | Gratis |
+| Silber 🥈 | Silberner Glanz | 30 🪙 |
+| Gold 🥇 | Goldener Schimmer | 80 🪙 |
+| Smaragd 💚 | Grüner Edelstein | 120 🪙 |
+| Rubin ❤️ | Roter Edelstein | 150 🪙 |
+| Flammen 🔥 | Animierter Feuerrahmen | 300 🪙 |
+| Krone 👑 | Königlicher Rahmen | 500 🪙 ⭐ |
+
+### 🏆 Sieges-Animationen (6 Animationen)
+
+| Animation | Beschreibung | Preis |
+|---|---|---|
+| Standard | Keine Extra-Animation | Gratis |
+| Konfetti 🎊 | Bunte Partikel fallen | 50 🪙 |
+| Blitz ⚡ | SVG-Blitzschlag | 100 🪙 |
+| Feuerwerk 🎆 | 3 Explosionen | 120 🪙 |
+| Drachenfeuer 🐲 | Drache mit Feueratem | 250 🪙 |
+| Götterdämmerung 🌟 | Radiale Lichtexplosion | 500 🪙 ⭐ |
+
+### 🔊 Sound-Packs (5 Packs)
+
+| Pack | Beschreibung | Preis |
+|---|---|---|
+| Standard | Original-Sounds | Gratis |
+| Taverne 🍺 | Gedämpfte Tavern-Klänge | 80 🪙 |
+| 8-Bit 👾 | Retro-Chiptune-Sounds | 100 🪙 |
+| Mystisch 🔮 | Ätherische Klänge | 120 🪙 |
+| Kriegstrommeln 🥁 | Epische Trommeln | 150 🪙 |
+
+⭐ = Legendärer Gegenstand (mit goldenem Leuchteffekt)
+
+### 📋 Auftrags-System (Quests)
+
+- 3 aktive Aufträge gleichzeitig
+- Zufällig aus 12 verschiedenen Auftragstypen generiert
+- Auftragstypen: Siege, Partien, Angriffe, Heilungen, SP-Sammlungen, Schaden, KI-Siege, Transzendenz-Siege
+- Abgeschlossene Aufträge können eingelöst werden → Münzbelohnung + neuer Auftrag
+- Fortschritt wird automatisch während des Spielens getrackt
+
+### 🎖️ Meilensteine
+
+6 einmalige Errungenschaften mit steigenden Belohnungen:
+
+| Meilenstein | Bedingung | Belohnung |
+|---|---|---|
+| Erste Schritte | 10 Siege | 50 🪙 |
+| Aufsteigend | 25 Siege | 100 🪙 + Kristall-Skin |
+| Halbzeit | 50 Partien | 80 🪙 + Wald-Tisch |
+| Veteran | 50 Siege | 150 🪙 + Flammen-Rahmen |
+| Marathonläufer | 100 Partien | 120 🪙 + Feuerwerk-Animation |
+| Legende | 100 Siege | 200 🪙 + Void-Skin |
+
+### 🎡 Tägliches Glücksrad
+
+- Einmal pro Tag drehbar
+- 9 Segmente mit gewichteter Zufallsverteilung
+- Gewinne: 10 bis 500 Münzen
+- Animiertes Drehen mit Ergebnis-Anzeige
 
 ---
 
@@ -394,7 +481,7 @@ Das Spiel ist responsiv und auf allen Geräten spielbar:
 | **Port** | 3000 (lokal) / env PORT (Deployment) |
 | **Deployment** | Render (https://wuerfelspiel.onrender.com) |
 | **Offline** | Komplett offline spielbar per Doppelklick auf index.html (ohne Online-Modus) |
-| **Persistenz** | localStorage (Profile, Statistiken, Erfolge, Skins, Münzen, Barrierefreiheit) |
+| **Persistenz** | localStorage (Profile, Statistiken, Erfolge, Shop-Items, Münzen, Aufträge, Meilensteine, Barrierefreiheit) |
 
 ---
 

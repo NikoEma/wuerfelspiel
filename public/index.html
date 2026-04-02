@@ -207,6 +207,52 @@
         .skin-preview-gotisch { font-family: 'MedievalSharp', monospace; }
         .skin-preview-strich { font-size: 1.4em; letter-spacing: 2px; }
         .skin-req { font-size: 0.9em; color: #c89040; margin-top: 5px; }
+        .skin-card.legendary { border-color: #e0a020; box-shadow: 2px 2px 0 #000, 0 0 12px rgba(224,160,32,0.3); }
+        .skin-card.legendary .skin-name { color: #ffcc00; }
+        .shop-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; justify-content: center; }
+        .shop-tab { padding: 8px 14px; font-size: 0.95em; background: #0a0814; color: #8877aa; border: 2px solid #2d1f4d; cursor: pointer; font-family: 'VT323', monospace; transition: border-color 0.15s, color 0.15s; }
+        .shop-tab:hover { border-color: #d4a030; color: #d4a030; }
+        .shop-tab.active { border-color: #d4a030; color: #d4a030; background: #1e1832; }
+        .shop-item-card { padding: 18px; border: 3px solid #2d1f4d; background: #0a0814; text-align: center; cursor: pointer; transition: border-color 0.15s; box-shadow: 2px 2px 0 #000; }
+        .shop-item-card:hover { border-color: #d4a030; }
+        .shop-item-card.selected { border-color: #d4a030; background: #1e1832; }
+        .shop-item-card.locked { opacity: 0.4; cursor: not-allowed; }
+        .shop-item-card.legendary { border-color: #e0a020; box-shadow: 2px 2px 0 #000, 0 0 12px rgba(224,160,32,0.3); }
+        .shop-item-name { font-family: 'Press Start 2P', monospace; font-size: 0.55em; color: #d4a030; margin-bottom: 8px; line-height: 1.4; }
+        .shop-item-preview { font-size: 1.8em; letter-spacing: 6px; margin: 8px 0; }
+        .shop-item-price { font-size: 0.9em; color: #c89040; margin-top: 5px; }
+        .shop-item-equipped { font-size: 0.85em; color: #44ccaa; margin-top: 5px; }
+        .skin-preview-runen { font-family: 'Segoe UI Symbol', 'Noto Sans Symbols', serif; }
+        .skin-preview-feuer { color: #ff6600; text-shadow: 0 0 8px #ff3300, 0 0 16px rgba(255,51,0,0.5); }
+        .skin-preview-eis { color: #88ddff; text-shadow: 0 0 8px #00aaff, 0 0 16px rgba(0,170,255,0.4); }
+        .skin-preview-nekromant { color: #aa44cc; text-shadow: 0 0 8px #7722aa, 0 0 16px rgba(119,34,170,0.4); }
+        .skin-preview-himmelsschmiede { color: #ffe066; text-shadow: 0 0 10px #ffcc00, 0 0 20px rgba(255,204,0,0.5); }
+        .skin-preview-void { color: #6633cc; text-shadow: 0 0 10px #4400aa, 0 0 20px rgba(68,0,170,0.5); background: linear-gradient(135deg, #0a0814, #1a0a2e); -webkit-background-clip: text; }
+        @keyframes rainbowCycle { 0% { color: #ff0000; } 16% { color: #ff8800; } 33% { color: #ffff00; } 50% { color: #00ff00; } 66% { color: #0088ff; } 83% { color: #8800ff; } 100% { color: #ff0000; } }
+        @keyframes konfettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        @keyframes dragonBreath { 0% { transform: scale(0); opacity: 0; } 30% { transform: scale(1.3); opacity: 1; } 70% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.5); opacity: 0; } }
+        @keyframes goetterdaemmerungFlash { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes starFall { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(60px) scale(0); opacity: 0; } }
+        .skin-preview-regenbogen { animation: rainbowCycle 3s linear infinite; text-shadow: 0 0 8px currentColor; }
+        .dice-pip-container { display: inline-grid; width: 48px; height: 48px; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 4px; }
+        .dice-pip { width: 10px; height: 10px; border-radius: 50%; background: #141020; }
+        .dice-pip.on { background: #d4c8e0; }
+        .table-standard { }
+        .table-taverne { background: linear-gradient(180deg, #2a1a0a 0%, #3d2610 100%) !important; border-color: #5a3a1a !important; }
+        .table-kerker { background: linear-gradient(180deg, #0a0a10 0%, #141420 100%) !important; border-color: #2a2a3a !important; }
+        .table-wald { background: linear-gradient(180deg, #0a1a0a 0%, #102010 100%) !important; border-color: #1a3a1a !important; }
+        .table-drachenhort { background: linear-gradient(180deg, #1a1000 0%, #2a1a00 100%) !important; border-color: #d4a030 !important; box-shadow: inset 0 0 30px rgba(212,160,48,0.1); }
+        .table-sternenhimmel { background: linear-gradient(180deg, #050510 0%, #0a0a20 100%) !important; border-color: #334488 !important; }
+        .table-thronsaal { background: linear-gradient(180deg, #1a0a0a 0%, #2a1020 100%) !important; border-color: #cc3333 !important; box-shadow: inset 0 0 40px rgba(204,51,51,0.1); }
+        .frame-standard { }
+        .frame-silber { border-color: #aaaacc !important; box-shadow: 0 0 8px rgba(170,170,204,0.3); }
+        .frame-gold { border-color: #d4a030 !important; box-shadow: 0 0 10px rgba(212,160,48,0.4); }
+        .frame-rubin { border-color: #cc3333 !important; box-shadow: 0 0 10px rgba(204,51,51,0.4); }
+        .frame-smaragd { border-color: #33cc66 !important; box-shadow: 0 0 10px rgba(51,204,102,0.4); }
+        @keyframes flammenFrame { 0%,100% { box-shadow: 0 0 10px rgba(255,100,0,0.5), 0 0 20px rgba(255,50,0,0.3); } 50% { box-shadow: 0 0 15px rgba(255,130,0,0.7), 0 0 30px rgba(255,80,0,0.4); } }
+        .frame-flammen { border-color: #ff6600 !important; animation: flammenFrame 2s ease-in-out infinite; }
+        .frame-krone { border-color: #ffcc00 !important; box-shadow: 0 0 12px rgba(255,204,0,0.5), 0 0 24px rgba(255,204,0,0.2); }
+        @media (max-width: 600px) { .shop-tabs { gap: 4px; } .shop-tab { padding: 6px 8px; font-size: 0.85em; } .shop-item-name { font-size: 0.5em; } }
         .btn-back-meta { display: block; margin: 20px auto 0; padding: 10px 30px; font-size: 1em; background-color: #1e1832; color: #d4c8e0; border: 3px solid #3d2d66; cursor: pointer; font-family: 'VT323', monospace; font-weight: 400; transition: border-color 0.15s; box-shadow: 2px 2px 0 #000; }
         .btn-back-meta:hover { border-color: #d4a030; color: #d4a030; }
         .btn-reset-stats { display: block; margin: 15px auto 0; padding: 8px 20px; font-size: 0.95em; background-color: #3a1a1a; color: #cc4444; border: 2px solid #cc4444; cursor: pointer; font-family: 'VT323', monospace; transition: background-color 0.15s; box-shadow: 2px 2px 0 #000; }
@@ -502,7 +548,7 @@
             applyA11yClasses(settings);
         })();
 
-        var GameState = { MainMenu: 'MainMenu', Tutorial: 'Tutorial', TrainingSelect: 'TrainingSelect', DifficultySelect: 'DifficultySelect', CharacterSelect: 'CharacterSelect', GenderSelect: 'GenderSelect', Playing: 'Playing', GameOver: 'GameOver', Statistics: 'Statistics', Achievements: 'Achievements', SkinSelect: 'SkinSelect', ProfileSelect: 'ProfileSelect', Accessibility: 'Accessibility', OnlineLobby: 'OnlineLobby', OnlineWaiting: 'OnlineWaiting' };
+        var GameState = { MainMenu: 'MainMenu', Tutorial: 'Tutorial', TrainingSelect: 'TrainingSelect', DifficultySelect: 'DifficultySelect', CharacterSelect: 'CharacterSelect', GenderSelect: 'GenderSelect', Playing: 'Playing', GameOver: 'GameOver', Statistics: 'Statistics', Achievements: 'Achievements', Shop: 'Shop', ProfileSelect: 'ProfileSelect', Accessibility: 'Accessibility', OnlineLobby: 'OnlineLobby', OnlineWaiting: 'OnlineWaiting' };
         var CharacterType = { Soldat: 0, Rebell: 1, Taschendieb: 2, Quacksalber: 3 };
         var Gender = { Male: 0, Female: 1, Diverse: 2 };
         var Difficulty = { Leicht: 'Leicht', Mittel: 'Mittel', Schwer: 'Schwer' };
@@ -523,7 +569,18 @@
                 achievements: {},
                 selectedSkin: 'standard',
                 coins: 0,
-                purchasedSkins: ['standard']
+                purchasedSkins: ['standard'],
+                selectedTable: 'standard',
+                purchasedTables: ['standard'],
+                selectedFrame: 'standard',
+                purchasedFrames: ['standard'],
+                selectedVictory: 'standard',
+                purchasedVictory: ['standard'],
+                selectedSounds: 'standard',
+                purchasedSounds: ['standard'],
+                quests: [],
+                milestones: {},
+                lastWheelDate: null
             };
         }
 
@@ -590,13 +647,29 @@
                 var def = getDefaultMetaData();
                 return def;
             }
-            var data = { stats: profile.stats, achievements: profile.achievements, selectedSkin: profile.selectedSkin, coins: profile.coins, purchasedSkins: profile.purchasedSkins };
+            var data = { stats: profile.stats, achievements: profile.achievements, selectedSkin: profile.selectedSkin, coins: profile.coins, purchasedSkins: profile.purchasedSkins,
+                selectedTable: profile.selectedTable, purchasedTables: profile.purchasedTables,
+                selectedFrame: profile.selectedFrame, purchasedFrames: profile.purchasedFrames,
+                selectedVictory: profile.selectedVictory, purchasedVictory: profile.purchasedVictory,
+                selectedSounds: profile.selectedSounds, purchasedSounds: profile.purchasedSounds,
+                quests: profile.quests, milestones: profile.milestones, lastWheelDate: profile.lastWheelDate };
             var def2 = getDefaultMetaData();
             if (!data.stats) data.stats = def2.stats;
             if (!data.achievements) data.achievements = def2.achievements;
             if (!data.selectedSkin) data.selectedSkin = 'standard';
             if (data.coins === undefined) data.coins = 0;
             if (!data.purchasedSkins) data.purchasedSkins = ['standard'];
+            if (!data.selectedTable) data.selectedTable = 'standard';
+            if (!data.purchasedTables) data.purchasedTables = ['standard'];
+            if (!data.selectedFrame) data.selectedFrame = 'standard';
+            if (!data.purchasedFrames) data.purchasedFrames = ['standard'];
+            if (!data.selectedVictory) data.selectedVictory = 'standard';
+            if (!data.purchasedVictory) data.purchasedVictory = ['standard'];
+            if (!data.selectedSounds) data.selectedSounds = 'standard';
+            if (!data.purchasedSounds) data.purchasedSounds = ['standard'];
+            if (!data.quests) data.quests = [];
+            if (!data.milestones) data.milestones = {};
+            if (data.lastWheelDate === undefined) data.lastWheelDate = null;
             for (var k in def2.stats) {
                 if (def2.stats.hasOwnProperty(k) && data.stats[k] === undefined) data.stats[k] = def2.stats[k];
             }
@@ -612,6 +685,17 @@
             profile.selectedSkin = data.selectedSkin;
             profile.coins = data.coins;
             profile.purchasedSkins = data.purchasedSkins;
+            profile.selectedTable = data.selectedTable;
+            profile.purchasedTables = data.purchasedTables;
+            profile.selectedFrame = data.selectedFrame;
+            profile.purchasedFrames = data.purchasedFrames;
+            profile.selectedVictory = data.selectedVictory;
+            profile.purchasedVictory = data.purchasedVictory;
+            profile.selectedSounds = data.selectedSounds;
+            profile.purchasedSounds = data.purchasedSounds;
+            profile.quests = data.quests;
+            profile.milestones = data.milestones;
+            profile.lastWheelDate = data.lastWheelDate;
             saveProfileStore(store);
         }
 
@@ -634,8 +718,97 @@
             standard: { name: 'Standard', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 0, cssClass: '' },
             gotisch: { name: 'Gotisch', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 30, cssClass: 'skin-preview-gotisch' },
             strichliste: { name: 'Strichliste', map: {1:'I',2:'II',3:'III',4:'IIII',5:'卌',6:'卌I'}, price: 60, cssClass: 'skin-preview-strich' },
-            symbole: { name: 'Symbole', map: {1:'⚀',2:'⚁',3:'⚂',4:'⚃',5:'⚄',6:'⚅'}, price: 100, cssClass: '' }
+            symbole: { name: 'Symbole', map: {1:'⚀',2:'⚁',3:'⚂',4:'⚃',5:'⚄',6:'⚅'}, price: 100, cssClass: 'skin-preview-symbole', pipDots: true },
+            runen: { name: 'Runen', map: {1:'ᚠ',2:'ᚢ',3:'ᚦ',4:'ᚨ',5:'ᚱ',6:'ᚲ'}, price: 50, cssClass: 'skin-preview-runen' },
+            kristall: { name: 'Kristall', map: {1:'◇',2:'◆',3:'◈',4:'⬡',5:'⬢',6:'⬣'}, price: 80, cssClass: '' },
+            knochen: { name: 'Knochen', map: {1:'☠',2:'💀',3:'⚰',4:'🦴',5:'🩻',6:'🪦'}, price: 100, cssClass: '' },
+            feuer: { name: 'Feuer', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 150, cssClass: 'skin-preview-feuer' },
+            eis: { name: 'Eis', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 150, cssClass: 'skin-preview-eis' },
+            nekromant: { name: 'Nekromant', map: {1:'Ⅰ',2:'Ⅱ',3:'Ⅲ',4:'Ⅳ',5:'Ⅴ',6:'Ⅵ'}, price: 200, cssClass: 'skin-preview-nekromant' },
+            himmelsschmiede: { name: 'Himmelsschmiede', map: {1:'✦',2:'✧',3:'★',4:'☆',5:'✶',6:'✹'}, price: 300, cssClass: 'skin-preview-himmelsschmiede' },
+            void: { name: 'Void', map: {1:'◌',2:'◍',3:'◎',4:'●',5:'◉',6:'⦿'}, price: 500, cssClass: 'skin-preview-void' },
+            regenbogen: { name: 'Regenbogen', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 1000, cssClass: 'skin-preview-regenbogen', legendary: true }
         };
+
+        // ===== TISCH-DESIGNS =====
+        var TABLE_DESIGNS = {
+            standard: { name: 'Standard', price: 0, cssClass: 'table-standard', desc: 'Der klassische Spieltisch' },
+            taverne: { name: 'Taverne', price: 50, cssClass: 'table-taverne', desc: 'Warmes Holz einer gemütlichen Taverne' },
+            wald: { name: 'Wald', price: 80, cssClass: 'table-wald', desc: 'Im tiefen Wald' },
+            kerker: { name: 'Kerker', price: 100, cssClass: 'table-kerker', desc: 'Kalte Steinmauern' },
+            sternenhimmel: { name: 'Sternenhimmel', price: 150, cssClass: 'table-sternenhimmel', desc: 'Unter dem Nachthimmel' },
+            drachenhort: { name: 'Drachenhort', price: 200, cssClass: 'table-drachenhort', desc: 'Auf einem Berg aus Gold' },
+            thronsaal: { name: 'Thronsaal', price: 500, cssClass: 'table-thronsaal', desc: 'Im königlichen Thronsaal', legendary: true }
+        };
+
+        // ===== PROFILRAHMEN =====
+        var PROFILE_FRAMES = {
+            standard: { name: 'Standard', price: 0, cssClass: 'frame-standard', desc: 'Kein Rahmen' },
+            silber: { name: 'Silber', price: 30, cssClass: 'frame-silber', desc: 'Schlichter Silberrahmen' },
+            gold: { name: 'Gold', price: 80, cssClass: 'frame-gold', desc: 'Edler Goldrahmen' },
+            smaragd: { name: 'Smaragd', price: 120, cssClass: 'frame-smaragd', desc: 'Grünes Leuchten' },
+            rubin: { name: 'Rubin', price: 150, cssClass: 'frame-rubin', desc: 'Rotes Feuer' },
+            flammen: { name: 'Flammen', price: 300, cssClass: 'frame-flammen', desc: 'Animierter Flammenrahmen' },
+            krone: { name: 'Krone des Königs', price: 500, cssClass: 'frame-krone', desc: 'Legendärer Goldglanz', legendary: true }
+        };
+
+        // ===== SIEGES-ANIMATIONEN =====
+        var VICTORY_ANIMS = {
+            standard: { name: 'Standard', price: 0, desc: 'Keine Animation' },
+            konfetti: { name: 'Konfetti', price: 50, desc: '🎊 Bunte Konfetti-Explosion' },
+            blitz: { name: 'Blitzschlag', price: 100, desc: '⚡ Dramatischer Blitz' },
+            feuerwerk: { name: 'Feuerwerk', price: 120, desc: '🎆 Bunte Raketen' },
+            drachenfeuer: { name: 'Drachenfeuer', price: 250, desc: '🐉 Drache speit Feuer' },
+            goetterdaemmerung: { name: 'Götterdämmerung', price: 500, desc: '💫 Kosmische Lichtexplosion', legendary: true }
+        };
+
+        // ===== SOUND-PACKS =====
+        var SOUND_PACKS = {
+            standard: { name: 'Standard', price: 0, desc: 'Normale Sounds' },
+            taverne: { name: 'Taverne', price: 80, desc: '🍺 Tiefe Holz-Sounds' },
+            achtbit: { name: '8-Bit', price: 100, desc: '👾 Retro Chiptune' },
+            mystisch: { name: 'Mystisch', price: 120, desc: '🔮 Magische Klänge' },
+            kriegstrommeln: { name: 'Kriegstrommeln', price: 150, desc: '🥁 Epische Trommeln + Hörner' }
+        };
+
+        // ===== AUFTRAGS-SYSTEM (Quests) =====
+        var QUEST_POOL = [
+            { type: 'wins', desc: 'Gewinne {goal} Partien', goal: 3, reward: 30, icon: '🏆' },
+            { type: 'wins', desc: 'Gewinne {goal} Partien', goal: 5, reward: 60, icon: '🏆' },
+            { type: 'games', desc: 'Spiele {goal} Partien', goal: 5, reward: 25, icon: '🎮' },
+            { type: 'games', desc: 'Spiele {goal} Partien', goal: 10, reward: 50, icon: '🎮' },
+            { type: 'attacks', desc: 'Greife {goal} Mal an', goal: 15, reward: 20, icon: '⚔' },
+            { type: 'attacks', desc: 'Greife {goal} Mal an', goal: 30, reward: 45, icon: '⚔' },
+            { type: 'heals', desc: 'Heile {goal} Mal', goal: 10, reward: 20, icon: '💚' },
+            { type: 'abilityPoints', desc: 'Sammle {goal} Mal Fähigkeitspunkte', goal: 10, reward: 25, icon: '⭐' },
+            { type: 'damage', desc: 'Verursache {goal} Gesamtschaden', goal: 100, reward: 35, icon: '💥' },
+            { type: 'damage', desc: 'Verursache {goal} Gesamtschaden', goal: 200, reward: 70, icon: '💥' },
+            { type: 'winsAI', desc: 'Besiege {goal} Mal die KI', goal: 3, reward: 40, icon: '🤖' },
+            { type: 'transzendenz', desc: 'Gewinne {goal} Mal durch Transzendenz', goal: 2, reward: 50, icon: '🌟' }
+        ];
+
+        // ===== MEILENSTEIN-SYSTEM =====
+        var MILESTONES = [
+            { id: 'wins10', wins: 10, reward: 50, desc: '10 Siege', icon: '🎖️', freeItem: null },
+            { id: 'wins25', wins: 25, reward: 100, desc: '25 Siege', icon: '🏅', freeItem: null },
+            { id: 'wins50', wins: 50, reward: 200, desc: '50 Siege', icon: '👑', freeItem: 'runen' },
+            { id: 'wins100', wins: 100, reward: 500, desc: '100 Siege', icon: '🌟', freeItem: 'flammen' },
+            { id: 'games50', wins: null, games: 50, reward: 100, desc: '50 Partien', icon: '📚', freeItem: null },
+            { id: 'games100', wins: null, games: 100, reward: 250, desc: '100 Partien', icon: '🎮', freeItem: null }
+        ];
+
+        // ===== GLÜCKSRAD =====
+        var WHEEL_SEGMENTS = [
+            { label: '🪙 10', reward: 10, weight: 30 },
+            { label: '🪙 20', reward: 20, weight: 25 },
+            { label: '🪙 30', reward: 30, weight: 15 },
+            { label: '🪙 50', reward: 50, weight: 10 },
+            { label: '🪙 75', reward: 75, weight: 8 },
+            { label: '🪙 100', reward: 100, weight: 5 },
+            { label: '🪙 150', reward: 150, weight: 4 },
+            { label: '🪙 250', reward: 250, weight: 2 },
+            { label: '💎 500', reward: 500, weight: 1 }
+        ];
 
         var CHARACTER_ABILITIES = {
             0: [
@@ -797,6 +970,161 @@
             },
             toggle: function() { this.muted = !this.muted; if (this.muted) Music.stop(); else Music._restart(); return this.muted; }
         };
+
+        // ===== SOUND-PACK DISPATCH =====
+        var SFX_PACKS = {
+            taverne: {
+                roll: function(ctx) {
+                    for (var i = 0; i < 8; i++) {
+                        var dur = 0.03 + Math.random() * 0.04;
+                        var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+                        var dd = buf.getChannelData(0);
+                        for (var j = 0; j < dd.length; j++) dd[j] = (Math.random() * 2 - 1);
+                        var src = ctx.createBufferSource(), gn = ctx.createGain();
+                        src.buffer = buf;
+                        var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 800 + Math.random() * 600;
+                        gn.gain.value = 0.08; gn.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.05 + dur + 0.03);
+                        src.connect(lp); lp.connect(gn); gn.connect(ctx.destination);
+                        src.start(ctx.currentTime + i * 0.05); src.stop(ctx.currentTime + i * 0.05 + dur + 0.04);
+                    }
+                },
+                attack: function(ctx) {
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = 100; o.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.3);
+                    g.gain.value = 0.15; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+                    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.35);
+                },
+                heal: function(ctx) {
+                    var notes = [392, 494, 587];
+                    for (var i = 0; i < notes.length; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'sine'; o.frequency.value = notes[i];
+                        g.gain.value = 0.08; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25 + i * 0.15);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.15); o.stop(ctx.currentTime + 0.25 + i * 0.15);
+                    }
+                }
+            },
+            achtbit: {
+                roll: function(ctx) {
+                    for (var i = 0; i < 6; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'square'; o.frequency.value = 200 + Math.random() * 800;
+                        g.gain.value = 0.06; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03 + i * 0.04);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.04); o.stop(ctx.currentTime + 0.05 + i * 0.04);
+                    }
+                },
+                attack: function(ctx) {
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'square'; o.frequency.value = 300; o.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.15);
+                    g.gain.value = 0.12; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.2);
+                },
+                heal: function(ctx) {
+                    var notes = [523, 659, 784, 1047];
+                    for (var i = 0; i < notes.length; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'square'; o.frequency.value = notes[i];
+                        g.gain.value = 0.06; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08 + i * 0.08);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.08); o.stop(ctx.currentTime + 0.1 + i * 0.08);
+                    }
+                },
+                collect: function(ctx) {
+                    var notes = [440, 554, 659, 880];
+                    for (var i = 0; i < notes.length; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'square'; o.frequency.value = notes[i];
+                        g.gain.value = 0.05; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06 + i * 0.06);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.06); o.stop(ctx.currentTime + 0.08 + i * 0.06);
+                    }
+                },
+                victory: function(ctx) {
+                    var notes = [523, 659, 784, 1047, 784, 1047, 1319];
+                    for (var i = 0; i < notes.length; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'square'; o.frequency.value = notes[i];
+                        g.gain.value = 0.07; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1 + i * 0.1);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.1); o.stop(ctx.currentTime + 0.12 + i * 0.1);
+                    }
+                }
+            },
+            mystisch: {
+                roll: function(ctx) {
+                    for (var i = 0; i < 5; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'sine'; o.frequency.value = 1200 + Math.random() * 1500;
+                        g.gain.value = 0.04; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15 + i * 0.08);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.08); o.stop(ctx.currentTime + 0.2 + i * 0.08);
+                    }
+                },
+                attack: function(ctx) {
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sine'; o.frequency.value = 800; o.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.4);
+                    g.gain.value = 0.1; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.5);
+                },
+                heal: function(ctx) {
+                    var notes = [880, 1047, 1319, 1568];
+                    for (var i = 0; i < notes.length; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'sine'; o.frequency.value = notes[i];
+                        g.gain.value = 0.06; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3 + i * 0.15);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.15); o.stop(ctx.currentTime + 0.35 + i * 0.15);
+                    }
+                }
+            },
+            kriegstrommeln: {
+                roll: function(ctx) {
+                    for (var i = 0; i < 4; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'sine'; o.frequency.value = 60 + Math.random() * 30;
+                        g.gain.value = 0.12; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15 + i * 0.12);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.12); o.stop(ctx.currentTime + 0.2 + i * 0.12);
+                    }
+                },
+                attack: function(ctx) {
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = 80;
+                    g.gain.value = 0.2; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.3);
+                    // Horn
+                    var h = ctx.createOscillator(), hg = ctx.createGain();
+                    h.type = 'sawtooth'; h.frequency.value = 220; h.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.4);
+                    hg.gain.value = 0.08; hg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+                    h.connect(hg); hg.connect(ctx.destination); h.start(ctx.currentTime + 0.05); h.stop(ctx.currentTime + 0.45);
+                },
+                victory: function(ctx) {
+                    var notes = [220, 330, 440, 330, 440, 550];
+                    for (var i = 0; i < notes.length; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'sawtooth'; o.frequency.value = notes[i];
+                        g.gain.value = 0.1; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25 + i * 0.2);
+                        o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + i * 0.2); o.stop(ctx.currentTime + 0.3 + i * 0.2);
+                    }
+                }
+            }
+        };
+
+        // Hook SFX to use active sound pack
+        (function() {
+            var originalSfx = {};
+            var sfxMethods = ['roll', 'attack', 'heal', 'collect', 'click', 'victory', 'defeat'];
+            for (var i = 0; i < sfxMethods.length; i++) {
+                originalSfx[sfxMethods[i]] = SFX[sfxMethods[i]].bind(SFX);
+            }
+            for (var j = 0; j < sfxMethods.length; j++) {
+                (function(method) {
+                    SFX[method] = function() {
+                        var pack = 'standard';
+                        try { pack = loadMetaData().selectedSounds || 'standard'; } catch(e) {}
+                        if (pack !== 'standard' && SFX_PACKS[pack] && SFX_PACKS[pack][method]) {
+                            SFX._play(SFX_PACKS[pack][method]);
+                        } else {
+                            originalSfx[method]();
+                        }
+                    };
+                })(sfxMethods[j]);
+            }
+        })();
 
         // ===== MUSIK-SYSTEM =====
         var Music = {
@@ -1057,6 +1385,10 @@
             this.turnCount = 0;
             this.healedThisGame = false;
             this.highestDamageThisGame = 0;
+            this.totalDamageThisGame = 0;
+            this.attacksThisGame = 0;
+            this.healsThisGame = 0;
+            this.abilityCollectsThisGame = 0;
             this.statsSaved = false;
         }
 
@@ -1182,7 +1514,7 @@
                     case GameState.GameOver: this.renderGameOver(); break;
                     case GameState.Statistics: this.renderStatistics(); break;
                     case GameState.Achievements: this.renderAchievements(); break;
-                    case GameState.SkinSelect: this.renderSkinSelector(); break;
+                    case GameState.Shop: this.renderShop(); break;
                     case GameState.ProfileSelect: this.renderProfileSelect(); break;
                     case GameState.Accessibility: this.renderAccessibility(); break;
                     case GameState.OnlineLobby: this.renderOnlineLobby(); break;
@@ -1194,8 +1526,10 @@
         Game.prototype.renderMainMenu = function() {
             var profileName = getActiveProfileName();
             var meta = loadMetaData();
+            var frameClass = PROFILE_FRAMES[meta.selectedFrame] ? PROFILE_FRAMES[meta.selectedFrame].cssClass : '';
+            var frameAttr = frameClass ? ' ' + frameClass : '';
             this.container.innerHTML = '<div id="mainMenu"><div class="title"><span class="title-emoji">🎲</span> WÜRFELSPIEL <span class="title-emoji">🎲</span></div>' +
-                '<div class="menu-profile-indicator">👤 ' + profileName + '  •  🪙 ' + meta.coins + '</div>' +
+                '<div class="menu-profile-indicator' + frameAttr + '">👤 ' + profileName + '  •  🪙 ' + meta.coins + '</div>' +
                 '<div class="button-group">' +
                 '<button class="btn-main" onclick="game.startGame2Player()">Gegen Spieler*in</button>' +
                 '<button class="btn-main" onclick="game.startGameVsAI()">Gegen KI</button>' +
@@ -1204,7 +1538,8 @@
                 '<button class="btn-main" onclick="game.showTutorial()">📖 Tutorial</button>' +
                 '<button class="btn-main" onclick="game.showStatistics()">📊 Chronik</button>' +
                 '<button class="btn-main" onclick="game.showAchievements()">🏆 Erfolge</button>' +
-                '<button class="btn-main" onclick="game.showSkinSelector()">🎲 Würfel-Skins</button>' +
+                '<button class="btn-main" onclick="game.showShop()">🛒 Shop</button>' +
+                '<button class="btn-main" onclick="game.showWheel()">🎡 Glücksrad</button>' +
                 '<button class="btn-main" onclick="game.showProfileSelect()">👤 Profile</button>' +
                 '<button class="btn-main" onclick="game.showAccessibility()">👓 Barrierefreiheit</button></div></div>';
         };
@@ -1730,7 +2065,9 @@
             }
 
             // Build final HTML
-            var h = '<div class="battle-screen">' +
+            var tableDesign = loadMetaData().selectedTable || 'standard';
+            var tableClass = TABLE_DESIGNS[tableDesign] ? TABLE_DESIGNS[tableDesign].cssClass : '';
+            var h = '<div class="battle-screen ' + tableClass + '">' +
                 '<div class="battle-header">' +
                 '<div class="current-player">' + (isKiTurn ? '⚔ KI ist am Zug' : 'Am Zug: Du (6 Würfel)') + '</div>' +
                 '<div class="rolls-left">' + roundLabel + ' — Würfe übrig: ' + rollsRem + '</div></div>';
@@ -1866,10 +2203,26 @@
                 var cls = '', txt = '';
                 if (d === -1) { cls = 'destroyed'; txt = '💀'; }
                 else if (d === 0) { cls = 'disabled'; txt = '?'; }
-                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : (this.actionSelected && !this.diceAnimating && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.map[d] || d; }
-                var skinStyle = (d > 0 && d !== -1 && skinData.cssClass === 'skin-preview-gotisch') ? ' style="font-family:MedievalSharp,Cinzel,Georgia,serif;"' : (d > 0 && d !== -1 && skinData.cssClass === 'skin-preview-strich') ? ' style="font-size:0.7em;letter-spacing:1px;"' : '';
+                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : (this.actionSelected && !this.diceAnimating && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.pipDots ? '' : (skinData.map[d] || d); }
+                var skinStyle = '';
+                var usePipDots = d > 0 && d !== -1 && skinData.pipDots;
+                if (d > 0 && d !== -1) {
+                    if (skinData.cssClass === 'skin-preview-gotisch') skinStyle = ' style="font-family:MedievalSharp,Cinzel,Georgia,serif;"';
+                    else if (skinData.cssClass === 'skin-preview-strich') skinStyle = ' style="font-size:0.7em;letter-spacing:1px;"';
+                    else if (skinData.cssClass === 'skin-preview-feuer') skinStyle = ' style="color:#ff6600;text-shadow:0 0 8px #ff3300,0 0 16px rgba(255,51,0,0.5);"';
+                    else if (skinData.cssClass === 'skin-preview-eis') skinStyle = ' style="color:#88ddff;text-shadow:0 0 8px #00aaff,0 0 16px rgba(0,170,255,0.4);"';
+                    else if (skinData.cssClass === 'skin-preview-nekromant') skinStyle = ' style="color:#aa44cc;text-shadow:0 0 8px #7722aa;"';
+                    else if (skinData.cssClass === 'skin-preview-himmelsschmiede') skinStyle = ' style="color:#ffe066;text-shadow:0 0 10px #ffcc00;"';
+                    else if (skinData.cssClass === 'skin-preview-void') skinStyle = ' style="color:#6633cc;text-shadow:0 0 10px #4400aa;"';
+                    else if (skinData.cssClass === 'skin-preview-runen') skinStyle = ' style="font-family:Segoe UI Symbol,Noto Sans Symbols,serif;"';
+                    else if (skinData.cssClass === 'skin-preview-regenbogen') skinStyle = ' class="skin-preview-regenbogen"';
+                }
                 diceHtml += '<div style="display:inline-block;text-align:center;margin:0 5px;">';
-                diceHtml += '<div class="dice ' + cls + '"' + skinStyle + ' onclick="game.toggleDiceKeep(' + i + ')">' + txt + '</div>';
+                if (usePipDots) {
+                    diceHtml += '<div class="dice ' + cls + '" onclick="game.toggleDiceKeep(' + i + ')">' + this.renderBattlePipDots(d) + '</div>';
+                } else {
+                    diceHtml += '<div class="dice ' + cls + '"' + skinStyle + ' onclick="game.toggleDiceKeep(' + i + ')">' + txt + '</div>';
+                }
                 if (showReroll && d > 0 && d !== -1 && !this.diceKept[i]) {
                     diceHtml += '<div style="margin-top:4px;"><button style="font-size:0.7em;padding:2px 8px;background:#1e1832;color:#d4a030;border:2px solid #d4a030;cursor:pointer;font-family:VT323,monospace;" onclick="game.rerollDie(' + i + ')">🔁</button></div>';
                 }
@@ -2053,6 +2406,12 @@
                 achievementHtml +
                 '<div class="button-group"><button class="btn-main" onclick="game.showMainMenu()">🏠 Hauptmenü</button>' +
                 '<button class="btn-main" onclick="game.playAgain()">🎮 Neue Partie</button></div></div>';
+
+            // Victory animation
+            var victoryKey = loadMetaData().selectedVictory || 'standard';
+            if (victoryKey !== 'standard' && typeof this.playVictoryAnim === 'function') {
+                this.playVictoryAnim(victoryKey);
+            }
         };
 
         Game.prototype.saveMatchStats = function(winner, loser, isTranszendenz) {
@@ -2090,6 +2449,18 @@
             }
 
             saveMetaData(meta);
+
+            // Quest-Tracking
+            this.updateQuests(meta, 'games', 1);
+            if (humanWon) {
+                this.updateQuests(meta, 'wins', 1);
+                if (isTranszendenz) this.updateQuests(meta, 'transzendenz', 1);
+                if (this.vsAI) this.updateQuests(meta, 'winsAI', 1);
+            }
+            if (this.totalDamageThisGame) this.updateQuests(meta, 'damage', this.totalDamageThisGame);
+
+            // Meilenstein-Check
+            this.checkMilestones(meta);
 
             // Achievements prüfen
             var gender = winner.isAI ? this.player1.gender : winner.gender;
@@ -2132,6 +2503,87 @@
             return { achievements: newlyUnlocked, bonusCoins: bonusCoins };
         };
 
+        // ===== QUEST-MANAGEMENT =====
+        Game.prototype.initQuests = function(meta) {
+            if (!meta.quests) meta.quests = [];
+            while (meta.quests.length < 3) {
+                var available = [];
+                for (var i = 0; i < QUEST_POOL.length; i++) {
+                    var q = QUEST_POOL[i];
+                    var alreadyActive = false;
+                    for (var j = 0; j < meta.quests.length; j++) {
+                        if (meta.quests[j].type === q.type && meta.quests[j].goal === q.goal) { alreadyActive = true; break; }
+                    }
+                    if (!alreadyActive) available.push(q);
+                }
+                if (available.length === 0) break;
+                var pick = available[Math.floor(Math.random() * available.length)];
+                meta.quests.push({ type: pick.type, desc: pick.desc.replace('{goal}', pick.goal), goal: pick.goal, reward: pick.reward, icon: pick.icon, progress: 0, completed: false });
+            }
+            saveMetaData(meta);
+        };
+
+        Game.prototype.updateQuests = function(meta, type, amount) {
+            if (!meta.quests) return;
+            var changed = false;
+            for (var i = 0; i < meta.quests.length; i++) {
+                var q = meta.quests[i];
+                if (q.type === type && !q.completed) {
+                    q.progress = Math.min(q.goal, q.progress + amount);
+                    if (q.progress >= q.goal) q.completed = true;
+                    changed = true;
+                }
+            }
+            // Also track attacks/heals/ability from this game
+            if (type === 'games') {
+                this.updateQuests(meta, 'attacks', this.attacksThisGame || 0);
+                this.updateQuests(meta, 'heals', this.healsThisGame || 0);
+                this.updateQuests(meta, 'abilityPoints', this.abilityCollectsThisGame || 0);
+            }
+            if (changed) saveMetaData(meta);
+        };
+
+        Game.prototype.claimQuest = function(idx) {
+            var meta = loadMetaData();
+            if (!meta.quests || !meta.quests[idx] || !meta.quests[idx].completed) return;
+            var q = meta.quests[idx];
+            meta.coins += q.reward;
+            meta.quests.splice(idx, 1);
+            saveMetaData(meta);
+            showScroll(q.icon + ' Auftrag abgeschlossen!\n🪙 +' + q.reward + ' Münzen', q.icon);
+            var self = this;
+            afterScroll(function() {
+                self.initQuests(meta);
+                self.render();
+            });
+        };
+
+        // ===== MEILENSTEIN-CHECK =====
+        Game.prototype.checkMilestones = function(meta) {
+            if (!meta.milestones) meta.milestones = {};
+            var s = meta.stats;
+            var changed = false;
+            for (var i = 0; i < MILESTONES.length; i++) {
+                var m = MILESTONES[i];
+                if (meta.milestones[m.id]) continue;
+                var reached = false;
+                if (m.wins && s.totalWins >= m.wins) reached = true;
+                if (m.games && s.totalGames >= m.games) reached = true;
+                if (reached) {
+                    meta.milestones[m.id] = { date: new Date().toISOString().split('T')[0] };
+                    meta.coins += m.reward;
+                    changed = true;
+                    if (m.freeItem) {
+                        // Grant free item
+                        if (DICE_SKINS[m.freeItem] && meta.purchasedSkins.indexOf(m.freeItem) === -1) meta.purchasedSkins.push(m.freeItem);
+                        if (PROFILE_FRAMES[m.freeItem] && meta.purchasedFrames.indexOf(m.freeItem) === -1) meta.purchasedFrames.push(m.freeItem);
+                    }
+                    showScroll(m.icon + ' Meilenstein: ' + m.desc + '!\n🪙 +' + m.reward + ' Münzen' + (m.freeItem ? '\n🎁 Gratis: ' + m.freeItem : ''), m.icon);
+                }
+            }
+            if (changed) saveMetaData(meta);
+        };
+
         // ===== NAVIGATION =====
         Game.prototype.showMainMenu = function() {
             this.trainingMode = false;
@@ -2144,7 +2596,80 @@
         };
         Game.prototype.showStatistics = function() { this.state = GameState.Statistics; this.render(); };
         Game.prototype.showAchievements = function() { this.state = GameState.Achievements; this.render(); };
-        Game.prototype.showSkinSelector = function() { this.state = GameState.SkinSelect; this.render(); };
+        Game.prototype.showShop = function(tab) { this.shopTab = tab || 'wuerfel'; this.state = GameState.Shop; this.render(); };
+
+        // ===== GLÜCKSRAD =====
+        Game.prototype.showWheel = function() {
+            var meta = loadMetaData();
+            var today = new Date().toISOString().split('T')[0];
+            var alreadySpun = meta.lastWheelDate === today;
+
+            var segHtml = '';
+            for (var i = 0; i < WHEEL_SEGMENTS.length; i++) {
+                var seg = WHEEL_SEGMENTS[i];
+                segHtml += '<div style="padding:6px 10px;border:1px solid #2d1f4d;display:inline-block;margin:3px;color:#d4a030;font-size:0.95em;">' + seg.label + '</div>';
+            }
+
+            var html = '<div class="meta-screen">' +
+                '<div class="meta-title">🎡 Tägliches Glücksrad</div>' +
+                '<div style="text-align:center;font-size:1.3em;color:#d4a030;margin-bottom:15px;">🪙 ' + meta.coins + ' Münzen</div>' +
+                '<div style="text-align:center;margin:20px 0;">' +
+                '<div id="wheelDisplay" style="font-size:4em;margin:20px 0;">🎡</div>' +
+                '<div style="margin:15px 0;color:#8877aa;">Mögliche Gewinne:</div>' +
+                '<div style="margin:10px auto;max-width:400px;">' + segHtml + '</div>';
+
+            if (alreadySpun) {
+                html += '<div style="margin:20px 0;color:#8877aa;font-family:Press Start 2P,monospace;font-size:0.6em;line-height:1.4;">⏰ Komm morgen wieder!</div>';
+            } else {
+                html += '<button class="btn-main" style="margin:20px auto;" onclick="game.spinWheel()">🎡 Drehen!</button>';
+            }
+
+            html += '</div>' +
+                '<button class="btn-back-meta" onclick="game.showMainMenu()">← Zurück</button>' +
+                '</div>';
+            this.container.innerHTML = html;
+        };
+
+        Game.prototype.spinWheel = function() {
+            var meta = loadMetaData();
+            var today = new Date().toISOString().split('T')[0];
+            if (meta.lastWheelDate === today) return;
+
+            // Weighted random selection
+            var totalWeight = 0;
+            for (var i = 0; i < WHEEL_SEGMENTS.length; i++) totalWeight += WHEEL_SEGMENTS[i].weight;
+            var r = Math.random() * totalWeight;
+            var cumulative = 0;
+            var winner = WHEEL_SEGMENTS[0];
+            for (var j = 0; j < WHEEL_SEGMENTS.length; j++) {
+                cumulative += WHEEL_SEGMENTS[j].weight;
+                if (r <= cumulative) { winner = WHEEL_SEGMENTS[j]; break; }
+            }
+
+            meta.lastWheelDate = today;
+            meta.coins += winner.reward;
+            saveMetaData(meta);
+
+            // Spin animation
+            var display = document.getElementById('wheelDisplay');
+            if (display) {
+                var spins = 0;
+                var maxSpins = 20;
+                var interval = setInterval(function() {
+                    var randSeg = WHEEL_SEGMENTS[Math.floor(Math.random() * WHEEL_SEGMENTS.length)];
+                    display.textContent = randSeg.label;
+                    display.style.transform = 'rotate(' + (spins * 36) + 'deg)';
+                    spins++;
+                    if (spins >= maxSpins) {
+                        clearInterval(interval);
+                        display.textContent = winner.label;
+                        display.style.transform = 'rotate(0deg)';
+                        showScroll('🎡 Glücksrad!\n' + winner.label + ' gewonnen!\n🪙 +' + winner.reward + ' Münzen', '🎡');
+                        afterScroll(function() { game.showWheel(); });
+                    }
+                }, 100 + spins * 15);
+            }
+        };
 
         // ===== PROFILE =====
         Game.prototype.showProfileSelect = function() { this.state = GameState.ProfileSelect; this.render(); };
@@ -2407,67 +2932,315 @@
             this.container.innerHTML = html;
         };
 
-        // ===== WÜRFEL-SKINS =====
-        Game.prototype.renderSkinSelector = function() {
+        // ===== SHOP =====
+        Game.prototype.renderShop = function() {
             var meta = loadMetaData();
-            var selectedSkin = meta.selectedSkin || 'standard';
-            var purchased = meta.purchasedSkins || ['standard'];
+            this.initQuests(meta);
+            var tab = this.shopTab || 'wuerfel';
+            var tabs = [
+                {key:'wuerfel', label:'🎲 Würfel'},
+                {key:'tische', label:'🏰 Tische'},
+                {key:'rahmen', label:'🖼️ Rahmen'},
+                {key:'siege', label:'🏆 Siege'},
+                {key:'sounds', label:'🔊 Sounds'},
+                {key:'auftraege', label:'📋 Aufträge'},
+                {key:'meilensteine', label:'🎖️ Meilensteine'}
+            ];
 
             var html = '<div class="meta-screen">' +
-                '<div class="meta-title">🎲 Würfel-Skins</div>' +
+                '<div class="meta-title">🛒 Shop</div>' +
                 '<div style="text-align:center;font-size:1.3em;color:#d4a030;margin-bottom:15px;">🪙 ' + meta.coins + ' Münzen</div>' +
-                '<div class="skin-grid">';
-
-            var skinKeys = ['standard', 'gotisch', 'strichliste', 'symbole'];
-            for (var i = 0; i < skinKeys.length; i++) {
-                var key = skinKeys[i];
-                var skin = DICE_SKINS[key];
-                var isPurchased = purchased.indexOf(key) !== -1;
-                var isSelected = selectedSkin === key;
-                var cls = isSelected ? 'selected' : (isPurchased ? '' : 'locked');
-
-                html += '<div class="skin-card ' + cls + '" onclick="game.selectSkin(\'' + key + '\')">' +
-                    '<div class="skin-name">' + skin.name + (isSelected ? ' ✓' : '') + '</div>' +
-                    '<div class="skin-preview ' + skin.cssClass + '">';
-                for (var d = 1; d <= 6; d++) {
-                    html += skin.map[d] + ' ';
-                }
-                html += '</div>';
-                if (!isPurchased) {
-                    var canAfford = meta.coins >= skin.price;
-                    html += '<div class="skin-req">🔒 Preis: ' + skin.price + ' 🪙' + (canAfford ? ' — Klicke zum Kaufen!' : '') + '</div>';
-                }
-                html += '</div>';
+                '<div class="shop-tabs">';
+            for (var t = 0; t < tabs.length; t++) {
+                html += '<button class="shop-tab' + (tab === tabs[t].key ? ' active' : '') + '" onclick="game.showShop(\'' + tabs[t].key + '\')">' + tabs[t].label + '</button>';
             }
-
             html += '</div>';
+
+            if (tab === 'wuerfel') html += this.renderShopWuerfel(meta);
+            else if (tab === 'tische') html += this.renderShopCategory(meta, TABLE_DESIGNS, 'Table', 'selectedTable', 'purchasedTables', '🏰');
+            else if (tab === 'rahmen') html += this.renderShopCategory(meta, PROFILE_FRAMES, 'Frame', 'selectedFrame', 'purchasedFrames', '🖼️');
+            else if (tab === 'siege') html += this.renderShopCategory(meta, VICTORY_ANIMS, 'Victory', 'selectedVictory', 'purchasedVictory', '🏆');
+            else if (tab === 'sounds') html += this.renderShopCategory(meta, SOUND_PACKS, 'Sounds', 'selectedSounds', 'purchasedSounds', '🔊');
+            else if (tab === 'auftraege') html += this.renderShopQuests(meta);
+            else if (tab === 'meilensteine') html += this.renderShopMilestones(meta);
+
             html += '<button class="btn-back-meta" onclick="game.showMainMenu()">← Zurück</button>';
             html += '</div>';
             this.container.innerHTML = html;
         };
 
-        Game.prototype.selectSkin = function(key) {
-            var meta = loadMetaData();
-            var skin = DICE_SKINS[key];
-            if (!skin) return;
+        Game.prototype.renderShopWuerfel = function(meta) {
+            var selected = meta.selectedSkin || 'standard';
             var purchased = meta.purchasedSkins || ['standard'];
+            var html = '<div class="skin-grid">';
+            var keys = Object.keys(DICE_SKINS);
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var skin = DICE_SKINS[key];
+                var isPurchased = purchased.indexOf(key) !== -1;
+                var isSelected = selected === key;
+                var cls = isSelected ? 'selected' : (isPurchased ? '' : 'locked');
+                if (skin.legendary) cls += ' legendary';
+
+                html += '<div class="skin-card ' + cls + '" onclick="game.purchaseItem(\'Skin\',\'' + key + '\')">' +
+                    '<div class="skin-name">' + skin.name + (isSelected ? ' ✓' : '') + '</div>' +
+                    '<div class="skin-preview ' + skin.cssClass + '">';
+                if (skin.pipDots) {
+                    for (var d = 1; d <= 6; d++) {
+                        html += this.renderPipDots(d) + ' ';
+                    }
+                } else {
+                    for (var d = 1; d <= 6; d++) {
+                        html += skin.map[d] + ' ';
+                    }
+                }
+                html += '</div>';
+                if (!isPurchased) {
+                    var canAfford = meta.coins >= skin.price;
+                    html += '<div class="skin-req">🔒 ' + skin.price + ' 🪙' + (canAfford ? ' — Kaufen!' : '') + '</div>';
+                } else if (isSelected) {
+                    html += '<div class="shop-item-equipped">✓ Ausgerüstet</div>';
+                }
+                html += '</div>';
+            }
+            html += '</div>';
+            return html;
+        };
+
+        Game.prototype.renderPipDots = function(val) {
+            var pip = function(pos) {
+                var positions = {
+                    1: [0,0,0,0,1,0,0,0,0],
+                    2: [1,0,0,0,0,0,0,0,1],
+                    3: [1,0,0,0,1,0,0,0,1],
+                    4: [1,0,1,0,0,0,1,0,1],
+                    5: [1,0,1,0,1,0,1,0,1],
+                    6: [1,0,1,1,0,1,1,0,1]
+                };
+                return positions[pos] || positions[1];
+            };
+            var dots = pip(val);
+            var h = '<span class="dice-pip-container">';
+            for (var i = 0; i < 9; i++) {
+                h += '<span class="dice-pip' + (dots[i] ? ' on' : '') + '"></span>';
+            }
+            h += '</span>';
+            return h;
+        };
+
+        Game.prototype.renderBattlePipDots = function(val) {
+            var positions = {
+                1: [0,0,0,0,1,0,0,0,0],
+                2: [1,0,0,0,0,0,0,0,1],
+                3: [1,0,0,0,1,0,0,0,1],
+                4: [1,0,1,0,0,0,1,0,1],
+                5: [1,0,1,0,1,0,1,0,1],
+                6: [1,0,1,1,0,1,1,0,1]
+            };
+            var dots = positions[val] || positions[1];
+            var h = '<div style="display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:2px;width:42px;height:42px;padding:3px;">';
+            for (var i = 0; i < 9; i++) {
+                h += '<div style="width:10px;height:10px;border-radius:50%;' + (dots[i] ? 'background:currentColor;' : '') + '"></div>';
+            }
+            h += '</div>';
+            return h;
+        };
+
+        Game.prototype.renderShopCategory = function(meta, catalog, type, selKey, purKey, icon) {
+            var selected = meta[selKey] || 'standard';
+            var purchased = meta[purKey] || ['standard'];
+            var html = '<div class="skin-grid">';
+            var keys = Object.keys(catalog);
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var item = catalog[key];
+                var isPurchased = purchased.indexOf(key) !== -1;
+                var isSelected = selected === key;
+                var cls = isSelected ? 'selected' : (isPurchased ? '' : 'locked');
+                if (item.legendary) cls += ' legendary';
+
+                html += '<div class="shop-item-card ' + cls + '" onclick="game.purchaseItem(\'' + type + '\',\'' + key + '\')">' +
+                    '<div class="shop-item-name">' + item.name + (isSelected ? ' ✓' : '') + '</div>' +
+                    '<div style="font-size:1em;color:#8877aa;margin:8px 0;">' + (item.desc || '') + '</div>';
+                if (item.cssClass && type === 'Frame') {
+                    html += '<div style="width:60px;height:60px;margin:8px auto;border:3px solid #3d2d66;background:#1e1832;" class="' + item.cssClass + '"></div>';
+                }
+                if (!isPurchased) {
+                    var canAfford = meta.coins >= item.price;
+                    html += '<div class="shop-item-price">🔒 ' + item.price + ' 🪙' + (canAfford ? ' — Kaufen!' : '') + '</div>';
+                } else if (isSelected) {
+                    html += '<div class="shop-item-equipped">✓ Ausgerüstet</div>';
+                }
+                html += '</div>';
+            }
+            html += '</div>';
+            return html;
+        };
+
+        Game.prototype.purchaseItem = function(type, key) {
+            var meta = loadMetaData();
+            var catalog, selKey, purKey, namePrefix;
+            if (type === 'Skin') { catalog = DICE_SKINS; selKey = 'selectedSkin'; purKey = 'purchasedSkins'; namePrefix = '🎲'; }
+            else if (type === 'Table') { catalog = TABLE_DESIGNS; selKey = 'selectedTable'; purKey = 'purchasedTables'; namePrefix = '🏰'; }
+            else if (type === 'Frame') { catalog = PROFILE_FRAMES; selKey = 'selectedFrame'; purKey = 'purchasedFrames'; namePrefix = '🖼️'; }
+            else if (type === 'Victory') { catalog = VICTORY_ANIMS; selKey = 'selectedVictory'; purKey = 'purchasedVictory'; namePrefix = '🏆'; }
+            else if (type === 'Sounds') { catalog = SOUND_PACKS; selKey = 'selectedSounds'; purKey = 'purchasedSounds'; namePrefix = '🔊'; }
+            else return;
+
+            var item = catalog[key];
+            if (!item) return;
+            var purchased = meta[purKey] || ['standard'];
+
             if (purchased.indexOf(key) !== -1) {
-                meta.selectedSkin = key;
+                // Equip
+                meta[selKey] = key;
                 saveMetaData(meta);
                 this.render();
                 return;
             }
-            // Kaufen
-            if (meta.coins >= skin.price) {
-                meta.coins -= skin.price;
-                meta.purchasedSkins.push(key);
-                meta.selectedSkin = key;
+            // Purchase
+            if (meta.coins >= item.price) {
+                meta.coins -= item.price;
+                purchased.push(key);
+                meta[purKey] = purchased;
+                meta[selKey] = key;
                 saveMetaData(meta);
-                showScroll('🎲 ' + skin.name + ' gekauft!\n🪙 -' + skin.price + ' Münzen', '🎲');
+                showScroll(namePrefix + ' ' + item.name + ' gekauft!\n🪙 -' + item.price + ' Münzen', namePrefix);
                 var self = this;
                 afterScroll(function() { self.render(); });
             }
         };
+
+        Game.prototype.renderShopQuests = function(meta) {
+            var html = '<div style="margin-bottom:15px;">';
+            if (!meta.quests || meta.quests.length === 0) {
+                html += '<div style="text-align:center;color:#8877aa;padding:20px;">Keine aktiven Aufträge</div>';
+            } else {
+                for (var i = 0; i < meta.quests.length; i++) {
+                    var q = meta.quests[i];
+                    var pct = Math.min(100, Math.round(q.progress / q.goal * 100));
+                    var isDone = q.completed;
+                    html += '<div style="padding:15px;border:3px solid ' + (isDone ? '#44ccaa' : '#2d1f4d') + ';background:#0a0814;margin-bottom:10px;box-shadow:2px 2px 0 #000;">';
+                    html += '<div style="font-family:Press Start 2P,monospace;font-size:0.55em;color:' + (isDone ? '#44ccaa' : '#d4a030') + ';margin-bottom:8px;line-height:1.4;">' + q.icon + ' ' + q.desc + '</div>';
+                    html += '<div class="progress-bar-wrap"><div style="height:100%;background:' + (isDone ? '#44ccaa' : '#d4a030') + ';width:' + pct + '%;transition:width 0.3s;"></div></div>';
+                    html += '<div style="display:flex;justify-content:space-between;margin-top:5px;">';
+                    html += '<span style="color:#8877aa;">' + q.progress + '/' + q.goal + '</span>';
+                    html += '<span style="color:#d4a030;">🪙 ' + q.reward + '</span>';
+                    html += '</div>';
+                    if (isDone) {
+                        html += '<button style="display:block;margin:8px auto 0;padding:8px 20px;background:#0d2a25;color:#44ccaa;border:2px solid #44ccaa;cursor:pointer;font-family:VT323,monospace;font-size:1em;" onclick="game.claimQuest(' + i + ')">✅ Abholen!</button>';
+                    }
+                    html += '</div>';
+                }
+            }
+            html += '</div>';
+            return html;
+        };
+
+        Game.prototype.renderShopMilestones = function(meta) {
+            var html = '<div style="margin-bottom:15px;">';
+            for (var i = 0; i < MILESTONES.length; i++) {
+                var m = MILESTONES[i];
+                var reached = !!meta.milestones[m.id];
+                var current = m.wins ? meta.stats.totalWins : meta.stats.totalGames;
+                var target = m.wins || m.games;
+                var pct = Math.min(100, Math.round(current / target * 100));
+                html += '<div style="padding:12px;border:3px solid ' + (reached ? '#d4a030' : '#2d1f4d') + ';background:' + (reached ? '#1e1832' : '#0a0814') + ';margin-bottom:8px;box-shadow:2px 2px 0 #000;">';
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+                html += '<span style="font-family:Press Start 2P,monospace;font-size:0.5em;color:' + (reached ? '#d4a030' : '#8877aa') + ';line-height:1.4;">' + m.icon + ' ' + m.desc + '</span>';
+                html += '<span style="color:' + (reached ? '#44ccaa' : '#c89040') + ';">' + (reached ? '✅' : '🪙 ' + m.reward) + '</span>';
+                html += '</div>';
+                if (!reached) {
+                    html += '<div class="progress-bar-wrap" style="margin-top:5px;"><div style="height:100%;background:#d4a030;width:' + pct + '%;transition:width 0.3s;"></div></div>';
+                    html += '<div style="font-size:0.85em;color:#8877aa;margin-top:3px;">' + current + '/' + target + '</div>';
+                }
+                if (m.freeItem && !reached) {
+                    html += '<div style="font-size:0.85em;color:#c89040;margin-top:3px;">🎁 Gratis-Item: ' + m.freeItem + '</div>';
+                }
+                html += '</div>';
+            }
+            html += '</div>';
+            return html;
+        };
+
+        // ===== SIEGES-ANIMATIONEN =====
+        Game.prototype.playVictoryAnim = function(key) {
+            if (key === 'konfetti') this.animKonfetti();
+            else if (key === 'blitz') this.animBlitz();
+            else if (key === 'feuerwerk') this.animFeuerwerk();
+            else if (key === 'drachenfeuer') this.animDrachenfeuer();
+            else if (key === 'goetterdaemmerung') this.animGoetterdaemmerung();
+        };
+
+        Game.prototype.animKonfetti = function() {
+            var c = document.createElement('div');
+            c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2010;overflow:hidden;';
+            document.body.appendChild(c);
+            var colors = ['#ff3333','#33ff33','#3333ff','#ffff33','#ff33ff','#33ffff','#d4a030','#ff6600'];
+            for (var i = 0; i < 50; i++) {
+                var p = document.createElement('div');
+                var sz = 6 + Math.random() * 8;
+                p.style.cssText = 'position:absolute;width:' + sz + 'px;height:' + sz + 'px;background:' + colors[Math.floor(Math.random() * colors.length)] + ';left:' + Math.random() * 100 + '%;top:-10px;opacity:1;';
+                p.style.animation = 'konfettiFall ' + (1.5 + Math.random() * 2) + 's ease-out ' + (Math.random() * 0.5) + 's forwards';
+                c.appendChild(p);
+            }
+            setTimeout(function() { if (c.parentNode) c.parentNode.removeChild(c); }, 4000);
+        };
+
+        Game.prototype.animBlitz = function() {
+            var f = document.createElement('div');
+            f.className = 'attack-flash';
+            f.innerHTML = '<svg viewBox="0 0 400 600"><path class="bolt" d="M200 0 L180 200 L230 200 L160 600 L250 300 L200 300 Z"/></svg>';
+            document.body.appendChild(f);
+            setTimeout(function() { if (f.parentNode) f.parentNode.removeChild(f); }, 800);
+        };
+
+        Game.prototype.animFeuerwerk = function() {
+            var c = document.createElement('div');
+            c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2010;overflow:hidden;';
+            document.body.appendChild(c);
+            var colors = ['#ff3333','#33ff33','#ffff33','#ff33ff','#33ffff'];
+            for (var r = 0; r < 3; r++) {
+                var cx = 20 + Math.random() * 60;
+                var cy = 20 + Math.random() * 40;
+                var col = colors[Math.floor(Math.random() * colors.length)];
+                for (var i = 0; i < 12; i++) {
+                    var p = document.createElement('div');
+                    var angle = (i / 12) * Math.PI * 2;
+                    var dist = 60 + Math.random() * 40;
+                    p.style.cssText = 'position:absolute;width:4px;height:4px;border-radius:50%;background:' + col + ';box-shadow:0 0 6px ' + col + ';left:' + cx + '%;top:' + cy + '%;opacity:1;transition:all 0.8s ease-out;';
+                    c.appendChild(p);
+                    (function(el, dx, dy) {
+                        setTimeout(function() {
+                            el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+                            el.style.opacity = '0';
+                        }, 100 + r * 400);
+                    })(p, Math.cos(angle) * dist, Math.sin(angle) * dist);
+                }
+            }
+            setTimeout(function() { if (c.parentNode) c.parentNode.removeChild(c); }, 3000);
+        };
+
+        Game.prototype.animDrachenfeuer = function() {
+            var c = document.createElement('div');
+            c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2010;display:flex;align-items:center;justify-content:center;';
+            c.innerHTML = '<div style="font-size:5em;animation:dragonBreath 2s ease-out forwards;">🐉🔥</div>';
+            document.body.appendChild(c);
+            setTimeout(function() { if (c.parentNode) c.parentNode.removeChild(c); }, 2500);
+        };
+
+        Game.prototype.animGoetterdaemmerung = function() {
+            var c = document.createElement('div');
+            c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2010;background:radial-gradient(circle,rgba(255,204,0,0.6) 0%,rgba(255,100,0,0.3) 40%,transparent 70%);animation:goetterdaemmerungFlash 2s ease-out forwards;';
+            document.body.appendChild(c);
+            for (var i = 0; i < 20; i++) {
+                var s = document.createElement('div');
+                s.style.cssText = 'position:absolute;width:3px;height:3px;border-radius:50%;background:#ffcc00;box-shadow:0 0 4px #ffcc00;left:' + Math.random() * 100 + '%;top:' + Math.random() * 100 + '%;animation:starFall ' + (1 + Math.random() * 1.5) + 's ease-out ' + (Math.random() * 0.5) + 's forwards;';
+                c.appendChild(s);
+            }
+            setTimeout(function() { if (c.parentNode) c.parentNode.removeChild(c); }, 3000);
+        };
+
         Game.prototype.startGame2Player = function() {
             this.vsAI = false; this.selectingForPlayer = 1;
             this.player1 = new Player('Spieler*in 1', false);
@@ -2572,6 +3345,10 @@
             this.turnCount = 0;
             this.healedThisGame = false;
             this.highestDamageThisGame = 0;
+            this.totalDamageThisGame = 0;
+            this.attacksThisGame = 0;
+            this.healsThisGame = 0;
+            this.abilityCollectsThisGame = 0;
             this.statsSaved = false;
             this.applyPreDiceEffects();
             this.initDice();
@@ -3084,6 +3861,8 @@
             opponent.lastDamageReceived = finalDamage;
             // Meta-Progression: höchster Schaden tracken
             if (finalDamage > this.highestDamageThisGame) this.highestDamageThisGame = finalDamage;
+            this.totalDamageThisGame += finalDamage;
+            this.attacksThisGame++;
             opponent.health = Math.max(0, opponent.health - finalDamage);
 
             var msg = '⚔ ' + finalDamage + ' Schaden an ' + opponent.name + '!';
@@ -3114,6 +3893,7 @@
         Game.prototype.performHeal = function(count) {
             var current = this.getCurrentPlayer();
             this.healedThisGame = true;
+            this.healsThisGame++;
             var healAmount = count * 5;
             current.health = Math.min(100, current.health + healAmount);
             var healMsg = '💚 ' + count + ' Heilwürfel = ' + healAmount + ' HP geheilt!\nHP: ' + current.health + '/100';
@@ -3133,6 +3913,7 @@
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
             current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+            this.abilityCollectsThisGame++;
             var fp = 0;
             var sp = 0;
             var marked = this.getMarkedDice();
