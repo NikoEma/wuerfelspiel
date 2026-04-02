@@ -1002,6 +1002,7 @@
             this.currentDice = [];
             this.diceKept = [];
             this.actionSelected = null;
+            this.diceAnimating = false;
             this.rerollUsed = false;
             this.restartUsed = false;
             this.copiedAbility = null;
@@ -1850,7 +1851,7 @@
                 var cls = '', txt = '';
                 if (d === -1) { cls = 'destroyed'; txt = '💀'; }
                 else if (d === 0) { cls = 'disabled'; txt = '?'; }
-                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : 'kept') : (this.actionSelected && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.map[d] || d; }
+                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : 'kept') : (this.actionSelected && !this.diceAnimating && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.map[d] || d; }
                 var skinStyle = (d > 0 && d !== -1 && skinData.cssClass === 'skin-preview-gotisch') ? ' style="font-family:MedievalSharp,Cinzel,Georgia,serif;"' : (d > 0 && d !== -1 && skinData.cssClass === 'skin-preview-strich') ? ' style="font-size:0.7em;letter-spacing:1px;"' : '';
                 diceHtml += '<div style="display:inline-block;text-align:center;margin:0 5px;">';
                 diceHtml += '<div class="dice ' + cls + '"' + skinStyle + ' onclick="game.toggleDiceKeep(' + i + ')">' + txt + '</div>';
@@ -1874,7 +1875,7 @@
             if (this.playerHasEffect(current, CharacterType.Quacksalber, 3) && !this.restartUsed && hasRolled) {
                 btns += '<button class="btn-action btn-restart" onclick="game.useRestart()">♻️ Neustart</button>';
             }
-            btns += '<button class="btn-action btn-end-turn" onclick="game.manualEndTurn()">Zug beenden</button>';
+            btns += '<button class="btn-action btn-end-turn" onclick="game.manualEndTurn()">Zug bestätigen</button>';
             btns += '</div>';
             var alwaysBtns = '<div class="actions-container" style="margin-top:0;">' +
                 '<button class="btn-action btn-surrender" onclick="game.surrender()">🏳️ Aufgeben</button>' +
@@ -1884,6 +1885,9 @@
             var opponent = this.getOpponent();
             var oppColorClass = (opponent === p1) ? 'player-color-green' : 'player-color-red';
             var curColorClass = (current === p1) ? 'player-color-green' : 'player-color-red';
+
+            // Ausgrauen: nach Würfeln muss erst Aktion gewählt werden
+            var greyStyle = (hasRolled && !this.actionSelected) ? ' style="opacity:0.3;pointer-events:none;"' : '';
 
             // Online-Zuganzeige
             var onlineBanner = '';
@@ -1903,7 +1907,7 @@
                 '<div class="rolls-left">Würfe übrig: ' + this.rollsRemaining + '</div></div>' +
                 '<div class="action-label">' + label + '</div>' +
                 actionHtml + previewHtml +
-                '<div class="opponent-bar">' +
+                '<div' + greyStyle + '><div class="opponent-bar">' +
                 '<span class="opp-name ' + oppColorClass + '">' + opponent.name + this.getPlayerMedals(opponent) + ' - ' + opponent.getCharacterName() + '</span>' +
                 '<span class="opp-stat">HP: ' + opponent.health + '/100</span>' +
                 '<div class="opp-hp-bar"><div class="opp-hp-fill" style="width:' + Math.max(0, opponent.health) + '%"></div></div>' +
@@ -1916,7 +1920,7 @@
                 '<div class="player-fp-sp">SP: <b>' + current.sp + '/60</b></div>' +
                 '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(current.sp/60*100)) + '%"></div></div>' +
                 '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, current.health) + '%"></div></div>' +
-                '<div class="ability-section">' + this.getAbilityDisplay(current) + '</div></div>' +
+                '<div class="ability-section">' + this.getAbilityDisplay(current) + '</div></div></div>' +
                 '<div' + interactiveStyle + '><div class="dice-container">' + diceHtml + '</div>' + btns + '</div>' + alwaysBtns + '</div>';
         };
 
@@ -2888,11 +2892,13 @@
             SFX.roll();
 
             // Würfel-Animation: Zahlen durchwürfeln + Tumble
+            this.diceAnimating = true;
             var diceEls = document.querySelectorAll('.dice:not(.kept):not(.locked):not(.destroyed):not(.disabled)');
             var activeSkin = loadMetaData().selectedSkin || 'standard';
             var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
             for (var a = 0; a < diceEls.length; a++) { diceEls[a].classList.add('rolling'); }
             var cycleCount = 0, maxCycles = 8;
+            var self = this;
             var cycleTimer = setInterval(function() {
                 cycleCount++;
                 for (var c = 0; c < diceEls.length; c++) {
@@ -2901,6 +2907,7 @@
                 }
                 if (cycleCount >= maxCycles) {
                     clearInterval(cycleTimer);
+                    self.diceAnimating = false;
                     if (typeof game !== 'undefined') game.render();
                 }
             }, 70);
@@ -3268,7 +3275,7 @@
             return false;
         };
 
-        // ===== ZUG BEENDEN =====
+        // ===== ZUG BESTÄTIGEN =====
         Game.prototype.manualEndTurn = function() {
             if (this.onlineMode) {
                 if (!this.isMyTurn()) return;
@@ -3348,78 +3355,253 @@
 
         // ===== KI =====
         Game.prototype.performAITurn = function() {
+            var self = this;
+            var ai = this.getCurrentPlayer();
+            var opp = this.getOpponent();
             var diceCount = this.currentDice.length;
-            // KI würfelt 3x
-            for (var r = 0; r < 3; r++) {
-                for (var i = 0; i < diceCount; i++) {
-                    if (this.currentDice[i] !== -1) {
-                        this.currentDice[i] = Math.floor(Math.random() * 6) + 1;
+
+            // ===== HELPER: Analyse der aktuellen Würfel =====
+            function analyzeDice(dice) {
+                var counts = {};
+                var ones = 0;
+                var alive = 0;
+                for (var i = 0; i < dice.length; i++) {
+                    var v = dice[i];
+                    if (v > 0) {
+                        alive++;
+                        counts[v] = (counts[v] || 0) + 1;
+                        if (v === 1) ones++;
                     }
                 }
+                // Beste Angriffs-Gruppe
+                var bestVal = 0, bestCount = 0, bestDmg = 0;
+                for (var v in counts) {
+                    if (counts.hasOwnProperty(v)) {
+                        var val = parseInt(v);
+                        var cnt = counts[v];
+                        var dmg = val * cnt;
+                        if (cnt >= 2 && dmg > bestDmg) { bestVal = val; bestCount = cnt; bestDmg = dmg; }
+                    }
+                }
+                // Einzeln höchster Wert (für Einzel-Angriff als Notlösung)
+                if (bestDmg === 0) {
+                    for (var v2 in counts) {
+                        if (counts.hasOwnProperty(v2)) {
+                            var val2 = parseInt(v2);
+                            if (val2 > bestVal) { bestVal = val2; bestCount = counts[v2]; bestDmg = val2 * counts[v2]; }
+                        }
+                    }
+                }
+                var healAmt = ones * 5;
+                return { counts: counts, ones: ones, alive: alive, bestVal: bestVal, bestCount: bestCount, bestDmg: bestDmg, healAmt: healAmt };
             }
+
+            // ===== HELPER: SP-Kombination berechnen (ohne markieren) =====
+            function calcSPForDice(dice) {
+                var sorted = [];
+                for (var i = 0; i < dice.length; i++) { if (dice[i] > 0) sorted.push(dice[i]); }
+                sorted.sort(function(a, b) { return a - b; });
+                if (sorted.length === 0) return { fp: 0, sp: 0 };
+                var groups = {};
+                for (var j = 0; j < sorted.length; j++) { groups[sorted[j]] = (groups[sorted[j]] || 0) + 1; }
+                var maxC = 0, pairs = 0;
+                for (var k in groups) { if (groups.hasOwnProperty(k)) { if (groups[k] > maxC) maxC = groups[k]; if (groups[k] >= 2) pairs++; } }
+                if (maxC >= 6) return { fp: 6, sp: 15 };
+                var unique = [];
+                for (var u = 0; u < sorted.length; u++) { if (unique.indexOf(sorted[u]) === -1) unique.push(sorted[u]); }
+                if (unique.length >= 6 && unique[0] === 1 && unique[5] === 6) return { fp: 4, sp: 8 };
+                if (unique.length >= 5) { for (var s = 0; s <= unique.length - 5; s++) { if (unique[s + 4] - unique[s] === 4) return { fp: 3, sp: 5 }; } }
+                if (maxC >= 4) return { fp: 3, sp: 4 };
+                if (pairs >= 2) return { fp: 2, sp: 3 };
+                if (maxC >= 3) return { fp: 2, sp: 2 };
+                return { fp: 0, sp: 0 };
+            }
+
+            // ===== STRATEGISCHE ENTSCHEIDUNG =====
+            // Phase 1: Strategie VOR dem Würfeln bestimmen
+            var strategy = 'attack'; // Standard
+            var oppCanKill = opp.health <= 0;
+            var aiLowHP = ai.health <= 40;
+            var oppCloseSP = opp.sp >= 45;
+            var aiCloseSP = ai.sp >= 45;
+            var aiNeedsAbility = ai.currentAbilityIndex < 4;
+            var fpToNextAbility = aiNeedsAbility ? (10 - ai.abilityProgress[ai.currentAbilityIndex]) : 999;
+
+            // Phase 2: Strategisches Würfeln — 3 Würfe mit Auswertung dazwischen
+            // Erster Wurf: alle Würfel
+            for (var i = 0; i < diceCount; i++) {
+                if (this.currentDice[i] !== -1) {
+                    this.currentDice[i] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+
+            // Analyse nach erstem Wurf
+            var analysis = analyzeDice(this.currentDice);
+            var spCombo = calcSPForDice(this.currentDice);
+
+            // Entscheide Strategie basierend auf erstem Wurf + Spielzustand
+            if (analysis.bestDmg >= opp.health && analysis.bestCount >= 2) {
+                strategy = 'attack'; // Kann Gegner töten!
+            } else if (aiCloseSP && spCombo.sp >= 5) {
+                strategy = 'ability'; // Nah an SP-Sieg, gute Combo
+            } else if (aiLowHP && analysis.ones >= 2) {
+                strategy = 'heal'; // Niedrige HP + genug 1er
+            } else if (oppCloseSP && analysis.bestDmg >= 8) {
+                strategy = 'attack'; // Gegner nah an SP-Sieg, aggressiv spielen
+            } else if (spCombo.sp >= 5) {
+                strategy = 'ability'; // Gute SP-Combo
+            } else if (analysis.bestDmg >= 12) {
+                strategy = 'attack'; // Starker Angriff möglich
+            } else if (aiNeedsAbility && fpToNextAbility <= 3 && spCombo.fp >= fpToNextAbility) {
+                strategy = 'ability'; // Nah an nächster Fähigkeit
+            } else if (aiLowHP && analysis.ones >= 1) {
+                strategy = 'heal'; // Niedrige HP
+            } else if (analysis.bestDmg >= 6) {
+                strategy = 'attack'; // Ordentlicher Angriff
+            } else if (spCombo.sp >= 2) {
+                strategy = 'ability'; // Irgendwas bei SP sammeln
+            } else if (analysis.ones >= 1) {
+                strategy = 'heal'; // Letzte Option: heilen
+            } else {
+                strategy = 'attack'; // Notfall: irgendwas angreifen
+            }
+
+            // Phase 3: Zweiter Wurf — behalte Würfel die zur Strategie passen
+            var kept = [];
+            for (var k = 0; k < diceCount; k++) { kept[k] = false; }
+
+            if (strategy === 'attack') {
+                // Behalte alle Würfel mit dem besten Wert
+                for (var k2 = 0; k2 < diceCount; k2++) {
+                    if (this.currentDice[k2] === analysis.bestVal) kept[k2] = true;
+                }
+            } else if (strategy === 'heal') {
+                // Behalte alle 1er
+                for (var k3 = 0; k3 < diceCount; k3++) {
+                    if (this.currentDice[k3] === 1) kept[k3] = true;
+                }
+            } else if (strategy === 'ability') {
+                // Behalte alle Würfel (SP-Combo braucht alle)
+                for (var k4 = 0; k4 < diceCount; k4++) {
+                    if (this.currentDice[k4] > 0) kept[k4] = true;
+                }
+            }
+
+            // Zweiter Wurf: nur nicht-behaltene
+            for (var w2 = 0; w2 < diceCount; w2++) {
+                if (!kept[w2] && this.currentDice[w2] !== -1) {
+                    this.currentDice[w2] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+
+            // Re-Analyse nach zweitem Wurf
+            var analysis2 = analyzeDice(this.currentDice);
+            var spCombo2 = calcSPForDice(this.currentDice);
+
+            // Strategie ggf. anpassen nach zweitem Wurf
+            if (analysis2.bestDmg >= opp.health && analysis2.bestCount >= 2) {
+                strategy = 'attack';
+            } else if (strategy === 'attack' && analysis2.bestDmg < 4 && analysis2.ones >= 2 && aiLowHP) {
+                strategy = 'heal'; // Angriff schlecht, lieber heilen
+            } else if (strategy === 'attack' && analysis2.bestDmg < 4 && spCombo2.sp >= 3) {
+                strategy = 'ability'; // Angriff schlecht, aber SP-Chance
+            }
+
+            // Phase 4: Dritter Wurf
+            var kept2 = [];
+            for (var k5 = 0; k5 < diceCount; k5++) { kept2[k5] = false; }
+
+            if (strategy === 'attack') {
+                var newBest = analysis2.bestVal;
+                for (var k6 = 0; k6 < diceCount; k6++) {
+                    if (this.currentDice[k6] === newBest) kept2[k6] = true;
+                }
+            } else if (strategy === 'heal') {
+                for (var k7 = 0; k7 < diceCount; k7++) {
+                    if (this.currentDice[k7] === 1) kept2[k7] = true;
+                }
+            } else if (strategy === 'ability') {
+                for (var k8 = 0; k8 < diceCount; k8++) {
+                    if (this.currentDice[k8] > 0) kept2[k8] = true;
+                }
+            }
+
+            // Dritter Wurf
+            for (var w3 = 0; w3 < diceCount; w3++) {
+                if (!kept2[w3] && this.currentDice[w3] !== -1) {
+                    this.currentDice[w3] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+
             this.rollsRemaining = 0;
-            // KI markiert alle gültigen Würfel
-            for (var m = 0; m < this.currentDice.length; m++) {
-                if (this.currentDice[m] > 0) this.diceKept[m] = true;
+
+            // Finale Analyse
+            var finalAnalysis = analyzeDice(this.currentDice);
+            var finalSP = calcSPForDice(this.currentDice);
+
+            // Finale Strategieentscheidung basierend auf dem was wir tatsächlich haben
+            if (finalAnalysis.bestDmg >= opp.health && finalAnalysis.bestCount >= 2) {
+                strategy = 'attack'; // Kill sichern
+            } else if (strategy === 'heal' && finalAnalysis.ones === 0) {
+                // Wollten heilen, aber keine 1er — erzwinge Alternativ-Aktion
+                if (finalAnalysis.bestDmg > 0 && finalAnalysis.bestCount >= 2) strategy = 'attack';
+                else if (finalSP.sp > 0) strategy = 'ability';
+                else if (finalAnalysis.bestDmg > 0) strategy = 'attack';
+            } else if (strategy === 'ability' && finalSP.sp === 0) {
+                if (finalAnalysis.bestDmg > 0 && finalAnalysis.bestCount >= 2) strategy = 'attack';
+                else if (finalAnalysis.ones > 0) strategy = 'heal';
+                else if (finalAnalysis.bestDmg > 0) strategy = 'attack';
+            } else if (strategy === 'attack' && finalAnalysis.bestCount < 2) {
+                // Kein Paar für Angriff
+                if (finalSP.sp > 0) strategy = 'ability';
+                else if (finalAnalysis.ones > 0) strategy = 'heal';
+                // Sonst: einzelner Würfel attackieren (besser als nichts)
             }
+
+            // ===== NIEMALS Zug verschwenden: Fallback-Logik =====
+            // Wenn strategy immer noch keine gültige Aktion hat, finde irgendwas
+            var hasDice = false;
+            for (var chk = 0; chk < diceCount; chk++) { if (this.currentDice[chk] > 0) { hasDice = true; break; } }
+            if (hasDice && strategy !== 'attack' && strategy !== 'heal' && strategy !== 'ability') {
+                if (finalAnalysis.bestDmg > 0) strategy = 'attack';
+                else if (finalAnalysis.ones > 0) strategy = 'heal';
+                else if (finalSP.sp > 0) strategy = 'ability';
+                else strategy = 'attack'; // Einzelwürfel-Angriff
+            }
+
+            // Würfel markieren basierend auf finaler Strategie
+            for (var m = 0; m < diceCount; m++) { this.diceKept[m] = false; }
+
+            if (strategy === 'attack') {
+                for (var ma = 0; ma < diceCount; ma++) {
+                    this.diceKept[ma] = (this.currentDice[ma] === finalAnalysis.bestVal);
+                }
+            } else if (strategy === 'heal') {
+                for (var mh = 0; mh < diceCount; mh++) {
+                    this.diceKept[mh] = (this.currentDice[mh] === 1);
+                }
+            } else if (strategy === 'ability') {
+                for (var ms = 0; ms < diceCount; ms++) {
+                    if (this.currentDice[ms] > 0) this.diceKept[ms] = true;
+                }
+            }
+
             this.render();
 
-            var self = this;
             setTimeout(function() {
-                var groups = self.getDiceGroups();
-                var bestDmg = 0;
-                var bestGroup = null;
-                for (var g = 0; g < groups.length; g++) {
-                    var d = groups[g].value * groups[g].count;
-                    if (d > bestDmg) { bestDmg = d; bestGroup = groups[g]; }
-                }
-                var markedDice = self.getMarkedDice();
-                var healOnes = markedDice.filter(function(d) { return d === 1; }).length;
-                var healAmt = healOnes * 5;
-                var abilCombo = self.calculateAbilityPoints();
-                var ai = self.getCurrentPlayer();
-                var opp = self.getOpponent();
-                var action = null;
-
-                if (self.aiDifficulty === Difficulty.Schwer) {
-                    if (bestDmg > 15) action = 'attack';
-                    else if (ai.health <= 35 && healAmt > 0) action = 'heal';
-                    else if (abilCombo.sp >= 4) action = 'ability';
-                    else if (bestDmg > 0) action = 'attack';
-                    else if (healAmt > 0) action = 'heal';
-                    else if (abilCombo.sp > 0) action = 'ability';
-                } else if (self.aiDifficulty === Difficulty.Mittel) {
-                    if (ai.health <= 35 && healAmt > 0) action = 'heal';
-                    else if (abilCombo.sp >= 4) action = 'ability';
-                    else if (bestDmg > 10) action = 'attack';
-                    else if (bestDmg > 0) action = 'attack';
-                    else if (healAmt > 0) action = 'heal';
-                    else if (abilCombo.sp > 0) action = 'ability';
-                } else {
-                    var acts = [];
-                    if (bestDmg > 0) acts.push('attack');
-                    if (healAmt > 0) acts.push('heal');
-                    if (abilCombo.sp > 0) acts.push('ability');
-                    action = acts.length > 0 ? acts[Math.floor(Math.random() * acts.length)] : null;
-                }
-
-                if (action === 'attack' && bestGroup) {
-                    // KI markiert nur passende Würfel
-                    for (var ri = 0; ri < self.currentDice.length; ri++) {
-                        self.diceKept[ri] = (self.currentDice[ri] === bestGroup.value);
-                    }
+                if (strategy === 'attack' && finalAnalysis.bestDmg > 0) {
                     self.actionSelected = 'attack';
-                    var damage = bestGroup.value * bestGroup.count;
+                    var damage = finalAnalysis.bestVal * finalAnalysis.bestCount;
                     // Fünfer-Upgrade für KI
-                    if (self.playerHasEffect(ai, CharacterType.Rebell, 3) && bestGroup.value === 5) {
-                        damage = 6 * bestGroup.count;
+                    if (self.playerHasEffect(ai, CharacterType.Rebell, 3) && finalAnalysis.bestVal === 5) {
+                        damage = 6 * finalAnalysis.bestCount;
                     }
                     var finalDmg = damage;
                     if (self.playerHasEffect(ai, CharacterType.Soldat, 1)) finalDmg += 2;
                     // Vergeltung
                     var vergeltungMsg = '';
                     if (self.playerHasEffect(opp, CharacterType.Soldat, 2)) {
-                        var rVal = bestGroup.value;
+                        var rVal = finalAnalysis.bestVal;
                         ai.health = Math.max(0, ai.health - rVal);
                         vergeltungMsg = '\n🔄 Vergeltung: ' + rVal + ' Schaden zurück!';
                     }
@@ -3431,24 +3613,49 @@
                     opp.health = Math.max(0, opp.health - finalDmg);
                     showScroll('KI greift an: ' + finalDmg + ' Schaden!' + vergeltungMsg, '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
-                } else if (action === 'heal' && healAmt > 0) {
+                } else if (strategy === 'heal' && finalAnalysis.ones > 0) {
+                    var healAmt = finalAnalysis.ones * 5;
                     ai.health = Math.min(100, ai.health + healAmt);
                     if (self.playerHasEffect(ai, CharacterType.Quacksalber, 1)) {
                         ai.sp += 1;
                     }
                     showScroll('KI heilt sich um ' + healAmt + ' HP!', '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
-                } else if (action === 'ability' && abilCombo.sp > 0) {
-                    var aiFP = abilCombo.fp;
-                    var aiSP = abilCombo.sp;
+                } else if (strategy === 'ability' && finalSP.sp > 0) {
+                    var aiFP = finalSP.fp;
+                    var aiSP = finalSP.sp;
                     if (self.playerHasEffect(ai, CharacterType.Taschendieb, 0)) { aiFP += 1; aiSP += 1; }
                     ai.fp += aiFP;
                     ai.addAbilityPoints(aiFP);
                     ai.sp += aiSP;
                     showScroll('KI sammelt +' + aiFP + ' FP, +' + aiSP + ' SP!', '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
+                } else if (hasDice) {
+                    // ABSOLUTER Notfall: Einzelwürfel-Angriff mit dem höchsten Wert
+                    var highVal = 0;
+                    for (var ei = 0; ei < diceCount; ei++) {
+                        if (self.currentDice[ei] > highVal) highVal = self.currentDice[ei];
+                    }
+                    if (highVal > 0) {
+                        for (var ej = 0; ej < diceCount; ej++) {
+                            self.diceKept[ej] = (self.currentDice[ej] === highVal);
+                        }
+                        self.actionSelected = 'attack';
+                        var eDmg = highVal;
+                        var eCount = 0;
+                        for (var ek = 0; ek < diceCount; ek++) { if (self.currentDice[ek] === highVal) eCount++; }
+                        eDmg = highVal * eCount;
+                        if (self.playerHasEffect(ai, CharacterType.Soldat, 1)) eDmg += 2;
+                        opp.lastDamageReceived = eDmg;
+                        opp.health = Math.max(0, opp.health - eDmg);
+                        showScroll('KI greift an: ' + eDmg + ' Schaden!', '🤖');
+                        if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
+                    } else {
+                        showScroll('KI hat keine Würfel übrig.', '🤖');
+                        afterScroll(function() { self.endTurn(); });
+                    }
                 } else {
-                    showScroll('KI beendet den Zug.', '🤖');
+                    showScroll('KI hat keine Würfel übrig.', '🤖');
                     afterScroll(function() { self.endTurn(); });
                 }
             }, 500);
@@ -3668,11 +3875,13 @@
             }
             this.render();
             SFX.roll();
+            this.diceAnimating = true;
             var diceEls = document.querySelectorAll('.dice:not(.kept):not(.locked):not(.destroyed):not(.disabled)');
             var activeSkin = loadMetaData().selectedSkin || 'standard';
             var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
             for (var a = 0; a < diceEls.length; a++) { diceEls[a].classList.add('rolling'); }
             var cycleCount = 0, maxCycles = 8;
+            var self = this;
             var cycleTimer = setInterval(function() {
                 cycleCount++;
                 for (var c = 0; c < diceEls.length; c++) {
@@ -3681,6 +3890,7 @@
                 }
                 if (cycleCount >= maxCycles) {
                     clearInterval(cycleTimer);
+                    self.diceAnimating = false;
                     if (typeof game !== 'undefined') game.render();
                 }
             }, 70);
