@@ -89,8 +89,8 @@ Aufeinanderfolgende Angriffe führen zu Erschöpfung:
 | n (n>2) | -(n-2) Würfel |
 
 - Minimum: **1 Würfel** (egal wie erschöpft)
-- Nicht-Angriff (Heilen/Blocken/Sammeln): Zähler sinkt um **1** pro Zug
-- Bei Zähler ≤2 → wieder 2 Freischüsse
+- Nicht-Angriff (Heilen/Blocken/Sammeln): Zähler wird **sofort auf 0** zurückgesetzt
+- Nach Reset → wieder 2 Freischüsse
 - Erschöpfung wird **immer** im Kampfbildschirm angezeigt (Freischüsse + ⚡-Icons bei Malus)
 
 ---
@@ -428,8 +428,9 @@ Die schwere KI nutzt einen mehrstufigen Entscheidungsprozess:
 
 Das Spiel unterstützt Online-Multiplayer über Socket.IO:
 
-1. **Raum erstellen**: Spieler 1 erstellt einen Raum und erhält einen 5-stelligen Raumcode
-2. **Raum beitreten**: Spieler 2 gibt den Code ein und tritt bei
+1. **Spielername**: Eigenen Namen eingeben oder Profilnamen verwenden
+2. **Raum erstellen**: Spieler 1 erstellt einen Raum und erhält einen 5-stelligen Raumcode
+3. **Raum beitreten**: Spieler 2 gibt den Code ein und tritt bei
 3. **Synchronisierung**: Alle Aktionen werden über den Server synchronisiert
 4. **Server-seitige Würfel**: Würfelwerte werden serverseitig generiert (Manipulationsschutz)
 5. **Aufgeben**: Beide Spieler können jederzeit aufgeben (🏳️ Aufgeben-Button)
@@ -451,6 +452,7 @@ Das gesamte Audio wird per **Web Audio API** im Browser synthetisiert — keine 
 | 🖱️ Klick | Rechteck-Welle Beep |
 | 🏆 Sieg | 7-Ton triumphale Fanfare |
 | 💀 Niederlage | 4-Ton absteigende Moll-Folge |
+| 🪙 Münzwurf | Metallisches Klirren + tiefer Aufprall |
 
 ### 🎵 Hintergrundmusik
 
@@ -458,6 +460,7 @@ Prozedural generierte Musik mit Melodie, Bass, Harmonien und Rhythmus:
 
 - **Lobby-Musik**: 4 melodische Phrasen (A→B→A→C→B→D), Glockenspiel-Effekt, Rhythmus-Puls, 480ms Tempo
 - **Kampf-Musik**: Aggressiveres Muster mit Percussion-artigen Noise-Bursts und schnelleren Arpeggios
+- **Sound-Pack-Musik**: Gekaufte Sound-Packs (Taverne, 8-Bit, Kriegstrommeln) bringen eigene Lobby- und Kampfmusik mit (z.B. warme Dreieckswellen für Taverne, Chiptune-Quadratwellen für 8-Bit, epische Sägezähne für Kriegstrommeln)
 - **Stummschalten**: 🔇/🔊 Button im Kampfbildschirm
 
 ---
@@ -473,6 +476,7 @@ Prozedural generierte Musik mit Melodie, Bass, Harmonien und Rhythmus:
 | 💚 Heil-Effekt | Grüner Flash + 35 Partikel (Herzen, Plus, Sparkles) + 40 Glitter | Heilung |
 | 🌟 Fähigkeits-Unlock | Glow-Animation auf dem Pergament-Scroll | Fähigkeit freigeschaltet |
 | 🟡 Gold-Markierung | Goldener Rahmen + Glow auf markierbaren Würfeln | Aktion gewählt |
+| 🪙 Münzwurf | 3D-Münze mit Adler (🦅) und Berg (⛰️), CSS-Rotation | Spielstart (Erstbestimmung) |
 
 ---
 
@@ -594,6 +598,30 @@ Wuerfelspiel_dice/
 
 - 🌐 **Live**: https://wuerfelspiel.onrender.com
 - 📦 **GitHub**: https://github.com/NikoEma/wuerfelspiel
+
+---
+
+## Changelog
+
+### v2.1 — Verbesserungen & Bugfixes
+
+**Neue Features:**
+- 🪙 **Münzwurf-Design**: 3D-Münze mit Adler (🦅) auf der Vorderseite und Berg (⛰️) auf der Rückseite, inklusive eigenem Münzklang-Soundeffekt
+- 🎵 **Sound-Pack-Musik**: Gekaufte Sound-Packs (Taverne, 8-Bit, Kriegstrommeln) spielen jetzt eigene Lobby- und Kampfmusik
+- 🏷️ **Multiplayer-Name**: Spieler können vor dem Online-Spiel einen eigenen Namen eingeben oder den Profilnamen verwenden
+- 😞 **Sieg/Niederlage-Differenzierung**: Verlierer sehen eine Niederlageanimation mit rotem Header statt der Siegesanimation
+
+**Bugfixes:**
+- 🐛 **Würfelzerstörer + Erschöpfung**: Erschöpfungszähler wird jetzt bei Nicht-Angriff sofort auf 0 zurückgesetzt (vorher nur -1 pro Runde, was bei Würfelzerstörer zu Blockade führte)
+- 🐛 **Taschendieb SP-Sieg**: Siegbedingung wird jetzt auch nach dem Sammeln von Fähigkeitspunkten geprüft (vorher konnte man 55+ SP haben ohne zu gewinnen)
+- 🐛 **Würfel-Skins im Kampf**: CSS-Klassen für Skins (Kristall-Glow, Knochen, Void etc.) werden jetzt korrekt im Kampf angezeigt
+- 🐛 **Musik-Autoplay online**: Audio-Kontext wird korrekt initialisiert und bei Benutzerinteraktion fortgesetzt
+
+**Verbesserungen:**
+- 🎲 **Gold-Rahmen Timing**: Goldene Würfelmarkierung erscheint erst nach Abschluss der Würfelanimation (3ms Delay)
+- 💚 **Heilen nach erstem Wurf**: Heilen kann jetzt auch ohne gewürfelte 1en ausgewählt werden, solange noch Würfe übrig sind (zum Neu-Würfeln)
+- 📱 **Mobile Layout**: Menü und Lobby korrekt zentriert auf Mobilgeräten
+- 🔊 **Sieg-/Niederlagelaut**: Korrekter Sound je nach Perspektive (Gewinner hört Fanfare, Verlierer hört Moll)
 
 ---
 

@@ -75,8 +75,11 @@
         /* Münzwurf-Animation */
         .coinflip-overlay { display:none; position:fixed; z-index:2500; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.82); align-items:center; justify-content:center; flex-direction:column; }
         .coinflip-overlay.show { display:flex; }
-        .coinflip-coin { width:90px; height:90px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #f5d76e, #d4a030 50%, #8b6914); border:4px solid #f0c040; box-shadow:0 0 20px rgba(212,160,48,0.6), inset 0 -2px 6px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; font-size:2.4em; image-rendering:pixelated; position:relative; }
-        .coinflip-coin::after { content:''; position:absolute; top:6px; left:12px; width:30px; height:14px; background:rgba(255,255,255,0.25); border-radius:50%; transform:rotate(-20deg); }
+        .coinflip-coin { width:90px; height:90px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #f5d76e, #d4a030 50%, #8b6914); border:4px solid #f0c040; box-shadow:0 0 20px rgba(212,160,48,0.6), inset 0 -2px 6px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; font-size:2.4em; image-rendering:pixelated; position:relative; transform-style:preserve-3d; }
+        .coin-front, .coin-back { position:absolute; width:100%; height:100%; display:flex; align-items:center; justify-content:center; backface-visibility:hidden; border-radius:50%; }
+        .coin-front { z-index:2; }
+        .coin-back { transform:rotateY(180deg); }
+        .coinflip-coin::after { content:''; position:absolute; top:6px; left:12px; width:30px; height:14px; background:rgba(255,255,255,0.25); border-radius:50%; transform:rotate(-20deg); z-index:3; backface-visibility:hidden; }
         @keyframes coinSpin {
             0% { transform:rotateY(0deg) scale(1); }
             10% { transform:rotateY(360deg) scale(0.85) translateY(-30px); }
@@ -409,6 +412,13 @@
             .ability-section { font-size: 0.8em; }
             .player-fp-sp, .player-hp { font-size: 0.9em; }
             .menu-profile-indicator { font-size: 0.9em; }
+            /* Lobby/Menu Zentrierung */
+            #mainMenu { text-align: center; padding: 0 5px; }
+            .meta-screen { text-align: center; max-width: 100%; box-sizing: border-box; }
+            .meta-screen input { max-width: 90%; box-sizing: border-box; }
+            .button-group { align-items: stretch; padding: 0 10px; }
+            .btn-main { width: 100%; max-width: 100%; box-sizing: border-box; }
+            .btn-back-meta { max-width: 100%; box-sizing: border-box; }
         }
         /* Accessibility: Fixed toggle button */
         .a11y-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 9999; width: 44px; height: 44px; background: #141020; border: 3px solid #3d2d66; color: #d4a030; font-size: 1.4em; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #000; transition: border-color 0.15s; font-family: 'VT323', monospace; padding: 0; }
@@ -568,7 +578,7 @@
     </div>
 
     <div id="coinFlipOverlay" class="coinflip-overlay">
-        <div class="coinflip-coin" id="coinFlipCoin">🪙</div>
+        <div class="coinflip-coin" id="coinFlipCoin"><div class="coin-front">🦅</div><div class="coin-back">⛰️</div></div>
         <div class="coinflip-label" id="coinFlipLabel"></div>
     </div>
 
@@ -1114,6 +1124,23 @@
                     }
                 });
             },
+            coinFlip: function() {
+                this._play(function(ctx) {
+                    // Metallisches Münzklingen
+                    for (var i = 0; i < 6; i++) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'sine'; o.frequency.value = 2000 + i * 400;
+                        g.gain.value = 0.06; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08 + i * 0.06);
+                        o.connect(g); g.connect(ctx.destination);
+                        o.start(ctx.currentTime + i * 0.06); o.stop(ctx.currentTime + 0.1 + i * 0.06);
+                    }
+                    // Tiefer Aufprall
+                    var ob = ctx.createOscillator(), gb = ctx.createGain();
+                    ob.type = 'sine'; ob.frequency.value = 180; ob.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.5);
+                    gb.gain.value = 0.1; gb.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                    ob.connect(gb); gb.connect(ctx.destination); ob.start(ctx.currentTime + 0.35); ob.stop(ctx.currentTime + 0.55);
+                });
+            },
             toggle: function() { this.muted = !this.muted; if (this.muted) Music.stop(); else Music._restart(); return this.muted; },
             toggleSfx: function() { this.sfxMuted = !this.sfxMuted; return this.sfxMuted; },
             toggleMusic: function() { this.musicMuted = !this.musicMuted; if (this.musicMuted) Music.stop(); else Music._restart(); return this.musicMuted; }
@@ -1299,8 +1326,22 @@
                 if (!ctx) return;
                 if (ctx.state === 'suspended') ctx.resume();
                 this.current = track;
-                if (track === 'lobby') this._playLobby(ctx);
-                else if (track === 'battle') this._playBattle(ctx);
+                // Sound-Pack-spezifische Musik
+                var pack = 'standard';
+                try { pack = loadMetaData().selectedSounds || 'standard'; } catch(e) {}
+                if (pack === 'taverne') {
+                    if (track === 'lobby') this._playTaverneLobby(ctx);
+                    else if (track === 'battle') this._playTaverneBattle(ctx);
+                } else if (pack === 'achtbit') {
+                    if (track === 'lobby') this._play8BitLobby(ctx);
+                    else if (track === 'battle') this._play8BitBattle(ctx);
+                } else if (pack === 'kriegstrommeln') {
+                    if (track === 'lobby') this._playKriegLobby(ctx);
+                    else if (track === 'battle') this._playKriegBattle(ctx);
+                } else {
+                    if (track === 'lobby') this._playLobby(ctx);
+                    else if (track === 'battle') this._playBattle(ctx);
+                }
             },
             _playLobby: function(ctx) {
                 // Erweiterte Lobby-Melodie mit 4 Phrasen und mehr Abwechslung
@@ -1399,6 +1440,179 @@
                     if (idx >= mel.length) { idx = 0; bIdx = 0; phrase++; }
                 }
                 tick(); self._timer = setInterval(tick, 280);
+            },
+            // Taverne: gemütliche Akkordeon-artige Melodie
+            _playTaverneLobby: function(ctx) {
+                var notes = [196, 220, 261.6, 293.7, 329.6, 293.7, 261.6, 220, 196, 174.6, 196, 220, 261.6, 329.6, 392, 329.6];
+                var bass = [98, 110, 130.8, 98];
+                var idx = 0, bIdx = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.04; mg.connect(ctx.destination);
+                self._nodes.push({ gain: mg });
+                function tick() {
+                    var _sep = loadA11ySettings().separatevolume;
+                    if ((_sep ? SFX.musicMuted : SFX.muted) || self.current !== 'lobby') return;
+                    var f = notes[idx % notes.length];
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'triangle'; o.frequency.value = f;
+                    g.gain.value = 0.5; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.55);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.6);
+                    if (idx % 4 === 0) {
+                        var ob = ctx.createOscillator(), gb = ctx.createGain();
+                        ob.type = 'sine'; ob.frequency.value = bass[bIdx % bass.length];
+                        gb.gain.value = 0.5; gb.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                        ob.connect(gb); gb.connect(mg); ob.start(); ob.stop(ctx.currentTime + 0.55); bIdx++;
+                    }
+                    idx++;
+                }
+                tick(); self._timer = setInterval(tick, 550);
+            },
+            _playTaverneBattle: function(ctx) {
+                var notes = [261.6, 329.6, 392, 440, 523.3, 440, 392, 329.6, 293.7, 349.2, 440, 523.3, 587.3, 523.3, 440, 349.2];
+                var bass = [130.8, 146.8, 164.8, 130.8];
+                var idx = 0, bIdx = 0, beat = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.035; mg.connect(ctx.destination);
+                self._nodes.push({ gain: mg });
+                function tick() {
+                    var _sep = loadA11ySettings().separatevolume;
+                    if ((_sep ? SFX.musicMuted : SFX.muted) || self.current !== 'battle') return;
+                    var f = notes[idx % notes.length];
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'triangle'; o.frequency.value = f;
+                    g.gain.value = 0.5; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.22);
+                    if (beat % 4 === 0) {
+                        var ob = ctx.createOscillator(), gb = ctx.createGain();
+                        ob.type = 'sine'; ob.frequency.value = bass[bIdx % bass.length];
+                        gb.gain.value = 0.6; gb.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                        ob.connect(gb); gb.connect(mg); ob.start(); ob.stop(ctx.currentTime + 0.45); bIdx++;
+                    }
+                    if (beat % 2 === 0) {
+                        var pLen = 0.04;
+                        var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * pLen), ctx.sampleRate);
+                        var dd = buf.getChannelData(0); for (var i = 0; i < dd.length; i++) dd[i] = (Math.random()*2-1) * 0.3;
+                        var n = ctx.createBufferSource(), ng = ctx.createGain();
+                        n.buffer = buf; ng.gain.value = 0.4; ng.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + pLen + 0.01);
+                        n.connect(ng); ng.connect(mg); n.start(); n.stop(ctx.currentTime + pLen + 0.02);
+                    }
+                    idx++; beat++;
+                    if (idx >= notes.length) { idx = 0; bIdx = 0; }
+                }
+                tick(); self._timer = setInterval(tick, 300);
+            },
+            // 8-Bit: Chiptune-Melodie
+            _play8BitLobby: function(ctx) {
+                var notes = [261.6, 329.6, 392, 523.3, 392, 329.6, 261.6, 196, 220, 261.6, 329.6, 440, 523.3, 440, 329.6, 261.6];
+                var idx = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.035; mg.connect(ctx.destination);
+                self._nodes.push({ gain: mg });
+                function tick() {
+                    var _sep = loadA11ySettings().separatevolume;
+                    if ((_sep ? SFX.musicMuted : SFX.muted) || self.current !== 'lobby') return;
+                    var f = notes[idx % notes.length];
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'square'; o.frequency.value = f;
+                    g.gain.value = 0.35; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.38);
+                    var o2 = ctx.createOscillator(), g2 = ctx.createGain();
+                    o2.type = 'square'; o2.frequency.value = f / 2;
+                    g2.gain.value = 0.2; g2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    o2.connect(g2); g2.connect(mg); o2.start(); o2.stop(ctx.currentTime + 0.38);
+                    idx++;
+                }
+                tick(); self._timer = setInterval(tick, 400);
+            },
+            _play8BitBattle: function(ctx) {
+                var notes = [329.6, 392, 440, 523.3, 587.3, 523.3, 440, 392, 329.6, 440, 523.3, 659.3, 784, 659.3, 523.3, 440];
+                var bass = [164.8, 196, 220, 196];
+                var idx = 0, bIdx = 0, beat = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.03; mg.connect(ctx.destination);
+                self._nodes.push({ gain: mg });
+                function tick() {
+                    var _sep = loadA11ySettings().separatevolume;
+                    if ((_sep ? SFX.musicMuted : SFX.muted) || self.current !== 'battle') return;
+                    var f = notes[idx % notes.length];
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'square'; o.frequency.value = f;
+                    g.gain.value = 0.4; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.17);
+                    if (beat % 4 === 0) {
+                        var ob = ctx.createOscillator(), gb = ctx.createGain();
+                        ob.type = 'square'; ob.frequency.value = bass[bIdx % bass.length];
+                        gb.gain.value = 0.5; gb.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                        ob.connect(gb); gb.connect(mg); ob.start(); ob.stop(ctx.currentTime + 0.33); bIdx++;
+                    }
+                    if (beat % 2 === 0) {
+                        var pLen = 0.03;
+                        var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * pLen), ctx.sampleRate);
+                        var dd = buf.getChannelData(0); for (var i = 0; i < dd.length; i++) dd[i] = (Math.random()*2-1) * 0.4;
+                        var n = ctx.createBufferSource(), ng = ctx.createGain();
+                        n.buffer = buf; ng.gain.value = 0.5; ng.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + pLen + 0.01);
+                        n.connect(ng); ng.connect(mg); n.start(); n.stop(ctx.currentTime + pLen + 0.02);
+                    }
+                    idx++; beat++;
+                    if (idx >= notes.length) { idx = 0; bIdx = 0; }
+                }
+                tick(); self._timer = setInterval(tick, 200);
+            },
+            // Kriegstrommeln: tiefe epische Trommeln
+            _playKriegLobby: function(ctx) {
+                var notes = [146.8, 174.6, 196, 220, 196, 174.6, 146.8, 130.8, 146.8, 196, 220, 261.6, 220, 196, 174.6, 146.8];
+                var idx = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.04; mg.connect(ctx.destination);
+                self._nodes.push({ gain: mg });
+                function tick() {
+                    var _sep = loadA11ySettings().separatevolume;
+                    if ((_sep ? SFX.musicMuted : SFX.muted) || self.current !== 'lobby') return;
+                    var f = notes[idx % notes.length];
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = f;
+                    g.gain.value = 0.3; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.55);
+                    if (idx % 2 === 0) {
+                        var pLen = 0.08;
+                        var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * pLen), ctx.sampleRate);
+                        var dd = buf.getChannelData(0); for (var i = 0; i < dd.length; i++) dd[i] = (Math.random()*2-1) * 0.6;
+                        var n = ctx.createBufferSource(), ng = ctx.createGain();
+                        n.buffer = buf; ng.gain.value = 0.5; ng.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + pLen + 0.01);
+                        n.connect(ng); ng.connect(mg); n.start(); n.stop(ctx.currentTime + pLen + 0.02);
+                    }
+                    idx++;
+                }
+                tick(); self._timer = setInterval(tick, 500);
+            },
+            _playKriegBattle: function(ctx) {
+                var notes = [220, 261.6, 293.7, 349.2, 392, 349.2, 293.7, 261.6, 220, 293.7, 349.2, 440, 523.3, 440, 349.2, 293.7];
+                var bass = [110, 130.8, 146.8, 110];
+                var idx = 0, bIdx = 0, beat = 0, self = this;
+                var mg = ctx.createGain(); mg.gain.value = 0.035; mg.connect(ctx.destination);
+                self._nodes.push({ gain: mg });
+                function tick() {
+                    var _sep = loadA11ySettings().separatevolume;
+                    if ((_sep ? SFX.musicMuted : SFX.muted) || self.current !== 'battle') return;
+                    var f = notes[idx % notes.length];
+                    var o = ctx.createOscillator(), g = ctx.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = f;
+                    g.gain.value = 0.4; g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.18);
+                    o.connect(g); g.connect(mg); o.start(); o.stop(ctx.currentTime + 0.2);
+                    if (beat % 2 === 0) {
+                        var pLen = (beat % 4 === 0) ? 0.08 : 0.05;
+                        var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * pLen), ctx.sampleRate);
+                        var dd = buf.getChannelData(0); for (var i = 0; i < dd.length; i++) dd[i] = (Math.random()*2-1) * ((beat % 4 === 0) ? 0.7 : 0.4);
+                        var n = ctx.createBufferSource(), ng = ctx.createGain();
+                        n.buffer = buf; ng.gain.value = (beat % 4 === 0) ? 0.8 : 0.5;
+                        ng.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + pLen + 0.01);
+                        n.connect(ng); ng.connect(mg); n.start(); n.stop(ctx.currentTime + pLen + 0.02);
+                    }
+                    if (beat % 4 === 0) {
+                        var ob = ctx.createOscillator(), gb = ctx.createGain();
+                        ob.type = 'sawtooth'; ob.frequency.value = bass[bIdx % bass.length];
+                        gb.gain.value = 0.6; gb.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                        ob.connect(gb); gb.connect(mg); ob.start(); ob.stop(ctx.currentTime + 0.45); bIdx++;
+                    }
+                    idx++; beat++;
+                    if (idx >= notes.length) { idx = 0; bIdx = 0; }
+                }
+                tick(); self._timer = setInterval(tick, 240);
             }
         };
 
@@ -1520,10 +1734,20 @@
             this.container = document.getElementById('gameContainer');
             // Lobby-Musik sofort starten (AudioContext wird bei Bedarf automatisch resumed)
             Music.play('lobby');
-            // Falls AudioContext suspended (Browser-Policy), bei erstem Klick erneut starten
-            var startMusic = function() { if (Music.current !== 'lobby') Music.play('lobby'); else if (Music.ctx && Music.ctx.state === 'suspended') { Music.ctx.resume().then(function() { Music._track = null; Music.play('lobby'); }); } document.removeEventListener('click', startMusic); document.removeEventListener('touchstart', startMusic); };
+            // Falls AudioContext suspended (Browser-Policy), bei erstem Klick/Touch/Taste erneut starten
+            var startMusic = function() {
+                if (Music.ctx && Music.ctx.state === 'suspended') {
+                    Music.ctx.resume().then(function() { Music._track = null; Music.current = null; Music.play('lobby'); });
+                } else if (Music.current !== 'lobby') {
+                    Music.play('lobby');
+                }
+                document.removeEventListener('click', startMusic);
+                document.removeEventListener('touchstart', startMusic);
+                document.removeEventListener('keydown', startMusic);
+            };
             document.addEventListener('click', startMusic);
             document.addEventListener('touchstart', startMusic);
+            document.addEventListener('keydown', startMusic);
             // Online Multiplayer
             this.onlineMode = false;
             this.myPlayerNumber = 0;
@@ -2451,6 +2675,7 @@
                 else if (d === 0) { cls = 'disabled'; txt = '?'; }
                 else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : (this.actionSelected && !this.diceAnimating && this.rollsRemaining === 0 && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.pipDots ? '' : (skinData.map[d] || d); }
                 var skinStyle = '';
+                var skinClass = '';
                 var usePipDots = d > 0 && d !== -1 && skinData.pipDots;
                 if (d > 0 && d !== -1) {
                     if (skinData.cssClass === 'skin-preview-gotisch') skinStyle = ' style="font-family:MedievalSharp,Cinzel,Georgia,serif;"';
@@ -2458,18 +2683,18 @@
                     else if (skinData.cssClass === 'skin-preview-feuer') skinStyle = ' style="color:#ff6600;text-shadow:0 0 8px #ff3300,0 0 16px rgba(255,51,0,0.5);"';
                     else if (skinData.cssClass === 'skin-preview-eis') skinStyle = ' style="color:#88ddff;text-shadow:0 0 8px #00aaff,0 0 16px rgba(0,170,255,0.4);"';
                     else if (skinData.cssClass === 'skin-preview-nekromant') skinStyle = ' style="color:#aa44cc;text-shadow:0 0 8px #7722aa;"';
-                    else if (skinData.cssClass === 'skin-preview-urzeit') skinStyle = ' class="skin-preview-urzeit"';
-                    else if (skinData.cssClass === 'skin-preview-kristall') skinStyle = ' class="skin-preview-kristall"';
-                    else if (skinData.cssClass === 'skin-preview-knochen') skinStyle = ' class="skin-preview-knochen"';
-                    else if (skinData.cssClass === 'skin-preview-himmelsschmiede') skinStyle = ' class="skin-preview-himmelsschmiede"';
-                    else if (skinData.cssClass === 'skin-preview-void') skinStyle = ' class="skin-preview-void"';
-                    else if (skinData.cssClass === 'skin-preview-regenbogen') skinStyle = ' class="skin-preview-regenbogen"';
+                    else if (skinData.cssClass === 'skin-preview-urzeit') skinClass = ' skin-preview-urzeit';
+                    else if (skinData.cssClass === 'skin-preview-kristall') skinClass = ' skin-preview-kristall';
+                    else if (skinData.cssClass === 'skin-preview-knochen') skinClass = ' skin-preview-knochen';
+                    else if (skinData.cssClass === 'skin-preview-himmelsschmiede') skinClass = ' skin-preview-himmelsschmiede';
+                    else if (skinData.cssClass === 'skin-preview-void') skinClass = ' skin-preview-void';
+                    else if (skinData.cssClass === 'skin-preview-regenbogen') skinClass = ' skin-preview-regenbogen';
                 }
                 diceHtml += '<div style="display:inline-block;text-align:center;margin:0 5px;">';
                 if (usePipDots) {
-                    diceHtml += '<div class="dice ' + cls + '" tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + this.renderBattlePipDots(d) + '</div>';
+                    diceHtml += '<div class="dice ' + cls + skinClass + '" tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + this.renderBattlePipDots(d) + '</div>';
                 } else {
-                    diceHtml += '<div class="dice ' + cls + '"' + skinStyle + ' tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + txt + '</div>';
+                    diceHtml += '<div class="dice ' + cls + skinClass + '"' + skinStyle + ' tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + txt + '</div>';
                 }
                 if (showReroll && d > 0 && d !== -1 && !this.diceKept[i]) {
                     diceHtml += '<div style="margin-top:4px;"><button style="font-size:0.7em;padding:2px 8px;background:#1e1832;color:#d4a030;border:2px solid #d4a030;cursor:pointer;font-family:VT323,monospace;" onclick="game.rerollDie(' + i + ')">🔁</button></div>';
@@ -2625,11 +2850,27 @@
             var isTranszendenz = this.player1.sp >= 55 || this.player2.sp >= 55;
             var w = isTranszendenz ? (this.player1.sp >= 55 ? this.player1 : this.player2) : (this.player1.health <= 0 ? this.player2 : this.player1);
             var loser = (w === this.player1) ? this.player2 : this.player1;
-            var winIcon = isTranszendenz ? '🌟' : '💀';
-            var winType = isTranszendenz ? '🌟 Transzendenz-Sieg! 🌟' : '💀 Elimination! 💀';
-            var winDesc = isTranszendenz
-                ? w.name + ' erreicht ' + w.sp + ' SP und transzendiert!'
-                : w.name + ' hat ' + loser.name + ' besiegt!';
+
+            // Bestimme ob der lokale Spieler gewonnen hat
+            var localPlayerWon = true;
+            if (this.vsAI) {
+                localPlayerWon = (w === this.player1); // Spieler 1 ist Mensch
+            } else if (this.onlineMode) {
+                localPlayerWon = (this.myPlayerNumber === 1 && w === this.player1) || (this.myPlayerNumber === 2 && w === this.player2);
+            }
+
+            var winIcon, winType, winDesc;
+            if (localPlayerWon) {
+                winIcon = isTranszendenz ? '🌟' : '💀';
+                winType = isTranszendenz ? '🌟 Transzendenz-Sieg! 🌟' : '💀 Elimination! 💀';
+                winDesc = isTranszendenz
+                    ? w.name + ' erreicht ' + w.sp + ' SP und transzendiert!'
+                    : w.name + ' hat ' + loser.name + ' besiegt!';
+            } else {
+                winIcon = '💀';
+                winType = '😞 Niederlage... 😞';
+                winDesc = w.name + ' hat gewonnen. ' + loser.name + ' wurde besiegt.';
+            }
 
             // Statistiken speichern + Achievements prüfen (nicht bei Training, nur einmal)
             var matchResult = { achievements: [], coins: 0 };
@@ -2653,8 +2894,9 @@
                 achievementHtml += '</div>';
             }
 
+            var headerColor = localPlayerWon ? '#d4a030' : '#cc4444';
             this.container.innerHTML = '<div style="text-align: center; margin-top: 60px;">' +
-                '<div style="font-size: 1.5em; margin-bottom: 20px; font-family: Press Start 2P, monospace;">' + winType + '</div>' +
+                '<div style="font-size: 1.5em; margin-bottom: 20px; font-family: Press Start 2P, monospace; color: ' + headerColor + ';">' + winType + '</div>' +
                 '<div style="font-size: 1em; margin-bottom: 15px; color: #d4a030; font-family: Press Start 2P, monospace; line-height: 1.4;">' + w.name + ' (' + w.getCharacterName() + ') gewinnt!</div>' +
                 '<div style="font-size: 1.2em; margin-bottom: 15px; color: #8877aa;">' + winDesc + '</div>' +
                 coinsHtml +
@@ -2662,10 +2904,12 @@
                 '<div class="button-group"><button class="btn-main" onclick="game.showMainMenu()">🏠 Hauptmenü</button>' +
                 '<button class="btn-main" onclick="game.playAgain()">🎮 Neue Partie</button></div></div>';
 
-            // Victory animation
-            var victoryKey = loadMetaData().selectedVictory || 'standard';
-            if (victoryKey !== 'standard' && typeof this.playVictoryAnim === 'function') {
-                this.playVictoryAnim(victoryKey);
+            // Victory animation nur für Gewinner
+            if (localPlayerWon) {
+                var victoryKey = loadMetaData().selectedVictory || 'standard';
+                if (victoryKey !== 'standard' && typeof this.playVictoryAnim === 'function') {
+                    this.playVictoryAnim(victoryKey);
+                }
             }
         };
 
@@ -3734,8 +3978,8 @@
         Game.prototype.selectAction = function(actionType) {
             if (this.onlineMode) {
                 if (!this.isMyTurn()) return;
-                // Heilen: prüfe ob eligible Würfel vorhanden
-                if (actionType === 'heal') {
+                // Heilen: prüfe ob eligible Würfel vorhanden (nur wenn keine Würfe mehr übrig)
+                if (actionType === 'heal' && this.rollsRemaining === 0) {
                     var current = this.getCurrentPlayer();
                     var hasZweier = this.playerHasEffect(current, CharacterType.Taschendieb, 1);
                     var hasAny = false;
@@ -3745,7 +3989,7 @@
                     if (!hasAny) {
                         var healMsg = hasZweier ? 'Keine 1er oder 2er vorhanden — keine Heilung möglich!' : 'Keine 1er vorhanden — keine Heilung möglich!';
                         showScroll(healMsg, '⚠️');
-                        current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+                        current.consecutiveAttacks = 0;
                         this.actionSelected = null;
                         var self = this; afterScroll(function() { self.sendOnlineAction({ type: 'endTurn' }); });
                         return;
@@ -3754,8 +3998,8 @@
                 this.sendOnlineAction({ type: 'selectAction', actionType: actionType });
                 return;
             }
-            // Heilen: prüfe ob eligible Würfel vorhanden
-            if (actionType === 'heal') {
+            // Heilen: prüfe ob eligible Würfel vorhanden (nur wenn keine Würfe mehr übrig)
+            if (actionType === 'heal' && this.rollsRemaining === 0) {
                 var current2 = this.getCurrentPlayer();
                 var hasZweier2 = this.playerHasEffect(current2, CharacterType.Taschendieb, 1);
                 var hasAny2 = false;
@@ -3765,7 +4009,7 @@
                 if (!hasAny2) {
                     var healMsg2 = hasZweier2 ? 'Keine 1er oder 2er vorhanden — keine Heilung möglich!' : 'Keine 1er vorhanden — keine Heilung möglich!';
                     showScroll(healMsg2, '⚠️');
-                    current2.consecutiveAttacks = Math.max(0, current2.consecutiveAttacks - 1);
+                    current2.consecutiveAttacks = 0;
                     this.actionSelected = null;
                     var self2 = this; afterScroll(function() { self2.endTurn(); });
                     return;
@@ -3839,7 +4083,7 @@
             label.classList.remove('reveal');
             coin.classList.remove('spinning');
             overlay.classList.add('show');
-            SFX.click();
+            SFX.coinFlip();
             // Gold-Partikel spawnen
             function spawnParticles() {
                 var rect = coin.getBoundingClientRect();
@@ -4095,7 +4339,7 @@
                     var hasZweier = this.playerHasEffect(current, CharacterType.Taschendieb, 1);
                     var healMsg = hasZweier ? 'Keine 1er oder 2er vorhanden — keine Heilung möglich!' : 'Keine 1er vorhanden — keine Heilung möglich!';
                     showScroll(healMsg, '⚠️');
-                    current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+                    current.consecutiveAttacks = 0;
                     this.actionSelected = null;
                     var self = this; afterScroll(function() { self.endTurn(); });
                     return;
@@ -4172,7 +4416,7 @@
                 showScroll('Markiere mindestens eine 1 zum Heilen!', '⚠️');
                 return;
             }
-            current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+            current.consecutiveAttacks = 0;
             this.performHeal(healCount);
         };
 
@@ -4189,7 +4433,7 @@
 
             var blockSum = markedDice.reduce(function(a, b) { return a + b; }, 0);
             if (!current.isAI) this.trackPlayerAction('block', {});
-            current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+            current.consecutiveAttacks = 0;
             if (current.lastDamageReceived > 0 && blockSum >= current.lastDamageReceived) {
                 current.health = Math.min(100, current.health + current.lastDamageReceived);
                 showScroll('🛡️ Blockade erfolgreich! ' + current.lastDamageReceived + ' HP wiederhergestellt!\n(Block: ' + blockSum + ' ≥ Schaden: ' + current.lastDamageReceived + ')', '🛡️');
@@ -4292,7 +4536,7 @@
         Game.prototype.collectAbilityPoints = function() {
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
-            current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+            current.consecutiveAttacks = 0;
             if (!current.isAI) this.trackPlayerAction('ability', {});
             this.abilityCollectsThisGame++;
             var fp = 0;
@@ -4438,12 +4682,23 @@
             // Aktiver Spieler hat Vorrang bei gleichzeitigem Sieg
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
+            var self = this;
+
+            // Hilfsfunktion: Sieg-/Niederlagen-SFX je nach lokalem Spieler
+            function winSfx(winner) {
+                if (self.vsAI && winner.isAI) { SFX.defeat(); }
+                else if (self.onlineMode) {
+                    var localIsP1 = self.myPlayerNumber === 1;
+                    var winnerIsP1 = (winner === self.player1);
+                    if (localIsP1 === winnerIsP1) SFX.victory(); else SFX.defeat();
+                } else { SFX.victory(); }
+            }
 
             // 1. Aktiver Spieler: Gegner auf 0 HP gebracht?
             if (opponent.health <= 0) {
                 this.state = GameState.GameOver;
                 Music.stop();
-                SFX.victory();
+                winSfx(current);
                 showScroll('💀 Elimination! ' + current.name + ' besiegt ' + opponent.name + '!', '💀');
                 this.render();
                 return true;
@@ -4452,7 +4707,7 @@
             if (current.sp >= 55) {
                 this.state = GameState.GameOver;
                 Music.stop();
-                SFX.victory();
+                winSfx(current);
                 showScroll('🌟 Transzendenz-Sieg! ' + current.name + ' erreicht 55 SP!', '🌟');
                 this.render();
                 return true;
@@ -4461,7 +4716,7 @@
             if (opponent.sp >= 55) {
                 this.state = GameState.GameOver;
                 Music.stop();
-                SFX.victory();
+                winSfx(opponent);
                 showScroll('🌟 Transzendenz-Sieg! ' + opponent.name + ' erreicht 55 SP!', '🌟');
                 this.render();
                 return true;
@@ -4470,7 +4725,7 @@
             if (current.health <= 0) {
                 this.state = GameState.GameOver;
                 Music.stop();
-                SFX.defeat();
+                winSfx(opponent);
                 showScroll('💀 Elimination! ' + opponent.name + ' besiegt ' + current.name + '!', '💀');
                 this.render();
                 return true;
@@ -4501,6 +4756,8 @@
                 afterScroll(function() { self._endTurnContinue(); });
                 return;
             }
+            // SP-Sieg prüfen (z.B. nach Fähigkeitspunkte-Sammlung)
+            if (this.checkWinCondition()) return;
             this._endTurnContinue();
         };
 
@@ -4824,7 +5081,7 @@
                 } else if (strategy === 'heal' && finalAnalysis.ones > 0) {
                     var healAmt = finalAnalysis.ones * 5;
                     ai.health = Math.min(100, ai.health + healAmt);
-                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
+                    ai.consecutiveAttacks = 0;
                     if (self.playerHasEffect(ai, CharacterType.Quacksalber, 1)) {
                         ai.sp += 2;
                     }
@@ -4837,7 +5094,7 @@
                     ai.fp += aiFP;
                     ai.addAbilityPoints(aiFP);
                     ai.sp += aiSP;
-                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
+                    ai.consecutiveAttacks = 0;
                     showScroll('KI sammelt +' + aiFP + ' FP, +' + aiSP + ' SP!', '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
                 } else if (hasDice) {
@@ -5252,7 +5509,7 @@
                     self.actionSelected = 'block';
                     var blockSum = 0;
                     for (var bi = 0; bi < diceCount; bi++) { if (self.currentDice[bi] > 0) blockSum += self.currentDice[bi]; }
-                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
+                    ai.consecutiveAttacks = 0;
                     if (blockSum >= ai.lastDamageReceived) {
                         ai.health = Math.min(100, ai.health + ai.lastDamageReceived);
                         showScroll('🛡️ KI blockt: ' + ai.lastDamageReceived + ' HP wiederhergestellt! (Block: ' + blockSum + ' ≥ Schaden: ' + ai.lastDamageReceived + ')', '🛡️');
@@ -5289,7 +5546,7 @@
                     if (self.playerHasEffect(ai, CharacterType.Taschendieb, 1)) healOnes += finalAnalysis.twos;
                     var healAmt = healOnes * 5;
                     ai.health = Math.min(100, ai.health + healAmt);
-                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
+                    ai.consecutiveAttacks = 0;
                     if (self.playerHasEffect(ai, CharacterType.Quacksalber, 1)) {
                         ai.sp += 2;
                     }
@@ -5302,7 +5559,7 @@
                     ai.fp += aiFP;
                     ai.addAbilityPoints(aiFP);
                     ai.sp += aiSP;
-                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
+                    ai.consecutiveAttacks = 0;
                     showScroll('KI sammelt +' + aiFP + ' FP, +' + aiSP + ' SP!', '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
                 } else if (hasDice) {
@@ -5346,9 +5603,14 @@
         };
 
         Game.prototype.renderOnlineLobby = function() {
+            var profileName = getActiveProfileName();
             this.container.innerHTML = '<div class="meta-screen">' +
                 '<div class="meta-title">🌐 Online spielen</div>' +
                 '<div style="text-align:center;">' +
+                '<div style="margin:10px 0 15px;">' +
+                '<label style="color:#8877aa;font-size:0.95em;">Dein Name:</label><br>' +
+                '<input id="onlineNameInput" type="text" maxlength="20" placeholder="' + profileName + '" value="' + profileName + '" style="padding:8px 12px;font-size:1.1em;font-family:VT323,monospace;background:#0a0814;color:#d4a030;border:3px solid #3d2d66;text-align:center;width:200px;margin-top:5px;" />' +
+                '</div>' +
                 '<button class="btn-main" onclick="game.createOnlineRoom()" style="margin:10px;">🏠 Raum erstellen</button>' +
                 '<div style="margin:20px 0 10px;color:#8877aa;">— oder —</div>' +
                 '<div style="margin:10px 0;">' +
@@ -5393,6 +5655,8 @@
         };
 
         Game.prototype.createOnlineRoom = function() {
+            var nameInput = document.getElementById('onlineNameInput');
+            this._onlinePlayerName = (nameInput && nameInput.value.trim()) || getActiveProfileName();
             this.initSocket();
             var self = this;
             this.socket.emit('createRoom', function(data) {
@@ -5406,6 +5670,8 @@
         };
 
         Game.prototype.joinOnlineRoom = function() {
+            var nameInput = document.getElementById('onlineNameInput');
+            this._onlinePlayerName = (nameInput && nameInput.value.trim()) || getActiveProfileName();
             var input = document.getElementById('roomCodeInput');
             var code = input ? input.value.trim().toUpperCase() : '';
             if (code.length < 3) {
@@ -5442,8 +5708,12 @@
             this.onlineReady = { 1: false, 2: false };
             this.onlineCharacters = { 1: null, 2: null };
             this.onlineGenders = { 1: null, 2: null };
-            this.player1 = new Player('Spieler*in 1', false);
-            this.player2 = new Player('Spieler*in 2', false);
+            // Online-Name verwenden falls eingegeben
+            var onlineName = this._onlinePlayerName || getActiveProfileName();
+            var p1Name = this.myPlayerNumber === 1 ? onlineName : 'Spieler*in 1';
+            var p2Name = this.myPlayerNumber === 2 ? onlineName : 'Spieler*in 2';
+            this.player1 = new Player(p1Name, false);
+            this.player2 = new Player(p2Name, false);
             // Jeder wählt für sich selbst
             this.selectingForPlayer = this.myPlayerNumber;
             this.state = GameState.CharacterSelect;
