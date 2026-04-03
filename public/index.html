@@ -135,7 +135,7 @@
         .progress-bar.sp { height: 100%; background: #d4a030; transition: width 0.3s; }
         .progress-bar.fp { height: 100%; background: #aa8822; transition: width 0.3s; }
         .player-fp-sp { margin: 4px 0; font-size: 1em; color: #8877aa; }
-        .character-image img { width: 100%; height: 100%; object-fit: cover; }
+        .character-image svg { width: 100%; height: 100%; image-rendering: pixelated; }
         .sp-progress-label { margin: 4px 0; font-size: 1em; color: #d4a030; }
         .scroll-overlay { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.75); align-items: center; justify-content: center; }
         .scroll-overlay.show { display: flex; }
@@ -2576,7 +2576,109 @@
 
         Game.prototype.renderCharacterSelect = function() {
             var pName = this.selectingForPlayer === 1 ? this.player1.name : this.player2.name;
-            var chars = [{name:'Soldat*in',img:'images/soldat.png'},{name:'Rebell*in',img:'images/rebell.png'},{name:'Taschendieb*in',img:'images/taschendieb.png'},{name:'Quacksalber*in',img:'images/quacksalber.png'}];
+            var chars = [{name:'Soldat*in',img:'soldat'},{name:'Rebell*in',img:'rebell'},{name:'Taschendieb*in',img:'taschendieb'},{name:'Quacksalber*in',img:'quacksalber'}];
+            var charSVGs = {
+            soldat: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
++'<rect x="7" y="0" width="2" height="1" fill="#c0c0c0"/>'
++'<rect x="6" y="1" width="4" height="1" fill="#a0a0a0"/>'
++'<rect x="5" y="2" width="6" height="1" fill="#808080"/>'
++'<rect x="6" y="3" width="4" height="2" fill="#f0c8a0"/>'
++'<rect x="5" y="3" width="1" height="1" fill="#808080"/>'
++'<rect x="10" y="3" width="1" height="1" fill="#808080"/>'
++'<rect x="7" y="4" width="1" height="1" fill="#2a1a0a"/>'
++'<rect x="9" y="4" width="1" height="1" fill="#2a1a0a"/>'
++'<rect x="7" y="5" width="2" height="1" fill="#e0a880"/>'
++'<rect x="5" y="6" width="6" height="1" fill="#c83030"/>'
++'<rect x="7" y="6" width="2" height="1" fill="#d4a030"/>'
++'<rect x="4" y="7" width="8" height="3" fill="#c83030"/>'
++'<rect x="6" y="7" width="4" height="1" fill="#d4a030"/>'
++'<rect x="7" y="8" width="2" height="1" fill="#d4a030"/>'
++'<rect x="3" y="8" width="1" height="2" fill="#f0c8a0"/>'
++'<rect x="12" y="8" width="1" height="2" fill="#f0c8a0"/>'
++'<rect x="12" y="6" width="1" height="2" fill="#a0a0a0"/>'
++'<rect x="13" y="3" width="1" height="5" fill="#c0c0c0"/>'
++'<rect x="13" y="2" width="1" height="1" fill="#d4a030"/>'
++'<rect x="6" y="10" width="4" height="2" fill="#8b4513"/>'
++'<rect x="6" y="12" width="2" height="3" fill="#c83030"/>'
++'<rect x="8" y="12" width="2" height="3" fill="#c83030"/>'
++'<rect x="5" y="15" width="3" height="1" fill="#4a3520"/>'
++'<rect x="8" y="15" width="3" height="1" fill="#4a3520"/>'
++'</svg>',
+            rebell: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
++'<rect x="6" y="0" width="4" height="1" fill="#2a4a2a"/>'
++'<rect x="5" y="1" width="6" height="1" fill="#3a6a3a"/>'
++'<rect x="6" y="2" width="4" height="1" fill="#2a4a2a"/>'
++'<rect x="6" y="3" width="4" height="2" fill="#f0c8a0"/>'
++'<rect x="7" y="4" width="1" height="1" fill="#2a1a0a"/>'
++'<rect x="9" y="4" width="1" height="1" fill="#2a1a0a"/>'
++'<rect x="7" y="5" width="2" height="1" fill="#e0a880"/>'
++'<rect x="11" y="1" width="1" height="3" fill="#3a6a3a"/>'
++'<rect x="5" y="6" width="6" height="1" fill="#3a6a3a"/>'
++'<rect x="4" y="7" width="8" height="3" fill="#2a4a2a"/>'
++'<rect x="6" y="7" width="4" height="1" fill="#3a6a3a"/>'
++'<rect x="3" y="8" width="1" height="2" fill="#f0c8a0"/>'
++'<rect x="12" y="8" width="1" height="2" fill="#f0c8a0"/>'
++'<rect x="2" y="6" width="2" height="5" fill="#8b6914"/>'
++'<rect x="1" y="6" width="1" height="5" fill="#a08020"/>'
++'<rect x="2" y="5" width="2" height="1" fill="#a08020"/>'
++'<rect x="2" y="11" width="2" height="1" fill="#a08020"/>'
++'<rect x="6" y="10" width="4" height="2" fill="#4a3520"/>'
++'<rect x="6" y="12" width="2" height="3" fill="#2a4a2a"/>'
++'<rect x="8" y="12" width="2" height="3" fill="#2a4a2a"/>'
++'<rect x="5" y="15" width="3" height="1" fill="#4a3520"/>'
++'<rect x="8" y="15" width="3" height="1" fill="#4a3520"/>'
++'</svg>',
+            taschendieb: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
++'<rect x="6" y="0" width="5" height="1" fill="#2a1a3a"/>'
++'<rect x="5" y="1" width="6" height="1" fill="#3a2a4a"/>'
++'<rect x="5" y="2" width="6" height="1" fill="#2a1a3a"/>'
++'<rect x="6" y="3" width="4" height="1" fill="#3a2a4a"/>'
++'<rect x="6" y="3" width="4" height="1" fill="#1a1a1a"/>'
++'<rect x="6" y="4" width="4" height="1" fill="#f0c8a0"/>'
++'<rect x="7" y="4" width="1" height="1" fill="#2a1a0a"/>'
++'<rect x="9" y="4" width="1" height="1" fill="#2a1a0a"/>'
++'<rect x="7" y="5" width="2" height="1" fill="#e0a880"/>'
++'<rect x="5" y="6" width="6" height="1" fill="#1a1a2a"/>'
++'<rect x="4" y="7" width="8" height="3" fill="#1a1a2a"/>'
++'<rect x="6" y="7" width="4" height="2" fill="#2a2a3a"/>'
++'<rect x="3" y="8" width="1" height="2" fill="#f0c8a0"/>'
++'<rect x="12" y="8" width="1" height="2" fill="#f0c8a0"/>'
++'<rect x="13" y="7" width="1" height="3" fill="#a0a0a0"/>'
++'<rect x="13" y="10" width="1" height="1" fill="#c0c0c0"/>'
++'<rect x="6" y="10" width="4" height="2" fill="#1a1a2a"/>'
++'<rect x="6" y="12" width="2" height="3" fill="#2a2a3a"/>'
++'<rect x="8" y="12" width="2" height="3" fill="#2a2a3a"/>'
++'<rect x="5" y="15" width="3" height="1" fill="#1a1a1a"/>'
++'<rect x="8" y="15" width="3" height="1" fill="#1a1a1a"/>'
++'<rect x="4" y="9" width="1" height="1" fill="#d4a030"/>'
++'<rect x="4" y="10" width="2" height="1" fill="#d4a030"/>'
++'</svg>',
+            quacksalber: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">'
++'<rect x="6" y="0" width="4" height="1" fill="#4a2a6a"/>'
++'<rect x="5" y="1" width="6" height="2" fill="#5a3a7a"/>'
++'<rect x="4" y="2" width="8" height="1" fill="#4a2a6a"/>'
++'<rect x="7" y="0" width="2" height="1" fill="#d4a030"/>'
++'<rect x="6" y="3" width="4" height="2" fill="#f0c8a0"/>'
++'<rect x="7" y="4" width="1" height="1" fill="#2a1a0a"/>'
++'<rect x="9" y="4" width="1" height="1" fill="#2a1a0a"/>'
++'<rect x="7" y="5" width="2" height="1" fill="#e0a880"/>'
++'<rect x="5" y="6" width="6" height="1" fill="#5a3a7a"/>'
++'<rect x="4" y="7" width="8" height="3" fill="#4a2a6a"/>'
++'<rect x="6" y="7" width="4" height="1" fill="#5a3a7a"/>'
++'<rect x="7" y="8" width="2" height="1" fill="#d4a030"/>'
++'<rect x="3" y="8" width="1" height="2" fill="#f0c8a0"/>'
++'<rect x="12" y="8" width="1" height="2" fill="#f0c8a0"/>'
++'<rect x="2" y="7" width="2" height="1" fill="#30c850"/>'
++'<rect x="1" y="8" width="3" height="2" fill="#40a848"/>'
++'<rect x="2" y="10" width="1" height="1" fill="#30c850"/>'
++'<rect x="1" y="8" width="1" height="1" fill="#80e090"/>'
++'<rect x="6" y="10" width="4" height="2" fill="#4a2a6a"/>'
++'<rect x="6" y="12" width="2" height="3" fill="#3a2a5a"/>'
++'<rect x="8" y="12" width="2" height="3" fill="#3a2a5a"/>'
++'<rect x="5" y="15" width="3" height="1" fill="#4a3520"/>'
++'<rect x="8" y="15" width="3" height="1" fill="#4a3520"/>'
++'</svg>'
+            };
             var h = '<div class="selection-screen"><button class="btn-back" onclick="game.goBack()">← Zurück</button>' +
                 '<div class="screen-title">' + pName + ' - Wähle deinen Charakter!</div><div class="character-grid">';
             var fpThresholds = [7, 7, 7, 7];
@@ -2588,7 +2690,7 @@
                         abils[a].name[2] + ' <span style="color:#c8b8e0;">(' + fpThresholds[a] + ' FP)</span><br>' +
                         '<span style="color:#d0c4ea;font-size:0.9em;">' + abils[a].desc[2] + '</span></div>';
                 }
-                h += '<div class="character-card"><div class="character-image"><img src="' + chars[i].img + '" alt="' + chars[i].name + '"></div>' +
+                h += '<div class="character-card"><div class="character-image">' + charSVGs[chars[i].img] + '</div>' +
                     '<div class="character-name">' + chars[i].name + '</div>' +
                     '<div style="padding:4px 8px;">' + abilList + '</div>' +
                     '<button class="btn-select" onclick="game.selectCharacter(' + i + ')">Auswählen</button></div>';
