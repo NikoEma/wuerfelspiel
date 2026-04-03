@@ -14,8 +14,8 @@ const STRAT_IDS = ['aggro', 'control', 'schwer'];
 
 // ===== CHARACTER_ABILITIES (aus index.html) =====
 // Soldat:       0=Kampfinstinkt(+3 DMG), 1=Kriegsmeister(+2 DMG, ≥12→+2SP), 2=Vergeltung(Reflekt 1 Wert), 3=Doppelwertung(2 Gruppen zählen)
-// Rebell:       0=Würfel-Diebstahl(+1 Bonuswürfel), 1=Schadensblockade(Block-Aktion), 2=Kriegsstratege(4 DMG Zugende), 3=Fünfer-Upgrade(5=6)
-// Taschendieb:  0=Punkt-Bonus(+1 FP+1 SP), 1=Zweier-Magisch(2er heilen), 2=Ressourcen-Raub(-2 FP Gegner), 3=Würfel-Zerstörer(1 Würfel zerstören)
+// Rebell:       0=Würfel-Diebstahl(+1 Bonuswürfel), 1=Kriegsstratege(5 DMG Zugende), 2=Schadensblockade(Block-Aktion), 3=Fünfer-Upgrade(5=6)
+// Taschendieb:  0=Punkt-Bonus(+1 SP), 1=Zweier-Magisch(2er heilen), 2=Ressourcen-Raub(-1 FP Gegner), 3=Würfel-Zerstörer(1 Würfel zerstören)
 // Quacksalber:  0=Neuwurf-Bonus(1 Würfel neu+1 SP), 1=Heilungs-Manager(1er bei Angriff heilen+2 SP), 2=Gegner-Zwang(Zufalls-Wurf wiederholen), 3=Doppelwertung(nicht für Quack)
 
 // ===== SPIELER =====
@@ -235,7 +235,7 @@ function chooseAction(dice, current, opponent, strategy) {
     const combo = calcCombo(dice);
     const hasZweier = playerHasEffect(current, CharacterType.Taschendieb, 1);
     const healCount = dice.filter(d => d === 1 || (hasZweier && d === 2)).length;
-    const canBlock = playerHasEffect(current, CharacterType.Rebell, 1) && current.lastDamageReceived > 0;
+    const canBlock = playerHasEffect(current, CharacterType.Rebell, 2) && current.lastDamageReceived > 0;
 
     // Calculate effective damage (with Kampfinstinkt, Kriegsmeister & Fünfer-Upgrade)
     let effectiveBestDmg = analysis.bestDmg;
@@ -343,7 +343,7 @@ function executeAttack(dice, current, opponent) {
         current.health = Math.min(100, current.health + healAmt);
         current.totalHealing += healAmt;
         current.sp += 2;
-        current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+        current.consecutiveAttacks = 0;
         return;
     }
     if (attackDice.length === 0) return;
@@ -436,7 +436,7 @@ function executeHeal(dice, current) {
     const healAmt = healCount * 5;
     current.health = Math.min(100, current.health + healAmt);
     current.totalHealing += healAmt;
-    current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+    current.consecutiveAttacks = 0;
 
     // Quacksalber Heilungs-Manager: +3 SP bei Heilen (same ability)
     if (playerHasEffect(current, CharacterType.Quacksalber, 1)) {
@@ -451,16 +451,16 @@ function executeAbility(dice, current, opponent) {
     let fp = combo.fp;
     let sp = combo.sp;
 
-    // Punkt-Bonus (Taschendieb Ability 0): +1 FP +1 SP
-    if (playerHasEffect(current, CharacterType.Taschendieb, 0)) { fp += 1; sp += 1; }
+    // Punkt-Bonus (Taschendieb Ability 0): +1 SP
+    if (playerHasEffect(current, CharacterType.Taschendieb, 0)) { sp += 1; }
 
     current.fp += fp;
     current.addAbilityPoints(fp);
     current.sp += sp;
 
-    // Ressourcen-Raub (Taschendieb Ability 2): Gegner verliert 2 FP
+    // Ressourcen-Raub (Taschendieb Ability 2): Gegner verliert 1 FP
     if (playerHasEffect(current, CharacterType.Taschendieb, 2)) {
-        const stolen = Math.min(2, opponent.fp);
+        const stolen = Math.min(1, opponent.fp);
         if (stolen > 0) {
             opponent.fp -= stolen;
             // Recalculate opponent ability state
@@ -483,7 +483,7 @@ function executeAbility(dice, current, opponent) {
         }
     }
 
-    current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+    current.consecutiveAttacks = 0;
 }
 
 function executeBlock(dice, current) {
@@ -516,7 +516,7 @@ function executeBlock(dice, current) {
         current.successfulBlocks++;
         current.lastDamageReceived = 0;
     }
-    current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+    current.consecutiveAttacks = 0;
 }
 
 // ===== EINEN ZUG SIMULIEREN =====
@@ -673,10 +673,10 @@ function simulateGame(char1, char2, strategy1, strategy2, starterIdx) {
         // Spielzug simulieren
         simulateTurn(current, opponent, strategy);
 
-        // Kriegsstratege (Rebell Ability 2): 4 auto-Schaden an Gegner am Zugende
-        if (playerHasEffect(current, CharacterType.Rebell, 2)) {
-            opponent.health = Math.max(0, opponent.health - 4);
-            current.totalDamage += 4;
+        // Kriegsstratege (Rebell Ability 1): 5 auto-Schaden an Gegner am Zugende
+        if (playerHasEffect(current, CharacterType.Rebell, 1)) {
+            opponent.health = Math.max(0, opponent.health - 5);
+            current.totalDamage += 5;
         }
 
         // Win-Check nach Aktion + Kriegsstratege

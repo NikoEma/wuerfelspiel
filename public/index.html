@@ -972,14 +972,14 @@
             ],
             1: [
                 { name: ['🎲 Würfel-Diebstahl', '🎲 Würfel-Diebstahl', '🎲 Würfel-Diebstahl'], desc: ['+1 Würfel wenn Gegner unmarkierte hatte', '+1 Würfel wenn Gegnerin unmarkierte hatte', '+1 Würfel wenn Gegner*in unmarkierte hatte'] },
+                { name: ['� Kriegsstratege', '👑 Kriegsstrategin', '👑 Kriegsstrateg*in'], desc: ['5 auto-Schaden/Runde', '5 auto-Schaden/Runde', '5 auto-Schaden/Runde'] },
                 { name: ['🛡️ Schadensblockade', '🛡️ Schadensblockade', '🛡️ Schadensblockade'], desc: ['Aktion Blocken: Summe ≥ Schaden = geheilt', 'Aktion Blocken: Summe ≥ Schaden = geheilt', 'Aktion Blocken: Summe ≥ Schaden = geheilt'] },
-                { name: ['👑 Kriegsstratege', '👑 Kriegsstrategin', '👑 Kriegsstrateg*in'], desc: ['4 auto-Schaden/Runde', '4 auto-Schaden/Runde', '4 auto-Schaden/Runde'] },
                 { name: ['🚀 Fünfer-Upgrade', '🚀 Fünfer-Upgrade', '🚀 Fünfer-Upgrade'], desc: ['5er zählen als 6 bei Angriff', '5er zählen als 6 bei Angriff', '5er zählen als 6 bei Angriff'] }
             ],
             2: [
-                { name: ['💰 Punkt-Bonus', '💰 Punkt-Bonus', '💰 Punkt-Bonus'], desc: ['+1 FP und +1 SP pro Sammlung', '+1 FP und +1 SP pro Sammlung', '+1 FP und +1 SP pro Sammlung'] },
+                { name: ['💰 Punkt-Bonus', '💰 Punkt-Bonus', '💰 Punkt-Bonus'], desc: ['+1 SP pro Sammlung', '+1 SP pro Sammlung', '+1 SP pro Sammlung'] },
                 { name: ['✨ Zweier-Magisch', '✨ Zweier-Magisch', '✨ Zweier-Magisch'], desc: ['2er können auch heilen (wie 1er)', '2er können auch heilen (wie 1er)', '2er können auch heilen (wie 1er)'] },
-                { name: ['💰 Ressourcen-Raub', '💰 Ressourcen-Raub', '💰 Ressourcen-Raub'], desc: ['Bei ⭐ Sammlung: Gegner verliert 2 FP', 'Bei ⭐ Sammlung: Gegnerin verliert 2 FP', 'Bei ⭐ Sammlung: Gegner*in verliert 2 FP'] },
+                { name: ['💰 Ressourcen-Raub', '💰 Ressourcen-Raub', '💰 Ressourcen-Raub'], desc: ['Bei ⭐ Sammlung: Gegner verliert 1 FP', 'Bei ⭐ Sammlung: Gegnerin verliert 1 FP', 'Bei ⭐ Sammlung: Gegner*in verliert 1 FP'] },
                 { name: ['💣 Würfel-Zerstörer', '💣 Würfel-Zerstörerin', '💣 Würfel-Zerstörer*in'], desc: ['Zerstört 1 Gegner-Würfel pro Zug', 'Zerstört 1 Gegnerin-Würfel pro Zug', 'Zerstört 1 Gegner*in-Würfel pro Zug'] }
             ],
             3: [
@@ -2514,9 +2514,9 @@
                 '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎪 Doppelwertung (' + ap[3] + '/40)</div></div>';
             var abilitiesP2 = '<div style="font-size: 0.9em;">' +
                 '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎲 Würfel-Diebstahl (0/10)</div>' +
-                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🛡️ Schadensblockade (0/20)</div>' +
-                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🚀 Fünfer-Upgrade (0/30)</div>' +
-                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">👑 Kriegsstrateg*in (0/40)</div></div>';
+                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">� Kriegsstrateg*in (0/20)</div>' +
+                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🛡️ Schadensblockade (0/30)</div>' +
+                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🚀 Fünfer-Upgrade (0/40)</div></div>';
 
             var kiActionLabel = '';
             if (isKiTurn) {
@@ -2745,7 +2745,7 @@
                     '<button class="btn-select-action' + atkCls + '" onclick="game.selectAction(\'attack\')">⚔ Angriff</button>' +
                     '<button class="btn-select-action' + healCls + '" onclick="game.selectAction(\'heal\')">💚 Heilen</button>' +
                     '<button class="btn-select-action' + abCls + '" onclick="game.selectAction(\'ability\')">⭐ Fähigkeitspunkte</button>';
-                if (this.playerHasEffect(current, CharacterType.Rebell, 1) && current.lastDamageReceived > 0) {
+                if (this.playerHasEffect(current, CharacterType.Rebell, 2) && current.lastDamageReceived > 0) {
                     var blkCls = this.actionSelected === 'block' ? ' action-active' : '';
                     actionHtml += '<button class="btn-select-action' + blkCls + '" style="border-color: #d4a030;" onclick="game.selectAction(\'block\')">🛡️ Blocken (' + current.lastDamageReceived + ' Schaden)</button>';
                 }
@@ -4665,8 +4665,8 @@
             // Zweierpasch (zwei verschiedene Paare)
             else if (groups.length === 2 && groups[0].count === 2 && groups[1].count === 2) { fp = 2; sp = 4; validCombo = true; }
             if (validCombo) {
-                // Taschendieb Fähigkeit 1: +1 FP und +1 SP pro Sammlung
-                if (this.playerHasEffect(current, CharacterType.Taschendieb, 0)) { fp += 1; sp += 1; }
+                // Taschendieb Fähigkeit 1: +1 SP pro Sammlung
+                if (this.playerHasEffect(current, CharacterType.Taschendieb, 0)) { sp += 1; }
                 current.fp += fp;
                 var prevUnlocked = current.abilityUnlocked.slice();
                 current.addAbilityPoints(fp);
@@ -4678,10 +4678,10 @@
                         showScroll('🌟 Neue Fähigkeit freigeschaltet!\n' + unlockedName + ' ⭐', '🌟', 'ability-unlock');
                     }
                 }
-                // Ressourcen-Raub: Gegner verliert 2 FP bei Sammlung
+                // Ressourcen-Raub: Gegner verliert 1 FP bei Sammlung
                 var raubMsg = '';
                 if (this.playerHasEffect(current, CharacterType.Taschendieb, 2)) {
-                    var stolen = Math.min(2, opponent.fp);
+                    var stolen = Math.min(1, opponent.fp);
                     if (stolen > 0) {
                         opponent.fp -= stolen;
                         // Fähigkeitsfortschritt anpassen
@@ -4849,10 +4849,10 @@
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
 
-            // Rebell Kriegsstratege: nach Aktion, Gegner nimmt 4 auto-Schaden
-            if (this.playerHasEffect(current, CharacterType.Rebell, 2)) {
-                opponent.health = Math.max(0, opponent.health - 4);
-                showScroll(getGenderedText(['👑 Kriegsstratege! ', '👑 Kriegsstrategin! ', '👑 Kriegsstrateg*in! '], current.gender) + opponent.name + ' nimmt 4 auto-Schaden!', '👑');
+            // Rebell Kriegsstratege: nach Aktion, Gegner nimmt 5 auto-Schaden
+            if (this.playerHasEffect(current, CharacterType.Rebell, 1)) {
+                opponent.health = Math.max(0, opponent.health - 5);
+                showScroll(getGenderedText(['👑 Kriegsstratege! ', '👑 Kriegsstrategin! ', '👑 Kriegsstrateg*in! '], current.gender) + opponent.name + ' nimmt 5 auto-Schaden!', '👑');
                 if (this.checkWinCondition()) return;
                 var self = this;
                 afterScroll(function() { self._endTurnContinue(); });
@@ -5374,7 +5374,7 @@
             var aiCloseSP = ai.sp >= 38;
             var aiNeedsAbility = ai.currentAbilityIndex < 4;
             var fpToNextAbility = aiNeedsAbility ? (7 - ai.abilityProgress[ai.currentAbilityIndex]) : 999;
-            var canBlock = self.playerHasEffect(ai, CharacterType.Rebell, 1) && ai.lastDamageReceived > 0;
+            var canBlock = self.playerHasEffect(ai, CharacterType.Rebell, 2) && ai.lastDamageReceived > 0;
 
             // Erster Wurf
             for (var i = 0; i < diceCount; i++) {
