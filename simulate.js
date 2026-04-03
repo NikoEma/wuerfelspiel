@@ -13,10 +13,10 @@ const STRAT_NAMES = ['Aggro', 'Control', 'Schwer'];
 const STRAT_IDS = ['aggro', 'control', 'schwer'];
 
 // ===== CHARACTER_ABILITIES (aus index.html) =====
-// Soldat:       0=Soldat-Initiative(+1 Würfel), 1=Kriegsmeister(+2 DMG, ≥12→+2SP), 2=Vergeltung(Reflekt 1 Wert), 3=Doppelwertung(2 Gruppen zählen)
-// Rebell:       0=Würfel-Diebstahl(+1 Bonuswürfel), 1=Schadensblockade(Block-Aktion), 2=Kriegsstratege(2 DMG+1 SP Zugende), 3=Fünfer-Upgrade(5=6)
+// Soldat:       0=Kampfinstinkt(+3 DMG), 1=Kriegsmeister(+2 DMG, ≥12→+2SP), 2=Vergeltung(Reflekt 1 Wert), 3=Doppelwertung(2 Gruppen zählen)
+// Rebell:       0=Würfel-Diebstahl(+1 Bonuswürfel), 1=Schadensblockade(Block-Aktion), 2=Kriegsstratege(4 DMG Zugende), 3=Fünfer-Upgrade(5=6)
 // Taschendieb:  0=Punkt-Bonus(+1 FP+1 SP), 1=Zweier-Magisch(2er heilen), 2=Ressourcen-Raub(-2 FP Gegner), 3=Würfel-Zerstörer(1 Würfel zerstören)
-// Quacksalber:  0=Reserve-Würfel(nicht im Code!), 1=Heilungs-Manager(1er bei Angriff heilen+1 SP), 2=Gegner-Zwang(Zufalls-Wurf wiederholen), 3=Doppelwertung(nicht für Quack)
+// Quacksalber:  0=Neuwurf-Bonus(1 Würfel neu+1 SP), 1=Heilungs-Manager(1er bei Angriff heilen+2 SP), 2=Gegner-Zwang(Zufalls-Wurf wiederholen), 3=Doppelwertung(nicht für Quack)
 
 // ===== SPIELER =====
 class Player {
@@ -26,7 +26,7 @@ class Player {
         this.health = 100;
         this.fp = 5;
         this.sp = 0;
-        this.abilityProgress = [0, 0, 0, 0];
+        this.abilityProgress = [5, 0, 0, 0];
         this.abilityUnlocked = [false, false, false, false];
         this.currentAbilityIndex = 0;
         this.bonusDice = 0;
@@ -45,9 +45,9 @@ class Player {
 
     addAbilityPoints(points) {
         while (points > 0 && this.currentAbilityIndex < 4) {
-            const needed = 10 - this.abilityProgress[this.currentAbilityIndex];
+            const needed = 7 - this.abilityProgress[this.currentAbilityIndex];
             if (points >= needed) {
-                this.abilityProgress[this.currentAbilityIndex] = 10;
+                this.abilityProgress[this.currentAbilityIndex] = 7;
                 this.abilityUnlocked[this.currentAbilityIndex] = true;
                 points -= needed;
                 this.currentAbilityIndex++;
@@ -221,8 +221,6 @@ function keepForAbility(dice) {
 // ===== DICE COUNT =====
 function getDiceCount(player) {
     let count = 6;
-    // Soldat Ability 0: Soldat-Initiative (+1 Würfel)
-    if (playerHasEffect(player, CharacterType.Soldat, 0)) count++;
     // Bonus dice (from Würfel-Diebstahl)
     count += player.bonusDice;
     // Exhaustion penalty: consecutiveAttacks > 2 → lose dice
@@ -239,8 +237,9 @@ function chooseAction(dice, current, opponent, strategy) {
     const healCount = dice.filter(d => d === 1 || (hasZweier && d === 2)).length;
     const canBlock = playerHasEffect(current, CharacterType.Rebell, 1) && current.lastDamageReceived > 0;
 
-    // Calculate effective damage (with Kriegsmeister & Fünfer-Upgrade)
+    // Calculate effective damage (with Kampfinstinkt, Kriegsmeister & Fünfer-Upgrade)
     let effectiveBestDmg = analysis.bestDmg;
+    if (playerHasEffect(current, CharacterType.Soldat, 0)) effectiveBestDmg += 3;
     if (playerHasEffect(current, CharacterType.Soldat, 1)) effectiveBestDmg += 2;
     if (playerHasEffect(current, CharacterType.Rebell, 3)) {
         const fiveCount = dice.filter(d => d === 5).length;
@@ -284,31 +283,35 @@ function chooseAction(dice, current, opponent, strategy) {
             return 'ability';
 
         case 'schwer':
-            // Kill-Check
+            // Kill-Check (höchste Priorität)
             if (effectiveBestDmg >= opponent.health) return 'attack';
+            // Block-Chance nutzen (Schadensblockade)
+            if (canBlock && current.lastDamageReceived <= analysis.bestDmg) return 'block';
             // Erschöpft: Pause
             if (current.consecutiveAttacks >= 2 && (combo.sp >= 3 || healCount >= 2)) {
                 return combo.sp >= 3 ? 'ability' : 'heal';
             }
+            // Gegner SP-Rennen → Aggro (frühere Erkennung)
+            if (opponent.sp >= 30 && analysis.bestDmg >= 6) return 'attack';
             // SP-Rennen: eigene SP hoch → Sammeln
-            if (current.sp >= 25 && combo.sp >= 3) return 'ability';
-            // Gegner SP-Rennen → Aggro
-            if (opponent.sp >= 30 && analysis.bestDmg >= 8) return 'attack';
-            // Niedrige HP → Heilen
-            if (current.health <= 20 && healCount >= 2) return 'heal';
-            // Block wenn lohnend
-            if (canBlock && current.lastDamageReceived >= 10) return 'block';
+            if (current.sp >= 32 && combo.sp >= 3) return 'ability';
+            // Niedrige HP → Heilen (dynamischer Schwellenwert: 60 bei voller Adaption)
+            if (current.health <= 60 && healCount >= 2) return 'heal';
+            // Block wenn lohnend (niedrigerer Schwellenwert)
+            if (canBlock && current.lastDamageReceived >= 8) return 'block';
             // Guter SP-Combo
             if (combo.sp >= 5) return 'ability';
             // Starker Angriff
             if (effectiveBestDmg >= 12) return 'attack';
+            // 2-Zug-Kill: aggressiv bleiben wenn Gegner niedrig
+            if (opponent.health <= 40 && effectiveBestDmg >= opponent.health / 2) return 'attack';
             // Nächste Fähigkeit nah
             if (current.currentAbilityIndex < 4) {
-                const fpNeeded = 10 - current.abilityProgress[current.currentAbilityIndex];
+                const fpNeeded = 7 - current.abilityProgress[current.currentAbilityIndex];
                 if (fpNeeded <= 3 && combo.fp >= fpNeeded) return 'ability';
             }
             // Niedrige HP → auch mit wenig heilen
-            if (current.health <= 40 && healCount >= 1) return 'heal';
+            if (current.health <= 60 && healCount >= 1) return 'heal';
             // Guter Angriff
             if (analysis.bestDmg >= 6) return 'attack';
             // Irgendein SP
@@ -339,7 +342,7 @@ function executeAttack(dice, current, opponent) {
         const healAmt = healDice.length * 5;
         current.health = Math.min(100, current.health + healAmt);
         current.totalHealing += healAmt;
-        current.sp += 1;
+        current.sp += 2;
         current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
         return;
     }
@@ -389,6 +392,9 @@ function executeAttack(dice, current, opponent) {
 
     if (damage <= 0) return;
 
+    // Kampfinstinkt: +3 Schaden
+    if (playerHasEffect(current, CharacterType.Soldat, 0)) damage += 3;
+
     // Kriegsmeister: +2 Schaden
     if (playerHasEffect(current, CharacterType.Soldat, 1)) damage += 2;
 
@@ -414,12 +420,12 @@ function executeAttack(dice, current, opponent) {
     // Erschöpfung tracken
     if (current.consecutiveAttacks > 2) current.exhaustionTriggers++;
 
-    // Heilungs-Manager Heilung (1er heilen + 1 SP)
+    // Heilungs-Manager Heilung (1er heilen + 3 SP)
     if (healDice.length > 0) {
         const healAmt = healDice.length * 5;
         current.health = Math.min(100, current.health + healAmt);
         current.totalHealing += healAmt;
-        current.sp += 1;
+        current.sp += 3;
     }
 }
 
@@ -432,9 +438,9 @@ function executeHeal(dice, current) {
     current.totalHealing += healAmt;
     current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
 
-    // Quacksalber Heilungs-Manager: +1 SP bei Heilen (same ability)
+    // Quacksalber Heilungs-Manager: +3 SP bei Heilen (same ability)
     if (playerHasEffect(current, CharacterType.Quacksalber, 1)) {
-        current.sp += 1;
+        current.sp += 3;
     }
 }
 
@@ -465,9 +471,9 @@ function executeAbility(dice, current, opponent) {
             opponent.abilityProgress = [0, 0, 0, 0];
             opponent.currentAbilityIndex = 0;
             for (let i = 0; i < 4; i++) {
-                const amount = Math.min(10, totalFP);
+                const amount = Math.min(7, totalFP);
                 opponent.abilityProgress[i] = amount;
-                if (amount >= 10) {
+                if (amount >= 7) {
                     opponent.abilityUnlocked[i] = true;
                     opponent.currentAbilityIndex = i + 1;
                 }
@@ -565,7 +571,7 @@ function simulateTurn(current, opponent, strategy) {
             case 'attack': keepMask = keepForAttack(activeVals, current); break;
             case 'heal':   keepMask = keepForHeal(activeVals, current); break;
             case 'ability': keepMask = keepForAbility(activeVals); break;
-            case 'block':  keepMask = keepForAttack(activeVals, current); break;
+            case 'block':  keepMask = activeVals.map(() => true); break;
             default:       keepMask = activeVals.map(() => false);
         }
 
@@ -583,6 +589,19 @@ function simulateTurn(current, opponent, strategy) {
             for (let i = 0; i < diceCount; i++) {
                 if (!kept[i] && dice[i] !== -1) dice[i] = rollDie();
             }
+        }
+    }
+
+    // Neuwurf-Bonus (Quacksalber Ability 0): 1 Würfel neu werfen + 1 SP
+    if (playerHasEffect(current, CharacterType.Quacksalber, 0)) {
+        // Reroll den niedrigsten aktiven Würfel
+        let minIdx = -1, minVal = 7;
+        for (let i = 0; i < diceCount; i++) {
+            if (dice[i] > 0 && dice[i] < minVal) { minVal = dice[i]; minIdx = i; }
+        }
+        if (minIdx >= 0) {
+            dice[minIdx] = rollDie();
+            current.sp += 1;
         }
     }
 
@@ -607,6 +626,7 @@ function simulateTurn(current, opponent, strategy) {
 
     // Kill-Chance immer ergreifen (override)
     let effectiveBestDmg = finalAnalysis.bestDmg;
+    if (playerHasEffect(current, CharacterType.Soldat, 0)) effectiveBestDmg += 3;
     if (playerHasEffect(current, CharacterType.Soldat, 1)) effectiveBestDmg += 2;
     if (playerHasEffect(current, CharacterType.Rebell, 3)) {
         const fiveCount = finalDice.filter(d => d === 5).length;
@@ -628,8 +648,8 @@ function simulateTurn(current, opponent, strategy) {
 // ===== WIN CONDITION CHECK =====
 function checkWin(current, opponent) {
     if (opponent.health <= 0) return { winner: 'current', condition: 'elimination' };
-    if (current.sp >= 40) return { winner: 'current', condition: 'transcendence' };
-    if (opponent.sp >= 40) return { winner: 'opponent', condition: 'transcendence' };
+    if (current.sp >= 55) return { winner: 'current', condition: 'transcendence' };
+    if (opponent.sp >= 55) return { winner: 'opponent', condition: 'transcendence' };
     if (current.health <= 0) return { winner: 'opponent', condition: 'elimination' };
     return null;
 }
@@ -638,11 +658,13 @@ function checkWin(current, opponent) {
 function simulateGame(char1, char2, strategy1, strategy2, starterIdx) {
     const p1 = new Player('P1', char1);
     const p2 = new Player('P2', char2);
+    // Startspieler-Kompensation: Spieler 2 bekommt +8 HP
+    p2.health = 108;
 
     let turn = 0;
     let currentIdx = starterIdx; // 0 or 1
 
-    while (p1.health > 0 && p2.health > 0 && p1.sp < 40 && p2.sp < 40 && turn < MAX_TURNS) {
+    while (p1.health > 0 && p2.health > 0 && p1.sp < 55 && p2.sp < 55 && turn < MAX_TURNS) {
         turn++;
         const current = currentIdx === 0 ? p1 : p2;
         const opponent = currentIdx === 0 ? p2 : p1;
@@ -651,11 +673,10 @@ function simulateGame(char1, char2, strategy1, strategy2, starterIdx) {
         // Spielzug simulieren
         simulateTurn(current, opponent, strategy);
 
-        // Kriegsstratege (Rebell Ability 2): 2 auto-Schaden an Gegner + 1 SP am Zugende
+        // Kriegsstratege (Rebell Ability 2): 4 auto-Schaden an Gegner am Zugende
         if (playerHasEffect(current, CharacterType.Rebell, 2)) {
-            opponent.health = Math.max(0, opponent.health - 2);
-            current.sp += 1;
-            current.totalDamage += 2;
+            opponent.health = Math.max(0, opponent.health - 4);
+            current.totalDamage += 4;
         }
 
         // Win-Check nach Aktion + Kriegsstratege

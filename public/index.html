@@ -71,6 +71,33 @@
             100% { transform: translate(0, 0) rotateX(720deg) rotateZ(0deg) scale(1); }
         }
         .dice.rolling { animation: diceRoll 0.7s cubic-bezier(0.2, 0.8, 0.3, 1); }
+
+        /* Münzwurf-Animation */
+        .coinflip-overlay { display:none; position:fixed; z-index:2500; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.82); align-items:center; justify-content:center; flex-direction:column; }
+        .coinflip-overlay.show { display:flex; }
+        .coinflip-coin { width:90px; height:90px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #f5d76e, #d4a030 50%, #8b6914); border:4px solid #f0c040; box-shadow:0 0 20px rgba(212,160,48,0.6), inset 0 -2px 6px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; font-size:2.4em; image-rendering:pixelated; position:relative; }
+        .coinflip-coin::after { content:''; position:absolute; top:6px; left:12px; width:30px; height:14px; background:rgba(255,255,255,0.25); border-radius:50%; transform:rotate(-20deg); }
+        @keyframes coinSpin {
+            0% { transform:rotateY(0deg) scale(1); }
+            10% { transform:rotateY(360deg) scale(0.85) translateY(-30px); }
+            20% { transform:rotateY(720deg) scale(0.75) translateY(-55px); }
+            30% { transform:rotateY(1080deg) scale(0.7) translateY(-70px); }
+            40% { transform:rotateY(1440deg) scale(0.75) translateY(-60px); }
+            50% { transform:rotateY(1800deg) scale(0.8) translateY(-45px); }
+            60% { transform:rotateY(2160deg) scale(0.85) translateY(-30px); }
+            70% { transform:rotateY(2520deg) scale(0.9) translateY(-15px); }
+            80% { transform:rotateY(2880deg) scale(0.95) translateY(-5px); }
+            90% { transform:rotateY(3060deg) scale(1) translateY(2px); }
+            100% { transform:rotateY(3240deg) scale(1) translateY(0); }
+        }
+        .coinflip-coin.spinning { animation:coinSpin 2s cubic-bezier(0.22,0.61,0.36,1) forwards; }
+        .coinflip-label { font-family:'Press Start 2P',monospace; color:#d4a030; font-size:0.7em; margin-top:20px; text-align:center; line-height:1.6; opacity:0; transition:opacity 0.5s ease; text-shadow:2px 2px 0 #000; }
+        .coinflip-label.reveal { opacity:1; }
+        .coinflip-particle { position:absolute; width:6px; height:6px; background:#f0c040; border-radius:1px; image-rendering:pixelated; pointer-events:none; }
+        @keyframes coinParticle {
+            0% { opacity:1; transform:translate(0,0) scale(1); }
+            100% { opacity:0; transform:translate(var(--px),var(--py)) scale(0); }
+        }
         .dice:hover { border-color: #d4a030; }
         .dice.kept { background-color: #d4a030; border-color: #d4a030; color: #0a0814; box-shadow: 3px 3px 0 #000, 0 0 8px rgba(212,160,48,0.4); }
         .dice.locked { opacity: 0.85; cursor: not-allowed; }
@@ -135,6 +162,32 @@
             50% { box-shadow: 3px 3px 0 #000, 0 0 0 3px #d4a030; border-color: #e8b84a; }
             100% { box-shadow: 3px 3px 0 #000; border-color: #d4a030; }
         }
+        @keyframes tutFadeIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes tutSlideIn { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes tutPopIn { 0% { opacity: 0; transform: scale(0.7); } 60% { opacity: 1; transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes tutDmgFlash { 0% { color: #ff4444; text-shadow: 0 0 12px #ff0000; } 100% { color: #d4c8e0; text-shadow: none; } }
+        @keyframes tutHealFlash { 0% { color: #44ff88; text-shadow: 0 0 12px #00ff44; } 100% { color: #d4c8e0; text-shadow: none; } }
+        @keyframes tutSpGlow { 0% { color: #ffdd44; text-shadow: 0 0 14px #ffaa00; } 100% { color: #d4c8e0; text-shadow: none; } }
+        @keyframes tutProgressFill { from { width: 0%; } to { width: var(--tut-prog); } }
+        @keyframes tutTypewriter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes tutConfetti { 0% { opacity: 1; transform: translateY(0) rotate(0deg); } 100% { opacity: 0; transform: translateY(-120px) rotate(360deg); } }
+        @keyframes tutBounceIn { 0% { opacity: 0; transform: scale(0.3); } 50% { opacity: 1; transform: scale(1.05); } 70% { transform: scale(0.95); } 100% { transform: scale(1); } }
+        .tut-fade-in { animation: tutFadeIn 0.5s ease-out both; }
+        .tut-slide-in { animation: tutSlideIn 0.4s ease-out both; }
+        .tut-pop-in { animation: tutPopIn 0.5s ease-out both; }
+        .tut-bounce-in { animation: tutBounceIn 0.6s ease-out both; }
+        .tut-dmg-flash { animation: tutDmgFlash 1.2s ease-out both; }
+        .tut-heal-flash { animation: tutHealFlash 1.2s ease-out both; }
+        .tut-sp-glow { animation: tutSpGlow 1.2s ease-out both; }
+        .tut-progress-bar { height: 6px; background: linear-gradient(90deg, #d4a030, #e8b84a); border-radius: 3px; animation: tutProgressFill 0.6s ease-out both; }
+        .tut-progress-track { height: 6px; background: #1e1832; border-radius: 3px; margin: 8px 0; border: 1px solid #3d2d66; overflow: hidden; }
+        .tut-step-dots { display: flex; justify-content: center; gap: 8px; margin: 8px 0; }
+        .tut-step-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #3d2d66; background: #1e1832; transition: all 0.3s; }
+        .tut-step-dot.active { background: #d4a030; border-color: #e8b84a; box-shadow: 0 0 8px rgba(212,160,48,0.6); }
+        .tut-step-dot.done { background: #6b8a3a; border-color: #8aaa4a; }
+        .tut-speech-msg > span { display: inline; animation: tutTypewriter 0.3s ease-out both; }
+        .tut-exhaust-warning { background: rgba(255,68,68,0.15); border: 2px dashed #cc4444; padding: 8px 12px; margin-top: 8px; font-size: 0.95em; color: #ff8888; animation: tutPopIn 0.4s ease-out both; }
+        .tut-reward-banner { background: linear-gradient(135deg, rgba(212,160,48,0.15), rgba(212,160,48,0.05)); border: 2px solid #d4a030; padding: 10px 16px; text-align: center; margin: 10px 0; animation: tutBounceIn 0.6s ease-out both; }
         .dice-eligible { box-shadow: 3px 3px 0 #000, 0 0 12px rgba(212,160,48,0.6), 0 0 20px rgba(212,160,48,0.3); border-color: #d4a030 !important; }
         .btn-select-action.action-active { border-color: #d4a030; background-color: #261f42; color: #fff; box-shadow: 2px 2px 0 #000, 0 0 8px rgba(212,160,48,0.4); }
         @keyframes screenShake {
@@ -222,12 +275,17 @@
         .shop-item-preview { font-size: 1.8em; letter-spacing: 6px; margin: 8px 0; }
         .shop-item-price { font-size: 0.9em; color: #c89040; margin-top: 5px; }
         .shop-item-equipped { font-size: 0.85em; color: #44ccaa; margin-top: 5px; }
-        .skin-preview-runen { font-family: 'Segoe UI Symbol', 'Noto Sans Symbols', serif; }
+        .skin-preview-urzeit { color: #8B7355; font-family: Georgia, 'Times New Roman', serif; font-weight: bold; text-shadow: 1px 1px 0 #5a4a35, -1px -1px 0 #3d2d1a, 2px 2px 3px rgba(0,0,0,0.6); letter-spacing: 2px; }
+        .skin-preview-kristall { animation: sparkle 1.5s ease-in-out infinite; text-shadow: 0 0 6px #aaddff, 0 0 12px rgba(170,221,255,0.5); }
+        .skin-preview-knochen { color: #e8dcc8; font-family: Georgia, serif; font-weight: bold; text-shadow: 1px 1px 0 #6b5b4a, 0 0 4px rgba(232,220,200,0.3); }
         .skin-preview-feuer { color: #ff6600; text-shadow: 0 0 8px #ff3300, 0 0 16px rgba(255,51,0,0.5); }
         .skin-preview-eis { color: #88ddff; text-shadow: 0 0 8px #00aaff, 0 0 16px rgba(0,170,255,0.4); }
         .skin-preview-nekromant { color: #aa44cc; text-shadow: 0 0 8px #7722aa, 0 0 16px rgba(119,34,170,0.4); }
-        .skin-preview-himmelsschmiede { color: #ffe066; text-shadow: 0 0 10px #ffcc00, 0 0 20px rgba(255,204,0,0.5); }
-        .skin-preview-void { color: #6633cc; text-shadow: 0 0 10px #4400aa, 0 0 20px rgba(68,0,170,0.5); background: linear-gradient(135deg, #0a0814, #1a0a2e); -webkit-background-clip: text; }
+        .skin-preview-himmelsschmiede { animation: goldenShift 2s ease-in-out infinite; text-shadow: 0 0 10px #ffcc00, 0 0 20px rgba(255,204,0,0.5); }
+        .skin-preview-void { animation: voidWaver 2.5s ease-in-out infinite; }
+        @keyframes sparkle { 0%, 100% { color: #ffffff; text-shadow: 0 0 6px #aaddff, 0 0 12px rgba(170,221,255,0.5); } 50% { color: #aaddff; text-shadow: 0 0 10px #ffffff, 0 0 20px rgba(255,255,255,0.6); } }
+        @keyframes goldenShift { 0%, 100% { color: #ffe066; text-shadow: 0 0 10px #ffcc00; } 50% { color: #ffffff; text-shadow: 0 0 12px #ffe066, 0 0 24px rgba(255,224,102,0.4); } }
+        @keyframes voidWaver { 0%, 100% { color: #6633cc; text-shadow: 0 0 8px #4400aa, 0 0 16px rgba(68,0,170,0.5); } 33% { color: #8844ee; text-shadow: 0 0 14px #6622cc, 0 0 28px rgba(102,34,204,0.6); } 66% { color: #5522aa; text-shadow: 0 0 6px #330088, 0 0 12px rgba(51,0,136,0.4); } }
         @keyframes rainbowCycle { 0% { color: #ff0000; } 16% { color: #ff8800; } 33% { color: #ffff00; } 50% { color: #00ff00; } 66% { color: #0088ff; } 83% { color: #8800ff; } 100% { color: #ff0000; } }
         @keyframes konfettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
         @keyframes dragonBreath { 0% { transform: scale(0); opacity: 0; } 30% { transform: scale(1.3); opacity: 1; } 70% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.5); opacity: 0; } }
@@ -239,11 +297,17 @@
         .dice-pip.on { background: #d4c8e0; }
         .table-standard { }
         .table-taverne { background: linear-gradient(180deg, #2a1a0a 0%, #3d2610 100%) !important; border-color: #5a3a1a !important; }
+        .table-taverne .player-panel, .table-taverne .opponent-bar, .table-taverne .current-panel, .table-taverne .battle-header { background-color: rgba(42,26,10,0.7) !important; border-color: #5a3a1a !important; }
         .table-kerker { background: linear-gradient(180deg, #0a0a10 0%, #141420 100%) !important; border-color: #2a2a3a !important; }
+        .table-kerker .player-panel, .table-kerker .opponent-bar, .table-kerker .current-panel, .table-kerker .battle-header { background-color: rgba(10,10,16,0.7) !important; border-color: #2a2a3a !important; }
         .table-wald { background: linear-gradient(180deg, #0a1a0a 0%, #102010 100%) !important; border-color: #1a3a1a !important; }
+        .table-wald .player-panel, .table-wald .opponent-bar, .table-wald .current-panel, .table-wald .battle-header { background-color: rgba(10,26,10,0.7) !important; border-color: #1a3a1a !important; }
         .table-drachenhort { background: linear-gradient(180deg, #1a1000 0%, #2a1a00 100%) !important; border-color: #d4a030 !important; box-shadow: inset 0 0 30px rgba(212,160,48,0.1); }
+        .table-drachenhort .player-panel, .table-drachenhort .opponent-bar, .table-drachenhort .current-panel, .table-drachenhort .battle-header { background-color: rgba(26,16,0,0.7) !important; border-color: #d4a030 !important; }
         .table-sternenhimmel { background: linear-gradient(180deg, #050510 0%, #0a0a20 100%) !important; border-color: #334488 !important; }
+        .table-sternenhimmel .player-panel, .table-sternenhimmel .opponent-bar, .table-sternenhimmel .current-panel, .table-sternenhimmel .battle-header { background-color: rgba(5,5,16,0.7) !important; border-color: #334488 !important; }
         .table-thronsaal { background: linear-gradient(180deg, #1a0a0a 0%, #2a1020 100%) !important; border-color: #cc3333 !important; box-shadow: inset 0 0 40px rgba(204,51,51,0.1); }
+        .table-thronsaal .player-panel, .table-thronsaal .opponent-bar, .table-thronsaal .current-panel, .table-thronsaal .battle-header { background-color: rgba(26,10,10,0.7) !important; border-color: #cc3333 !important; }
         .frame-standard { }
         .frame-silber { border-color: #aaaacc !important; box-shadow: 0 0 8px rgba(170,170,204,0.3); }
         .frame-gold { border-color: #d4a030 !important; box-shadow: 0 0 10px rgba(212,160,48,0.4); }
@@ -373,6 +437,13 @@
         body.colorblind-mode .info-rule, body.colorblind-mode .rolls-left, body.colorblind-mode .player-hp, body.colorblind-mode .player-fp-sp, body.colorblind-mode .difficulty-desc, body.colorblind-mode .achievement-desc, body.colorblind-mode .stat-label, body.colorblind-mode .opponent-bar .opp-stat { color: #c0b0d4; }
         body.colorblind-mode .dice { border-width: 4px; }
         body.colorblind-mode .dice.kept { box-shadow: 3px 3px 0 #000, 0 0 12px rgba(212,160,48,0.6); }
+        body.colorblind-mode .btn-main, body.colorblind-mode .btn-action, body.colorblind-mode .btn-select-action, body.colorblind-mode .btn-back, body.colorblind-mode .btn-back-meta { border-width: 3px; }
+        body.colorblind-mode .player-name, body.colorblind-mode .opp-name { font-weight: bold; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+        body.colorblind-mode .hp-fill, body.colorblind-mode .opp-hp-fill { border: 2px solid rgba(255,255,255,0.4); }
+        body.colorblind-mode .scroll-text, body.colorblind-mode .scroll-btn { color: #e0d8f0; }
+        body.colorblind-mode .a11y-option-desc, body.colorblind-mode .difficulty-desc { color: #bbb0d0; }
+        body.colorblind-mode .current-player { color: #f0e8ff; }
+        body.colorblind-mode .action-label { color: #e0d8f0; }
         /* Red-Green Mode: Swap red/green for orange/blue */
         body.rg-mode .hp-fill { background: #4488cc; }
         body.rg-mode .player2 .hp-fill { background: #e07020; }
@@ -390,6 +461,35 @@
         body.rg-mode .player-color-green { color: #4488cc; }
         body.rg-mode .player-color-red { color: #e07020; }
         body.rg-mode .btn-surrender { border-color: #e07020; }
+        body.rg-mode .shop-item-equipped { color: #4488cc; }
+        body.rg-mode .tut-step-dot.done { background: #4488cc; border-color: #66aaee; }
+        body.rg-mode .tut-exhaust-warning { border-color: #e07020; color: #ffaa66; background: rgba(224,112,32,0.15); }
+        body.rg-mode .attack-flash .bolt { stroke: #e07020; filter: drop-shadow(0 0 12px #e07020) drop-shadow(0 0 30px rgba(224,112,32,0.6)); }
+        body.rg-mode .heal-flash { background: radial-gradient(circle, rgba(68,136,204,0.45) 0%, rgba(34,85,153,0.2) 50%, rgba(68,136,204,0) 80%); }
+        @keyframes tutDmgFlashRG { 0% { color: #e07020; text-shadow: 0 0 12px #cc5500; } 100% { color: #d4c8e0; text-shadow: none; } }
+        @keyframes tutHealFlashRG { 0% { color: #4488cc; text-shadow: 0 0 12px #2266aa; } 100% { color: #d4c8e0; text-shadow: none; } }
+        body.rg-mode .tut-dmg-flash { animation-name: tutDmgFlashRG; }
+        body.rg-mode .tut-heal-flash { animation-name: tutHealFlashRG; }
+        @keyframes rainbowCycleRG { 0% { color: #e07020; } 16% { color: #ff8800; } 33% { color: #ffff00; } 50% { color: #4488cc; } 66% { color: #0088ff; } 83% { color: #8800ff; } 100% { color: #e07020; } }
+        body.rg-mode .skin-preview-regenbogen { animation-name: rainbowCycleRG; }
+        /* Reduced Motion Mode */
+        body.reducedmotion-mode .screen-shake { animation: none !important; }
+        body.reducedmotion-mode .attack-flash { display: none !important; }
+        body.reducedmotion-mode .heal-flash { display: none !important; }
+        body.reducedmotion-mode .heal-container { display: none !important; }
+        body.reducedmotion-mode .ripple-container { display: none !important; }
+        body.reducedmotion-mode .tut-fade-in, body.reducedmotion-mode .tut-slide-in, body.reducedmotion-mode .tut-pop-in, body.reducedmotion-mode .tut-bounce-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+        body.reducedmotion-mode .tut-dmg-flash, body.reducedmotion-mode .tut-heal-flash, body.reducedmotion-mode .tut-sp-glow { animation: none !important; }
+        body.reducedmotion-mode .dice { animation-duration: 0.01s !important; }
+        body.reducedmotion-mode .skin-preview-regenbogen, body.reducedmotion-mode .skin-preview-kristall, body.reducedmotion-mode .skin-preview-void, body.reducedmotion-mode .skin-preview-himmelsschmiede { animation: none !important; }
+        body.reducedmotion-mode .scroll-parchment { animation: none !important; }
+        @media (prefers-reduced-motion: reduce) {
+            .screen-shake { animation: none !important; }
+            .attack-flash { display: none !important; }
+            .heal-flash { display: none !important; }
+            .heal-container { display: none !important; }
+            .dice { animation-duration: 0.01s !important; }
+        }
         /* Big Font Mode */
         body.bigfont-mode { font-size: 1.45em; }
         body.bigfont-mode .btn-main { font-size: 0.9em; }
@@ -448,14 +548,14 @@
             <div class="info-rule">Kl. Straße = +3 FP, +6 SP</div>
             <div class="info-rule">Gr. Straße = +4 FP, +10 SP</div>
             <div class="info-rule">6× gleich = +6 FP, +18 SP</div>
-            <div class="info-rule" style="margin-top: 4px; color: #d4a030;">FP → Fähigkeiten (10/20/30/40)</div>
-            <div class="info-rule" style="color: #d4a030;">SP 40 = 🌟 Transzendenz!</div>
+            <div class="info-rule" style="margin-top: 4px; color: #d4a030;">FP → Fähigkeiten (7/14/21/28)</div>
+            <div class="info-rule" style="color: #d4a030;">SP 55 = 🌟 Transzendenz!</div>
             <div class="info-rule" style="margin-top: 4px; color: #e09030;">⚡ Erschöpfung: ab 3×⚔ je -1🎲 (min. 1)</div>
         </div>
         <div style="margin-bottom: 8px;">
             <div class="info-title" style="margin: 0 0 5px 0; font-size: 0.9em;">🏆 Sieg:</div>
             <div class="info-rule">💀 Gegner auf 0 HP</div>
-            <div class="info-rule">🌟 40 SP erreichen</div>
+            <div class="info-rule">🌟 55 SP erreichen</div>
         </div>
     </div>
 
@@ -467,27 +567,40 @@
         </div>
     </div>
 
-    <div id="gameContainer"></div>
+    <div id="coinFlipOverlay" class="coinflip-overlay">
+        <div class="coinflip-coin" id="coinFlipCoin">🪙</div>
+        <div class="coinflip-label" id="coinFlipLabel"></div>
+    </div>
+
+    <div id="gameContainer" role="main" aria-label="Spielbereich"></div>
 
     <button class="a11y-toggle" id="a11yToggle" onclick="toggleA11yPanel()" title="Barrierefreiheit">👓</button>
     <button class="info-toggle-mobile" id="infoToggleMobile" onclick="toggleMobileInfo()" title="Regeln">📋</button>
     <div class="a11y-panel" id="a11yPanel">
         <div class="a11y-panel-title">👓 Barrierefreiheit</div>
-        <div class="a11y-option" onclick="toggleA11yMode('lrs')">
+        <div class="a11y-option" tabindex="0" role="button" aria-label="LRS-Modus umschalten" onclick="toggleA11yMode('lrs')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <div class="a11y-checkbox" id="a11yCheckLrs"></div>
             <div><div class="a11y-option-label">LRS-Modus</div><div class="a11y-option-desc">Lesbare Schrift (OpenDyslexic)</div></div>
         </div>
-        <div class="a11y-option" onclick="toggleA11yMode('colorblind')">
+        <div class="a11y-option" tabindex="0" role="button" aria-label="Farbenblindheit-Modus umschalten" onclick="toggleA11yMode('colorblind')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <div class="a11y-checkbox" id="a11yCheckColorblind"></div>
             <div><div class="a11y-option-label">Farbenblindheit</div><div class="a11y-option-desc">Höherer Kontrast</div></div>
         </div>
-        <div class="a11y-option" onclick="toggleA11yMode('rg')">
+        <div class="a11y-option" tabindex="0" role="button" aria-label="Rot-Grün-Schwäche-Modus umschalten" onclick="toggleA11yMode('rg')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <div class="a11y-checkbox" id="a11yCheckRg"></div>
             <div><div class="a11y-option-label">Rot-Grün-Schwäche</div><div class="a11y-option-desc">Rot→Orange, Grün→Blau</div></div>
         </div>
-        <div class="a11y-option" onclick="toggleA11yMode('bigfont')">
+        <div class="a11y-option" tabindex="0" role="button" aria-label="Größere Schrift umschalten" onclick="toggleA11yMode('bigfont')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <div class="a11y-checkbox" id="a11yCheckBigfont"></div>
             <div><div class="a11y-option-label">Größere Schrift</div><div class="a11y-option-desc">Alle Texte vergrößern</div></div>
+        </div>
+        <div class="a11y-option" tabindex="0" role="button" aria-label="Animationen reduzieren umschalten" onclick="toggleA11yMode('reducedmotion')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <div class="a11y-checkbox" id="a11yCheckReducedmotion"></div>
+            <div><div class="a11y-option-label">Animationen reduzieren</div><div class="a11y-option-desc">Kein Bildschirmwackeln, Blitz-Effekte aus</div></div>
+        </div>
+        <div class="a11y-option" tabindex="0" role="button" aria-label="Getrennte Lautstärke umschalten" onclick="toggleA11yMode('separatevolume')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            <div class="a11y-checkbox" id="a11yCheckSeparatevolume"></div>
+            <div><div class="a11y-option-label">Getrennte Lautstärke</div><div class="a11y-option-desc">Musik und Effekte separat steuern</div></div>
         </div>
     </div>
 
@@ -498,7 +611,7 @@
                 var data = localStorage.getItem('wuerfelspiel_accessibility');
                 if (data) return JSON.parse(data);
             } catch(e) {}
-            return { lrs: false, colorblind: false, rg: false, bigfont: false };
+            return { lrs: false, colorblind: false, rg: false, bigfont: false, reducedmotion: false, separatevolume: false };
         }
 
         function saveA11ySettings(settings) {
@@ -511,6 +624,7 @@
             if (settings.colorblind) b.classList.add('colorblind-mode'); else b.classList.remove('colorblind-mode');
             if (settings.rg) b.classList.add('rg-mode'); else b.classList.remove('rg-mode');
             if (settings.bigfont) b.classList.add('bigfont-mode'); else b.classList.remove('bigfont-mode');
+            if (settings.reducedmotion) b.classList.add('reducedmotion-mode'); else b.classList.remove('reducedmotion-mode');
             updateA11yCheckboxes(settings);
         }
 
@@ -523,6 +637,22 @@
             if (rgEl) { rgEl.className = 'a11y-checkbox' + (settings.rg ? ' checked' : ''); rgEl.textContent = settings.rg ? '✓' : ''; }
             var bfEl = document.getElementById('a11yCheckBigfont');
             if (bfEl) { bfEl.className = 'a11y-checkbox' + (settings.bigfont ? ' checked' : ''); bfEl.textContent = settings.bigfont ? '✓' : ''; }
+            var rmEl = document.getElementById('a11yCheckReducedmotion');
+            if (rmEl) { rmEl.className = 'a11y-checkbox' + (settings.reducedmotion ? ' checked' : ''); rmEl.textContent = settings.reducedmotion ? '✓' : ''; }
+            var svEl = document.getElementById('a11yCheckSeparatevolume');
+            if (svEl) { svEl.className = 'a11y-checkbox' + (settings.separatevolume ? ' checked' : ''); svEl.textContent = settings.separatevolume ? '✓' : ''; }
+        }
+
+        // RG-mode helpers for inline styles
+        function rgColor(c) {
+            if (!document.body.classList.contains('rg-mode')) return c;
+            var map = { '#44ccaa': '#4488cc', '#cc4444': '#e07020', '#cc2222': '#e07020', '#55aa55': '#4488cc', '#4caf50': '#4488cc', '#ff8888': '#ffaa66', '#0d2a25': '#0d1a33' };
+            return map[c.toLowerCase()] || c;
+        }
+        function rgEmoji(e) {
+            if (!document.body.classList.contains('rg-mode')) return e;
+            var map = { '\uD83D\uDC9A': '\uD83D\uDC99', '\uD83D\uDFE2': '\uD83D\uDFE0\uFE0F', '\uD83D\uDD34': '\uD83D\uDFE0' };
+            return map[e] || e;
         }
 
         function toggleA11yPanel() {
@@ -580,7 +710,19 @@
                 purchasedSounds: ['standard'],
                 quests: [],
                 milestones: {},
-                lastWheelDate: null
+                lastWheelDate: null,
+                aiLearning: {
+                    gamesPlayed: 0,
+                    actionCounts: { attack: 0, heal: 0, ability: 0, block: 0 },
+                    healThresholds: [],
+                    avgDamagePerAttack: 0,
+                    totalDamageDealt: 0,
+                    totalAttacks: 0,
+                    charPicks: [0,0,0,0],
+                    winsByElim: 0,
+                    winsByTrans: 0,
+                    matchups: {}
+                }
             };
         }
 
@@ -652,7 +794,7 @@
                 selectedFrame: profile.selectedFrame, purchasedFrames: profile.purchasedFrames,
                 selectedVictory: profile.selectedVictory, purchasedVictory: profile.purchasedVictory,
                 selectedSounds: profile.selectedSounds, purchasedSounds: profile.purchasedSounds,
-                quests: profile.quests, milestones: profile.milestones, lastWheelDate: profile.lastWheelDate };
+                quests: profile.quests, milestones: profile.milestones, lastWheelDate: profile.lastWheelDate, aiLearning: profile.aiLearning };
             var def2 = getDefaultMetaData();
             if (!data.stats) data.stats = def2.stats;
             if (!data.achievements) data.achievements = def2.achievements;
@@ -670,6 +812,7 @@
             if (!data.quests) data.quests = [];
             if (!data.milestones) data.milestones = {};
             if (data.lastWheelDate === undefined) data.lastWheelDate = null;
+            if (!data.aiLearning) data.aiLearning = def2.aiLearning;
             for (var k in def2.stats) {
                 if (def2.stats.hasOwnProperty(k) && data.stats[k] === undefined) data.stats[k] = def2.stats[k];
             }
@@ -696,6 +839,7 @@
             profile.quests = data.quests;
             profile.milestones = data.milestones;
             profile.lastWheelDate = data.lastWheelDate;
+            profile.aiLearning = data.aiLearning;
             saveProfileStore(store);
         }
 
@@ -719,14 +863,14 @@
             gotisch: { name: 'Gotisch', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 30, cssClass: 'skin-preview-gotisch' },
             strichliste: { name: 'Strichliste', map: {1:'I',2:'II',3:'III',4:'IIII',5:'卌',6:'卌I'}, price: 60, cssClass: 'skin-preview-strich' },
             symbole: { name: 'Symbole', map: {1:'⚀',2:'⚁',3:'⚂',4:'⚃',5:'⚄',6:'⚅'}, price: 100, cssClass: 'skin-preview-symbole', pipDots: true },
-            runen: { name: 'Runen', map: {1:'ᚠ',2:'ᚢ',3:'ᚦ',4:'ᚨ',5:'ᚱ',6:'ᚲ'}, price: 50, cssClass: 'skin-preview-runen' },
-            kristall: { name: 'Kristall', map: {1:'◇',2:'◆',3:'◈',4:'⬡',5:'⬢',6:'⬣'}, price: 80, cssClass: '' },
-            knochen: { name: 'Knochen', map: {1:'☠',2:'💀',3:'⚰',4:'🦴',5:'🩻',6:'🪦'}, price: 100, cssClass: '' },
+            urzeit: { name: 'Urzeit', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 50, cssClass: 'skin-preview-urzeit' },
+            kristall: { name: 'Kristall', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 80, cssClass: 'skin-preview-kristall' },
+            knochen: { name: 'Knochen', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 100, cssClass: 'skin-preview-knochen' },
             feuer: { name: 'Feuer', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 150, cssClass: 'skin-preview-feuer' },
             eis: { name: 'Eis', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 150, cssClass: 'skin-preview-eis' },
             nekromant: { name: 'Nekromant', map: {1:'Ⅰ',2:'Ⅱ',3:'Ⅲ',4:'Ⅳ',5:'Ⅴ',6:'Ⅵ'}, price: 200, cssClass: 'skin-preview-nekromant' },
-            himmelsschmiede: { name: 'Himmelsschmiede', map: {1:'✦',2:'✧',3:'★',4:'☆',5:'✶',6:'✹'}, price: 300, cssClass: 'skin-preview-himmelsschmiede' },
-            void: { name: 'Void', map: {1:'◌',2:'◍',3:'◎',4:'●',5:'◉',6:'⦿'}, price: 500, cssClass: 'skin-preview-void' },
+            himmelsschmiede: { name: 'Himmelsschmiede', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 300, cssClass: 'skin-preview-himmelsschmiede' },
+            void: { name: 'Void', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 500, cssClass: 'skin-preview-void' },
             regenbogen: { name: 'Regenbogen', map: {1:'1',2:'2',3:'3',4:'4',5:'5',6:'6'}, price: 1000, cssClass: 'skin-preview-regenbogen', legendary: true }
         };
 
@@ -764,11 +908,11 @@
 
         // ===== SOUND-PACKS =====
         var SOUND_PACKS = {
-            standard: { name: 'Standard', price: 0, desc: 'Normale Sounds' },
-            taverne: { name: 'Taverne', price: 80, desc: '🍺 Tiefe Holz-Sounds' },
-            achtbit: { name: '8-Bit', price: 100, desc: '👾 Retro Chiptune' },
-            mystisch: { name: 'Mystisch', price: 120, desc: '🔮 Magische Klänge' },
-            kriegstrommeln: { name: 'Kriegstrommeln', price: 150, desc: '🥁 Epische Trommeln + Hörner' }
+            standard: { name: 'Standard', price: 0, desc: '🎵 Original (Würfeln, Angriff, Heilung, Sammeln, Sieg, Klick)' },
+            taverne: { name: 'Taverne', price: 80, desc: '🍺 Dumpfe Holztöne (Würfeln, Angriff, Sammeln, Klick, Musik)' },
+            achtbit: { name: '8-Bit', price: 100, desc: '👾 Retro-Chiptune (Würfeln, Angriff, Heilung, Sieg, Klick, Musik)' },
+            mystisch: { name: 'Mystisch', price: 120, desc: '🔮 Magische Klänge (Ätherisches Würfeln, Angriff, Heilung, Sammeln)' },
+            kriegstrommeln: { name: 'Kriegstrommeln', price: 150, desc: '🥁 Epische Trommeln (Würfeln, Angriff, Sieg, Niederlage, Musik)' }
         };
 
         // ===== AUFTRAGS-SYSTEM (Quests) =====
@@ -791,7 +935,7 @@
         var MILESTONES = [
             { id: 'wins10', wins: 10, reward: 50, desc: '10 Siege', icon: '🎖️', freeItem: null },
             { id: 'wins25', wins: 25, reward: 100, desc: '25 Siege', icon: '🏅', freeItem: null },
-            { id: 'wins50', wins: 50, reward: 200, desc: '50 Siege', icon: '👑', freeItem: 'runen' },
+            { id: 'wins50', wins: 50, reward: 200, desc: '50 Siege', icon: '👑', freeItem: 'urzeit' },
             { id: 'wins100', wins: 100, reward: 500, desc: '100 Siege', icon: '🌟', freeItem: 'flammen' },
             { id: 'games50', wins: null, games: 50, reward: 100, desc: '50 Partien', icon: '📚', freeItem: null },
             { id: 'games100', wins: null, games: 100, reward: 250, desc: '100 Partien', icon: '🎮', freeItem: null }
@@ -804,15 +948,14 @@
             { label: '🪙 30', reward: 30, weight: 15 },
             { label: '🪙 50', reward: 50, weight: 10 },
             { label: '🪙 75', reward: 75, weight: 8 },
-            { label: '🪙 100', reward: 100, weight: 5 },
+            { label: '🪙 100', reward: 100, weight: 6 },
             { label: '🪙 150', reward: 150, weight: 4 },
-            { label: '🪙 250', reward: 250, weight: 2 },
-            { label: '💎 500', reward: 500, weight: 1 }
+            { label: '🪙 200', reward: 200, weight: 2 }
         ];
 
         var CHARACTER_ABILITIES = {
             0: [
-                { name: ['⚡ Extrawürfel', '⚡ Extrawürfel', '⚡ Extrawürfel'], desc: ['7 Würfel statt 6', '7 Würfel statt 6', '7 Würfel statt 6'] },
+                { name: ['⚔️ Kampfinstinkt', '⚔️ Kampfinstinkt', '⚔️ Kampfinstinkt'], desc: ['+3 Angriffsschaden', '+3 Angriffsschaden', '+3 Angriffsschaden'] },
                 { name: ['🎯 Kriegsmeister', '🎯 Kriegsmeisterin', '🎯 Kriegsmeister*in'], desc: ['+2 Schaden. ≥12 Schaden: +2 SP', '+2 Schaden. ≥12 Schaden: +2 SP', '+2 Schaden. ≥12 Schaden: +2 SP'] },
                 { name: ['🔄 Vergeltung', '🔄 Vergeltung', '🔄 Vergeltung'], desc: ['Reflektiert 1 Würfelwert als Gegenschaden', 'Reflektiert 1 Würfelwert als Gegenschaden', 'Reflektiert 1 Würfelwert als Gegenschaden'] },
                 { name: ['🎪 Doppelwertung', '🎪 Doppelwertung', '🎪 Doppelwertung'], desc: ['2 verschiedene Gruppen für Angriff markierbar', '2 verschiedene Gruppen für Angriff markierbar', '2 verschiedene Gruppen für Angriff markierbar'] }
@@ -820,7 +963,7 @@
             1: [
                 { name: ['🎲 Würfel-Diebstahl', '🎲 Würfel-Diebstahl', '🎲 Würfel-Diebstahl'], desc: ['+1 Würfel wenn Gegner unmarkierte hatte', '+1 Würfel wenn Gegnerin unmarkierte hatte', '+1 Würfel wenn Gegner*in unmarkierte hatte'] },
                 { name: ['🛡️ Schadensblockade', '🛡️ Schadensblockade', '🛡️ Schadensblockade'], desc: ['Aktion Blocken: Summe ≥ Schaden = geheilt', 'Aktion Blocken: Summe ≥ Schaden = geheilt', 'Aktion Blocken: Summe ≥ Schaden = geheilt'] },
-                { name: ['👑 Kriegsstratege', '👑 Kriegsstrategin', '👑 Kriegsstrateg*in'], desc: ['2 auto-Schaden + 1 SP/Runde', '2 auto-Schaden + 1 SP/Runde', '2 auto-Schaden + 1 SP/Runde'] },
+                { name: ['👑 Kriegsstratege', '👑 Kriegsstrategin', '👑 Kriegsstrateg*in'], desc: ['4 auto-Schaden/Runde', '4 auto-Schaden/Runde', '4 auto-Schaden/Runde'] },
                 { name: ['🚀 Fünfer-Upgrade', '🚀 Fünfer-Upgrade', '🚀 Fünfer-Upgrade'], desc: ['5er zählen als 6 bei Angriff', '5er zählen als 6 bei Angriff', '5er zählen als 6 bei Angriff'] }
             ],
             2: [
@@ -830,8 +973,8 @@
                 { name: ['💣 Würfel-Zerstörer', '💣 Würfel-Zerstörerin', '💣 Würfel-Zerstörer*in'], desc: ['Zerstört 1 Gegner-Würfel pro Zug', 'Zerstört 1 Gegnerin-Würfel pro Zug', 'Zerstört 1 Gegner*in-Würfel pro Zug'] }
             ],
             3: [
-                { name: ['🔁 Neuwurf-Bonus', '🔁 Neuwurf-Bonus', '🔁 Neuwurf-Bonus'], desc: ['Doppelklick: 1 Würfel neu werfen (1x/Zug)', 'Doppelklick: 1 Würfel neu werfen (1x/Zug)', 'Doppelklick: 1 Würfel neu werfen (1x/Zug)'] },
-                { name: ['💊 Heilungs-Manager', '💊 Heilungs-Managerin', '💊 Heilungs-Manager*in'], desc: ['1er heilen bei Angriff + 1 SP/Heilung', '1er heilen bei Angriff + 1 SP/Heilung', '1er heilen bei Angriff + 1 SP/Heilung'] },
+                { name: ['🔁 Neuwurf-Bonus', '🔁 Neuwurf-Bonus', '🔁 Neuwurf-Bonus'], desc: ['Doppelklick: 1 Würfel neu werfen (1x/Zug) +1 SP', 'Doppelklick: 1 Würfel neu werfen (1x/Zug) +1 SP', 'Doppelklick: 1 Würfel neu werfen (1x/Zug) +1 SP'] },
+                { name: ['💊 Heilungs-Manager', '💊 Heilungs-Managerin', '💊 Heilungs-Manager*in'], desc: ['1er heilen bei Angriff + 3 SP/Heilung', '1er heilen bei Angriff + 3 SP/Heilung', '1er heilen bei Angriff + 3 SP/Heilung'] },
                 { name: ['🔮 Gegner-Zwang', '🔮 Gegnerin-Zwang', '🔮 Gegner*in-Zwang'], desc: ['1 zufälliger Gegner-Wurf wird ungültig', '1 zufälliger Gegnerin-Wurf wird ungültig', '1 zufälliger Gegner*in-Wurf wird ungültig'] },
                 { name: ['♻️ Selber-Neustart', '♻️ Selber-Neustart', '♻️ Selber-Neustart'], desc: ['Button: Alle Würfel komplett neu werfen (1x/Zug)', 'Button: Alle Würfel komplett neu werfen (1x/Zug)', 'Button: Alle Würfel komplett neu werfen (1x/Zug)'] }
             ]
@@ -841,12 +984,15 @@
         var SFX = {
             ctx: null,
             muted: false,
+            sfxMuted: false,
+            musicMuted: false,
             _getCtx: function() {
                 if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} }
                 return this.ctx;
             },
             _play: function(fn) {
-                if (this.muted) return;
+                var sep = loadA11ySettings().separatevolume;
+                if (sep ? this.sfxMuted : this.muted) return;
                 var ctx = this._getCtx();
                 if (!ctx) return;
                 if (ctx.state === 'suspended') ctx.resume();
@@ -968,7 +1114,9 @@
                     }
                 });
             },
-            toggle: function() { this.muted = !this.muted; if (this.muted) Music.stop(); else Music._restart(); return this.muted; }
+            toggle: function() { this.muted = !this.muted; if (this.muted) Music.stop(); else Music._restart(); return this.muted; },
+            toggleSfx: function() { this.sfxMuted = !this.sfxMuted; return this.sfxMuted; },
+            toggleMusic: function() { this.musicMuted = !this.musicMuted; if (this.musicMuted) Music.stop(); else Music._restart(); return this.musicMuted; }
         };
 
         // ===== SOUND-PACK DISPATCH =====
@@ -1143,7 +1291,8 @@
             _restart: function() { if (this._track) this.play(this._track); },
             play: function(track) {
                 this._track = track;
-                if (SFX.muted) return;
+                var sep = loadA11ySettings().separatevolume;
+                if (sep ? SFX.musicMuted : SFX.muted) return;
                 if (this.current === track) return;
                 this.stop();
                 var ctx = this._getCtx();
@@ -1165,7 +1314,8 @@
                 var mg = ctx.createGain(); mg.gain.value = 0.045; mg.connect(ctx.destination);
                 self._nodes.push({ gain: mg });
                 function tick() {
-                    if (SFX.muted || self.current !== 'lobby') return;
+                    var _sep = loadA11ySettings().separatevolume;
+                    if ((_sep ? SFX.musicMuted : SFX.muted) || self.current !== 'lobby') return;
                     var currentPhrase = phrases[phraseIdx % phrases.length];
                     var f = currentPhrase[noteInPhrase % currentPhrase.length];
                     // Hauptmelodie: Sine
@@ -1214,7 +1364,8 @@
                 var mg = ctx.createGain(); mg.gain.value = 0.03; mg.connect(ctx.destination);
                 self._nodes.push({ gain: mg });
                 function tick() {
-                    if (SFX.muted || self.current !== 'battle') return;
+                    var _sep = loadA11ySettings().separatevolume;
+                    if ((_sep ? SFX.musicMuted : SFX.muted) || self.current !== 'battle') return;
                     var mel = (phrase % 2 === 0) ? phraseA : phraseB;
                     var bas = (phrase % 2 === 0) ? bassA : bassB;
                     var f = mel[idx % mel.length];
@@ -1316,8 +1467,8 @@
             return (names[this.character] && names[this.character][this.gender]) || 'Unbekannt';
         };
         Player.prototype.addAbilityPoints = function(points) {
-            // Jede Fähigkeit kostet 10 FP, Überschuss geht weiter
-            var thresholds = [10, 10, 10, 10];
+            // Jede Fähigkeit kostet 7 FP, Überschuss geht weiter
+            var thresholds = [7, 7, 7, 7];
             while (points > 0 && this.currentAbilityIndex < 4) {
                 var needed = thresholds[this.currentAbilityIndex] - this.abilityProgress[this.currentAbilityIndex];
                 if (points >= needed) {
@@ -1404,7 +1555,6 @@
         Game.prototype.getDiceCount = function() {
             var current = this.getCurrentPlayer();
             var count = 6;
-            if (this.playerHasEffect(current, CharacterType.Soldat, 0)) count++;
             count += current.bonusDice;
             // Erschöpfungs-Malus: ab dem 3. Angriff hintereinander (progressiv)
             var exhaustion = Math.max(0, current.consecutiveAttacks - 2);
@@ -1629,7 +1779,7 @@
                         roll2Done: 'Zweiter Wurf — noch eine <strong>4</strong>! Jetzt 3× die 4 (3er-Pasch = 2 SP). Behalte alle drei 4er und versuche noch eine!<br><br>👉 <strong>Markiere die neue 4</strong> und klick auf <strong>„🎲 Würfeln (1)"!</strong>',
                         roll3Done: 'Letzter Wurf — noch eine <strong>4</strong>! 4× die 4 = <strong>4er-Pasch = +3 FP und +4 SP</strong>! Markiere jetzt alle vier 4er.<br><br>👉 <strong>Markiere die vierte 4!</strong>',
                         diceMarked: 'Vier 4er markiert — ein <strong>4er-Pasch = +3 FP und +4 SP</strong>!<br><br>👉 <strong>Klick auf „✅ Aktion bestätigen"!</strong>',
-                        result: '<strong>4er-Pasch = +3 FP und +5 SP!</strong><br><br>📊 <strong>FP (Fähigkeitspunkte):</strong> Dein Fortschritt: <strong>8/10</strong> zur ersten Fähigkeit ("⚡ Extrawürfel"). Mit Start-FP 5 + 3 FP = 8 FP!<br>📊 <strong>SP (Siegpunkte):</strong> Du hast jetzt <strong>5/40 SP</strong>. Bei <strong>40 SP</strong> gewinnst du sofort — ein <strong>🌟 Transzendenz-Sieg</strong>!<br><br>💡 Es gibt <strong>2 Wege zu gewinnen</strong>:<br>💀 <strong>Elimination</strong>: Senke die HP deines Gegners auf 0.<br>🌟 <strong>Transzendenz</strong>: Sammle 40 SP durch ⭐ Fähigkeitspunkte-Kombinationen!',
+                        result: '<strong>4er-Pasch = +3 FP und +5 SP!</strong><br><br>📊 <strong>FP (Fähigkeitspunkte):</strong> Du hast <strong>8 FP</strong> — erste Fähigkeit ("⚔️ Kampfinstinkt") freigeschaltet! (Kosten: 7 FP, 1 FP Überschuss).<br>📊 <strong>SP (Siegpunkte):</strong> Du hast jetzt <strong>5/55 SP</strong>. Bei <strong>55 SP</strong> gewinnst du sofort — ein <strong>🌟 Transzendenz-Sieg</strong>!<br><br>💡 Es gibt <strong>2 Wege zu gewinnen</strong>:<br>💀 <strong>Elimination</strong>: Senke die HP deines Gegners auf 0.<br>🌟 <strong>Transzendenz</strong>: Sammle 55 SP durch ⭐ Fähigkeitspunkte-Kombinationen!',
                         kiTurn: 'Die KI würfelt 3× die 6 und greift an: <strong>18 Schaden!</strong> Du hast jetzt <strong>82 HP</strong>. Ein harter Treffer!'
                     },
                     tips: {
@@ -1639,7 +1789,7 @@
                         roll2Done: 'SP-Tabelle: 3er-Pasch = 3 SP, Zweierpasch = 4 SP, 4er-Pasch = 5 SP, Kl. Straße = 6 SP, Gr. Straße = 10 SP, 6× gleich = 18 SP. FP je nach Kombi: 2–6 FP dazu!',
                         roll3Done: 'Alternativ: 4×4 als Angriff wäre 16 Schaden gewesen! Überlege immer: Sofortiger Schaden oder langfristige Fähigkeiten?',
                         diceMarked: '',
-                        rolled: 'SP (Siegpunkte) bringen dich zum 🌟 Transzendenz-Sieg bei 40 SP! FP schalten Fähigkeiten frei. Beides kommt nur durch ⭐!',
+                        rolled: 'SP (Siegpunkte) bringen dich zum 🌟 Transzendenz-Sieg bei 55 SP! FP schalten Fähigkeiten frei. Beides kommt nur durch ⭐!',
                         kiTurn: ''
                     }
                 },
@@ -1656,7 +1806,7 @@
                         roll2Done: 'Zweiter Wurf — noch eine <strong>6</strong>! Behalte beide 6er und versuche beim letzten Wurf noch eine!<br><br>👉 <strong>Markiere die neue 6</strong> und klick auf <strong>„🎲 Würfeln (1)"!</strong>',
                         roll3Done: 'Letzter Wurf — eine dritte <strong>6</strong>! 3× die 6 = <strong>18 Schaden</strong> — der stärkste Dreier-Angriff! Markiere alle drei 6er!<br><br>👉 <strong>Markiere die dritte 6!</strong>',
                         diceMarked: 'Drei 6er markiert. <strong>6 + 6 + 6 = 18 Schaden!</strong><br><br>👉 <strong>Klick auf „✅ Aktion bestätigen"!</strong>',
-                        result: '<strong>6 + 6 + 6 = 18 Schaden!</strong> Die KI hat nur noch <strong>82 HP</strong>. So baut man über 3 Würfe den perfekten Angriff auf!',
+                        result: '<strong>6 + 6 + 6 = 18 Schaden!</strong> Die KI hat nur noch <strong>82 HP</strong>. So baut man über 3 Würfe den perfekten Angriff auf!<br><br>Aber Vorsicht — nach 3 Angriffen in Folge droht <strong>⚡ Erschöpfung</strong>! Nächste Runde zeigen wir dir, was passiert...',
                         kiTurn: ''
                     },
                     tips: {
@@ -1667,6 +1817,34 @@
                         roll3Done: 'Mit der Fähigkeit "Kriegsmeister*in" wären das sogar 20 Schaden!',
                         diceMarked: '',
                         result: '',
+                        kiTurn: ''
+                    }
+                },
+                { // Runde 5 — ERSCHÖPFUNG + HEILEN (nach 3 Angriffen in Folge: -1 Würfel!)
+                    roll1: [1,3,1,5,1,2], roll2: [1,1,1,4,1,3], roll3: [1,1,1,1,6,2],
+                    guidedKeep1: [0,2,4], guidedKeep2: [0,1,2],
+                    action: 'heal', targetDice: [0,1,2,3],
+                    resultDmg: 0, resultHeal: 20, resultAP: 0, resultSP: 0,
+                    exhaustionDemo: true, exhaustDice: 5,
+                    kiAction: 'attack', kiDice: [4,4,3,4,2,1], kiKept: [0,1,3], kiDmg: 12, kiSP: 0,
+                    msgs: {
+                        preRoll: '⚡ <strong>Erschöpfung!</strong> Im echten Spiel passiert das, wenn du <strong>3× hintereinander angreifst</strong>: Dann verlierst du <strong>-1 Würfel</strong>! Beim 4. Angriff sogar -2 usw.<br><br>💡 <strong>Aber:</strong> Heilen oder Sammeln senkt den Erschöpfungszähler. Deshalb ist Abwechslung wichtig! Lass uns diesmal heilen.<br><br>👉 <strong>Klick auf „🎲 Würfeln (3)"!</strong>',
+                        rolled: 'Guter Wurf! Da sind schon <strong>2× die 1</strong>. Beim Heilen bringt jede 1 genau <strong>5 HP</strong>. Lass uns alle 1er einsammeln!<br><br>👉 <strong>Wähle 💚 Heilen!</strong>',
+                        keep1: 'Behalte die 1er und würfle den Rest nochmal. Mehr 1er = mehr Heilung!<br><br>👉 <strong>Markiere die 1er</strong> und klick auf <strong>„🎲 Würfeln (2)"!</strong>',
+                        roll2Done: 'Noch eine <strong>1</strong> dazu! Schon 3× die 1. Weiter sammeln!<br><br>👉 <strong>Markiere die neue 1</strong> und klick auf <strong>„🎲 Würfeln (1)"!</strong>',
+                        roll3Done: 'Letzter Wurf — noch eine <strong>1</strong>! 4× die 1 = <strong>20 HP Heilung!</strong> Markiere alle vier 1er!<br><br>👉 <strong>Markiere die vierte 1!</strong>',
+                        diceMarked: 'Vier 1er markiert. <strong>4 × 5 = 20 HP Heilung!</strong><br><br>👉 <strong>Klick auf „✅ Aktion bestätigen"!</strong>',
+                        result: '<strong>+20 HP!</strong> Zurück bei <strong>84 HP!</strong><br><br>⚡ <strong>Erschöpfungs-Regeln:</strong><br>• 2 Angriffe hintereinander = OK (Freischüsse)<br>• Ab dem 3. Angriff: <strong>-1 Würfel</strong> pro weiterem Angriff<br>• Heilen/Sammeln: Erschöpfung sinkt um 1<br>• Minimum: Immer mindestens 1 Würfel<br><br>💡 <strong>Taktik:</strong> Variiere deine Aktionen! Angriff-Heilen-Angriff ist besser als Angriff-Angriff-Angriff.',
+                        kiTurn: 'Die KI greift an: <strong>3× die 4 = 12 Schaden!</strong> Du hast jetzt <strong>72 HP</strong>. Aber du hast wertvolle HP zurückgewonnen!'
+                    },
+                    tips: {
+                        preRoll: 'Das Erschöpfungs-System verhindert endlose Angriffsketten. Kluge Spieler wechseln zwischen Aktionen!',
+                        rolled: 'Heilen bricht deine Erschöpfungskette — ein strategischer Doppelvorteil!',
+                        keep1: 'Im echten Spiel siehst du die Erschöpfung immer als ⚡-Symbole neben deinem Namen.',
+                        roll2Done: '4× die 1 wäre 20 HP — das Maximum in einem Zug. Der*die Quacksalber*in mit Heilungs-Manager kann sogar doppelt heilen!',
+                        roll3Done: 'Nach dieser Heilung ist dein Erschöpfungszähler wieder zurückgesetzt — bereit für neue Angriffe!',
+                        diceMarked: '',
+                        result: 'Denk daran: Sammeln (⭐) bricht die Erschöpfung genauso wie Heilen!',
                         kiTurn: ''
                     }
                 }
@@ -1682,6 +1860,7 @@
             }
             if (this.tutorialPhase === 'pre-roll') {
                 // Erster Wurf
+                SFX.roll();
                 this.tutorialDice = round.roll1.slice();
                 this.tutorialDiceKept = [];
                 this.tutorialDiceLocked = [false,false,false,false,false,false];
@@ -1694,6 +1873,7 @@
                 setTimeout(function() { var els = document.querySelectorAll('.dice.rolling'); for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); } }, 700);
             } else if (this.tutorialPhase === 'action-selected' && this.tutorialRollsRemaining > 0) {
                 // Zweiter oder dritter Wurf: gesperrte Würfel beibehalten
+                SFX.roll();
                 for (var i = 0; i < this.tutorialDiceKept.length; i++) {
                     var idx = this.tutorialDiceKept[i];
                     this.tutorialDiceLocked[idx] = true;
@@ -1717,6 +1897,7 @@
             if (this.tutorialPhase !== 'rolled') return;
             var round = this.getTutorialRounds()[this.tutorialRound];
             if (action === round.action) {
+                SFX.click();
                 this.tutorialAction = action;
                 this.tutorialPhase = 'action-selected';
                 this.render();
@@ -1753,12 +1934,15 @@
             var round = this.getTutorialRounds()[this.tutorialRound];
             if (round.resultDmg > 0) {
                 this.tutorialHP.p2 -= round.resultDmg;
+                this.showScreenShake();
             }
             if (round.resultHeal > 0) {
                 this.tutorialHP.p1 = Math.min(100, this.tutorialHP.p1 + round.resultHeal);
+                this.showHealEffect();
             }
             if (round.resultAP > 0) {
                 this.tutorialAP[0] += round.resultAP;
+                this.showSparkles();
             }
             if (round.resultSP > 0) {
                 this.tutorialSP.p1 += round.resultSP;
@@ -1772,19 +1956,33 @@
             if (this.tutorialPhase === 'result') {
                 if (round.kiAction) {
                     // KI-Zug anzeigen
-                    if (round.kiDmg > 0) this.tutorialHP.p1 -= round.kiDmg;
+                    if (round.kiDmg > 0) {
+                        this.tutorialHP.p1 -= round.kiDmg;
+                        this.showScreenShake();
+                    }
                     if (round.kiHeal > 0) this.tutorialHP.p2 = Math.min(100, this.tutorialHP.p2 + round.kiHeal);
                     if (round.kiSP > 0) this.tutorialSP.p2 += round.kiSP;
                     this.tutorialPhase = 'ki-turn';
                     this.render();
                 } else {
-                    // Keine KI → Zusammenfassung
-                    this.tutorialPhase = 'summary';
-                    this.render();
+                    // Keine KI → nächste Runde oder Zusammenfassung
+                    if (this.tutorialRound < this.getTutorialRounds().length - 1) {
+                        this.tutorialRound++;
+                        this.tutorialPhase = 'pre-roll';
+                        this.tutorialDice = [0,0,0,0,0,0];
+                        this.tutorialDiceKept = [];
+                        this.tutorialDiceLocked = [false,false,false,false,false,false];
+                        this.tutorialRollsRemaining = 3;
+                        this.tutorialAction = null;
+                        this.render();
+                    } else {
+                        this.tutorialPhase = 'summary';
+                        this.render();
+                    }
                 }
             } else if (this.tutorialPhase === 'ki-turn') {
                 // Nächste Runde oder Zusammenfassung
-                if (this.tutorialRound < 3) {
+                if (this.tutorialRound < this.getTutorialRounds().length - 1) {
                     this.tutorialRound++;
                     this.tutorialPhase = 'pre-roll';
                     this.tutorialDice = [0,0,0,0,0,0];
@@ -1806,19 +2004,34 @@
             var speakerName = isMeister ? 'Würfelmeister*in' : 'KI-Gegner*in';
             var bubbleBorder = isMeister ? '#d4a030' : '#cc4444';
             var bubbleBg = isMeister ? 'rgba(212,160,48,0.1)' : 'rgba(204,68,68,0.1)';
-            var h = '<div style="background: #141020; border: 3px solid ' + bubbleBorder + '; padding: 12px 16px; margin-bottom: 15px; box-shadow: 3px 3px 0 #000;">';
+            var h = '<div class="tut-fade-in" style="background: #141020; border: 3px solid ' + bubbleBorder + '; padding: 12px 16px; margin-bottom: 15px; box-shadow: 3px 3px 0 #000;">';
             h += '<div style="display: flex; align-items: flex-start; gap: 12px;">';
-            h += '<div style="flex-shrink: 0; width: 46px; height: 46px; ' +
-                'background: ' + (isMeister ? '#1e1832' : '#3a1a1a') + '; ' +
+            h += '<div style="flex-shrink: 0; width: 50px; height: 50px; ' +
+                'background: ' + (isMeister ? 'linear-gradient(135deg, #1e1832, #2a1f45)' : 'linear-gradient(135deg, #3a1a1a, #4a2222)') + '; ' +
                 'border: 3px solid ' + bubbleBorder + '; display: flex; align-items: center; justify-content: center; ' +
-                'font-size: 1.4em;">' + speakerIcon + '</div>';
+                'font-size: 1.6em; border-radius: 4px;" class="tut-pop-in">' + speakerIcon + '</div>';
             h += '<div style="flex: 1;">';
-            h += '<div style="font-family: Press Start 2P, monospace; font-size: 0.5em; color: ' + bubbleBorder + '; margin-bottom: 6px; line-height: 1.4;">' + speakerName + '</div>';
-            h += '<div style="line-height: 1.6; font-size: 1em; color: #d4c8e0;">' + msg + '</div>';
+            h += '<div style="font-family: Press Start 2P, monospace; font-size: 0.5em; color: ' + bubbleBorder + '; margin-bottom: 6px; line-height: 1.4; letter-spacing: 1px;">' + speakerName + '</div>';
+            h += '<div class="tut-speech-msg tut-slide-in" style="line-height: 1.6; font-size: 1em; color: #d4c8e0;">' + msg + '</div>';
             if (tip) {
-                h += '<div style="margin-top: 8px; padding-top: 8px; border-top: 2px dashed #3d2d66; font-size: 0.95em; color: #8877aa; font-style: italic; line-height: 1.5;">💡 ' + tip + '</div>';
+                h += '<div class="tut-fade-in" style="animation-delay: 0.3s; margin-top: 8px; padding: 8px 10px; background: rgba(136,119,170,0.08); border-left: 3px solid #5a4a8a; font-size: 0.95em; color: #8877aa; font-style: italic; line-height: 1.5;">💡 ' + tip + '</div>';
             }
             h += '</div></div></div>';
+            return h;
+        };
+
+        Game.prototype.renderTutorialProgressDots = function() {
+            var totalRounds = this.getTutorialRounds().length;
+            var h = '<div class="tut-step-dots">';
+            for (var i = 0; i < totalRounds; i++) {
+                var cls = 'tut-step-dot';
+                if (i < this.tutorialRound) cls += ' done';
+                else if (i === this.tutorialRound) cls += ' active';
+                h += '<div class="' + cls + '" title="Runde ' + (i+1) + '"></div>';
+            }
+            h += '</div>';
+            var pct = Math.round(((this.tutorialRound) / totalRounds) * 100);
+            h += '<div class="tut-progress-track"><div class="tut-progress-bar" style="--tut-prog: ' + pct + '%;"></div></div>';
             return h;
         };
 
@@ -1833,27 +2046,53 @@
 
             // === SUMMARY SCREEN ===
             if (phase === 'summary') {
+                SFX.victory();
+                var totalRounds = this.getTutorialRounds().length;
                 var h = '<div class="battle-screen">' +
-                    '<div class="battle-header"><div class="current-player">📖 Tutorial abgeschlossen!</div></div>';
+                    '<div class="battle-header"><div class="current-player tut-bounce-in">🎉 Tutorial abgeschlossen!</div></div>';
+                // Confetti particles
+                h += '<div style="position:relative;height:0;overflow:visible;">';
+                var confettiChars = ['🎲', '⚔', '💚', '⭐', '🏆', '✨', '🎯', '🛡️'];
+                for (var ci = 0; ci < 12; ci++) {
+                    h += '<div style="position:absolute;top:-10px;left:' + (5 + ci * 8) + '%;font-size:1.2em;animation:tutConfetti ' + (1.5 + Math.random()) + 's ease-out ' + (ci * 0.15) + 's both;">' + confettiChars[ci % confettiChars.length] + '</div>';
+                }
+                h += '</div>';
+                // Progress — 100%
+                h += '<div class="tut-step-dots" style="margin-top:10px;">';
+                for (var si = 0; si < totalRounds; si++) h += '<div class="tut-step-dot done"></div>';
+                h += '</div><div class="tut-progress-track"><div class="tut-progress-bar" style="--tut-prog:100%;"></div></div>';
                 h += this.renderTutorialSpeechBubble('meister',
-                    '<strong>Das waren 4 Runden!</strong> Du kennst jetzt die Grundlagen:',
-                    '⚔ <strong>Angriff</strong>: Markiere gleiche Würfel. Ihre Summe = Schaden.<br>' +
-                    '💚 <strong>Heilen</strong>: Markiere 1er. Jede 1 = 5 HP.<br>' +
-                    '⭐ <strong>Fähigkeitspunkte</strong>: Sammle Punkte mit Kombinationen (Pasch, Straße).<br>' +
-                    '&nbsp;&nbsp;&nbsp;→ <strong>FP</strong>: Je nach Kombi (2–6) — schaltet Fähigkeiten frei (10/20/30/40 FP).<br>' +
-                    '&nbsp;&nbsp;&nbsp;→ <strong>SP</strong>: Je nach Kombi (3–18) — Siegpunkte für den Transzendenz-Sieg.<br><br>' +
-                    '🏆 <strong>2 Siegbedingungen</strong>:<br>' +
-                    '&nbsp;&nbsp;💀 <strong>Elimination</strong>: Senke den Gegner auf 0 HP.<br>' +
-                    '&nbsp;&nbsp;🌟 <strong>Transzendenz</strong>: Sammle 40 SP durch ⭐-Kombinationen!<br><br>' +
-                    '⚡ <strong>Erschöpfung</strong>: 2 Angriffe frei, ab dem 3. je -1 Würfel. Nicht-Angriff: +1 zurück (min. 1).<br>' +
-                    '🎲 Du hast <strong>3 Würfe pro Zug</strong>! Behalte nach jedem Wurf die besten Würfel und würfle den Rest nochmal.<br>' +
-                    '🔒 Behaltene Würfel werden gesperrt und bleiben bei allen weiteren Würfen erhalten.<br>' +
-                    '⭐ Jede*r Spieler*in hat 4 einzigartige Fähigkeiten — aktiviere sie durch Anklicken!<br>' +
-                    '🎯 Wäge jede Runde ab: Angriff, Heilung oder Fähigkeiten?<br><br>' +
-                    'Viel Spaß beim Spielen! 🎲');
+                    '🎉 <strong>Großartig, ' + totalRounds + ' Runden geschafft!</strong> Du bist bereit für echte Duelle!',
+                    '');
+                // Summary cards
+                h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;">';
+                h += '<div class="tut-fade-in" style="animation-delay:0.1s;background:#141020;border:2px solid #5a4a8a;padding:10px;text-align:center;">' +
+                    '<div style="font-size:1.4em;margin-bottom:4px;">⚔</div><div style="font-size:0.8em;color:#d4a030;">Angriff</div>' +
+                    '<div style="font-size:0.75em;color:#8877aa;margin-top:4px;">Gleiche Würfel markieren<br>Summe = Schaden</div></div>';
+                h += '<div class="tut-fade-in" style="animation-delay:0.2s;background:#141020;border:2px solid #5a4a8a;padding:10px;text-align:center;">' +
+                    '<div style="font-size:1.4em;margin-bottom:4px;">💚</div><div style="font-size:0.8em;color:#d4a030;">Heilen</div>' +
+                    '<div style="font-size:0.75em;color:#8877aa;margin-top:4px;">1er markieren<br>Jede 1 = 5 HP</div></div>';
+                h += '<div class="tut-fade-in" style="animation-delay:0.3s;background:#141020;border:2px solid #5a4a8a;padding:10px;text-align:center;">' +
+                    '<div style="font-size:1.4em;margin-bottom:4px;">⭐</div><div style="font-size:0.8em;color:#d4a030;">Sammeln</div>' +
+                    '<div style="font-size:0.75em;color:#8877aa;margin-top:4px;">Pasch/Straße = FP + SP<br>FP → Fähigkeiten, SP → Sieg</div></div>';
+                h += '<div class="tut-fade-in" style="animation-delay:0.4s;background:#141020;border:2px solid #5a4a8a;padding:10px;text-align:center;">' +
+                    '<div style="font-size:1.4em;margin-bottom:4px;">⚡</div><div style="font-size:0.8em;color:#d4a030;">Erschöpfung</div>' +
+                    '<div style="font-size:0.75em;color:#8877aa;margin-top:4px;">3+ Angriffe → -1 Würfel<br>Heilen/Sammeln erholt</div></div>';
+                h += '</div>';
+                // Siegwege
+                h += '<div class="tut-reward-banner" style="animation-delay:0.5s;">' +
+                    '<div style="font-size:0.85em;color:#d4a030;font-family:Press Start 2P,monospace;margin-bottom:6px;">🏆 2 Wege zum Sieg</div>' +
+                    '<div style="display:flex;justify-content:center;gap:20px;font-size:0.9em;">' +
+                    '<span>💀 <strong>Elimination</strong><br><span style="font-size:0.8em;color:#8877aa;">Gegner auf 0 HP</span></span>' +
+                    '<span>🌟 <strong>Transzendenz</strong><br><span style="font-size:0.8em;color:#8877aa;">55 SP sammeln</span></span></div></div>';
+                // Extra Info: Münzwurf, Shop, 4 Charaktere
+                h += '<div class="tut-fade-in" style="animation-delay:0.6s;background:rgba(212,160,48,0.05);border:1px solid #3d2d66;padding:10px;margin:8px 0;font-size:0.85em;color:#a898c8;line-height:1.6;">' +
+                    '🪙 <strong>Münzwurf</strong>: Wer anfängt, wird zufällig bestimmt. Der Zweitspieler bekommt +8 HP (108 HP) als Ausgleich.<br>' +
+                    '🛒 <strong>Shop</strong>: Siege und Aufträge bringen Münzen. Im Shop gibt es Würfel-Skins, Tischdesigns, Rahmen, Animationen und Sound-Packs!<br>' +
+                    '👥 <strong>4 Charaktere</strong>: Soldat (Schaden), Rebell (Taktik), Taschendieb (Ressourcen), Quacksalber (Würfelkontrolle) — jede*r mit 4 einzigartigen Fähigkeiten!</div>';
                 h += '<div class="actions-container">' +
-                    '<button class="btn-action btn-roll" onclick="game.showMainMenu()">🏠 Hauptmenü</button>' +
-                    '<button class="btn-action btn-execute" onclick="game.startGameVsAI()">🎮 Jetzt spielen!</button></div>';
+                    '<button class="btn-action btn-end-turn" onclick="game.showMainMenu()">🏠 Hauptmenü</button>' +
+                    '<button class="btn-action btn-execute tut-bounce-in" style="animation-delay:0.7s;" onclick="game.startGameVsAI()">🎮 Jetzt spielen!</button></div>';
                 h += '</div>';
                 this.container.innerHTML = h;
                 return;
@@ -1861,38 +2100,34 @@
 
             // === INTRO SCREEN ===
             if (phase === 'intro') {
+                var totalRounds = this.getTutorialRounds().length;
                 var h = '<div class="battle-screen">' +
-                    '<div class="battle-header"><div class="current-player">📖 Tutorial — Willkommen!</div></div>';
+                    '<div class="battle-header"><div class="current-player tut-bounce-in">📖 Tutorial — Willkommen!</div></div>';
+                h += this.renderTutorialProgressDots();
                 h += this.renderTutorialSpeechBubble('meister',
-                    'Hallo, ich bin dein*e <strong>Würfelmeister*in</strong>! In diesem Tutorial spielen wir <strong>4 Runden</strong> durch. Du wirst alles selbst machen: würfeln, Aktion wählen, Würfel markieren und bestätigen.<br><br>Das Spielfeld sieht genauso aus wie im echten Spiel!',
-                    '<strong>Szenario:</strong> Du spielst als 🪖 Soldat*in gegen die KI (⚔ Rebell*in). Beide starten mit 100 HP und 0 SP.<br><br>' +
-                    '🏆 <strong>2 Wege zum Sieg:</strong><br>' +
-                    '&nbsp;&nbsp;💀 <strong>Elimination</strong>: Bringe den Gegner auf 0 HP.<br>' +
-                    '&nbsp;&nbsp;🌟 <strong>Transzendenz</strong>: Sammle 40 SP (Siegpunkte) durch ⭐ Fähigkeitspunkte-Kombinationen!');
-                // Player panels preview
-                h += '<div class="players-container">' +
-                    '<div class="player-panel player1"><div class="player-name player-color-green">🪖 Du — Soldat*in</div>' +
-                    '<div class="player-hp">HP: 100/100</div>' +
-                    '<div class="player-fp-sp">SP: <b>0/40</b></div>' +
-                    '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width:0%"></div></div>' +
-                    '<div class="hp-bar"><div class="hp-fill" style="width: 100%"></div></div>' +
-                    '<div class="ability-section"><div style="font-size: 0.9em;">' +
-                    '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">⚡ Extrawürfel (0/10)</div>' +
-                    '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎯 Kriegsmeister*in (0/20)</div>' +
-                    '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🔄 Vergeltung (0/30)</div>' +
-                    '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎪 Doppelwertung (0/40)</div></div></div></div>' +
-                    '<div class="player-panel player2"><div class="player-name player-color-red">⚔ KI — Rebell*in</div>' +
-                    '<div class="player-hp">HP: 100/100</div>' +
-                    '<div class="player-fp-sp">SP: <b>0/40</b></div>' +
-                    '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width:0%"></div></div>' +
-                    '<div class="hp-bar"><div class="hp-fill" style="width: 100%"></div></div>' +
-                    '<div class="ability-section"><div style="font-size: 0.9em;">' +
-                    '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎲 Würfel-Diebstahl (0/10)</div>' +
-                    '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🛡️ Schadensblockade (0/20)</div>' +
-                    '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🚀 Fünfer-Upgrade (0/30)</div>' +
-                    '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">👑 Kriegsstrateg*in (0/40)</div></div></div></div></div>';
+                    'Hallo, ich bin dein*e <strong>Würfelmeister*in</strong>! 🧙<br><br>' +
+                    'In <strong>' + totalRounds + ' kurzen Runden</strong> lernst du alles: Würfeln, Angreifen, Heilen, Fähigkeiten sammeln und das Erschöpfungs-System. Du machst alles selbst — genau wie im echten Spiel!',
+                    '');
+                // Character showcase
+                h += '<div class="tut-fade-in" style="animation-delay:0.2s;background:#141020;border:2px solid #3d2d66;padding:10px;margin:8px 0;">';
+                h += '<div style="font-size:0.75em;color:#d4a030;text-align:center;margin-bottom:8px;font-family:Press Start 2P,monospace;">4 einzigartige Charaktere</div>';
+                h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;text-align:center;font-size:0.8em;">';
+                h += '<div class="tut-pop-in" style="animation-delay:0.3s;"><div style="font-size:1.5em;">🪖</div><div style="color:#d4c8e0;">Soldat*in</div><div style="font-size:0.7em;color:#8877aa;">Schaden</div></div>';
+                h += '<div class="tut-pop-in" style="animation-delay:0.4s;"><div style="font-size:1.5em;">⚔</div><div style="color:#d4c8e0;">Rebell*in</div><div style="font-size:0.7em;color:#8877aa;">Taktik</div></div>';
+                h += '<div class="tut-pop-in" style="animation-delay:0.5s;"><div style="font-size:1.5em;">🗝️</div><div style="color:#d4c8e0;">Taschendieb*in</div><div style="font-size:0.7em;color:#8877aa;">Ressourcen</div></div>';
+                h += '<div class="tut-pop-in" style="animation-delay:0.6s;"><div style="font-size:1.5em;">🧪</div><div style="color:#d4c8e0;">Quacksalber*in</div><div style="font-size:0.7em;color:#8877aa;">Kontrolle</div></div>';
+                h += '</div></div>';
+                // Szenario + Siegwege
+                h += '<div class="tut-fade-in" style="animation-delay:0.4s;background:rgba(212,160,48,0.05);border:1px solid #3d2d66;padding:10px;margin:8px 0;font-size:0.85em;color:#a898c8;line-height:1.6;">' +
+                    '⚔ <strong>Szenario:</strong> Du spielst als 🪖 Soldat*in gegen die KI (⚔ Rebell*in). Beide starten mit <strong>100 HP</strong> und <strong>0 SP</strong>.<br>' +
+                    '🪙 Im echten Spiel bestimmt ein <strong>Münzwurf</strong> wer beginnt — der Zweitspieler bekommt +8 HP als Ausgleich.</div>';
+                h += '<div class="tut-reward-banner" style="animation-delay:0.5s;">' +
+                    '<div style="font-size:0.8em;color:#d4a030;font-family:Press Start 2P,monospace;margin-bottom:6px;">🏆 2 Wege zum Sieg</div>' +
+                    '<div style="display:flex;justify-content:center;gap:20px;font-size:0.9em;">' +
+                    '<span>💀 <strong>Elimination</strong><br><span style="font-size:0.8em;color:#8877aa;">Gegner auf 0 HP</span></span>' +
+                    '<span>🌟 <strong>Transzendenz</strong><br><span style="font-size:0.8em;color:#8877aa;">55 SP sammeln</span></span></div></div>';
                 h += '<div class="actions-container">' +
-                    '<button class="btn-action btn-roll" onclick="game.tutorialPhase=\'pre-roll\';game.tutorialRollDice()">Los geht\'s! →</button>' +
+                    '<button class="btn-action btn-roll tut-bounce-in" style="animation-delay:0.6s;" onclick="game.tutorialPhase=\'pre-roll\';game.tutorialRollDice()">⚔ Los geht\'s! →</button>' +
                     '<button class="btn-action btn-end-turn" onclick="game.showMainMenu()">← Hauptmenü</button></div>';
                 h += '</div>';
                 this.container.innerHTML = h;
@@ -1902,7 +2137,8 @@
             // === BATTLE SIMULATION SCREEN ===
             var isKiTurn = phase === 'ki-turn';
             var hasRolled = phase !== 'pre-roll';
-            var roundLabel = 'Runde ' + (rd + 1) + ' von 4';
+            var totalRounds = this.getTutorialRounds().length;
+            var roundLabel = 'Runde ' + (rd + 1) + ' von ' + totalRounds;
             var rollsRem = this.tutorialRollsRemaining;
 
             // Status text
@@ -2048,9 +2284,9 @@
             var p1Name = '🪖 Du — Soldat*in';
             var p2Name = '⚔ KI — Rebell*in';
             var abilitiesP1 = '<div style="font-size: 0.9em;">' +
-                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">⚡ Extrawürfel (' + ap[0] + '/10)</div>' +
+                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">⚔️ Kampfinstinkt (' + ap[0] + '/10)</div>' +
                 '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎯 Kriegsmeister*in (' + ap[1] + '/20)</div>' +
-                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🔄 Verfolgungsschaden (' + ap[2] + '/30)</div>' +
+                '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🔄 Vergeltung (' + ap[2] + '/30)</div>' +
                 '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎪 Doppelwertung (' + ap[3] + '/40)</div></div>';
             var abilitiesP2 = '<div style="font-size: 0.9em;">' +
                 '<div style="color: #7a6b99; padding: 3px 5px; margin: 2px 0;">🎲 Würfel-Diebstahl (0/10)</div>' +
@@ -2067,31 +2303,41 @@
             // Build final HTML
             var tableDesign = loadMetaData().selectedTable || 'standard';
             var tableClass = TABLE_DESIGNS[tableDesign] ? TABLE_DESIGNS[tableDesign].cssClass : '';
+            if (tableClass) this.container.className = tableClass;
+            else this.container.className = '';
             var h = '<div class="battle-screen ' + tableClass + '">' +
                 '<div class="battle-header">' +
                 '<div class="current-player">' + (isKiTurn ? '⚔ KI ist am Zug' : 'Am Zug: Du (6 Würfel)') + '</div>' +
                 '<div class="rolls-left">' + roundLabel + ' — Würfe übrig: ' + rollsRem + '</div></div>';
 
+            // Progress dots
+            h += this.renderTutorialProgressDots();
+
             // Speech bubble at top
             if (msg) h += this.renderTutorialSpeechBubble(speaker, msg, tip);
 
-            h += '<div class="action-label">' + (isKiTurn && kiActionLabel ? kiActionLabel : label) + '</div>';
+            // Exhaustion warning for round 5
+            if (round.exhaustionDemo && phase === 'pre-roll') {
+                h += '<div class="tut-exhaust-warning">⚡ <strong>Lektion: Erschöpfung!</strong> 3+ Angriffe hintereinander = -1 Würfel pro Angriff. Heilen/Sammeln erholt dich!</div>';
+            }
+
+            h += '<div class="action-label tut-slide-in">' + (isKiTurn && kiActionLabel ? kiActionLabel : label) + '</div>';
             h += actionHtml;
 
             h += '<div class="players-container">' +
                 '<div class="player-panel player1"><div class="player-name player-color-green">' + p1Name + '</div>' +
-                '<div class="player-hp">HP: ' + hp1 + '/100</div>' +
-                '<div class="player-fp-sp">SP: <b>' + sp1 + '/40</b></div>' +
-                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(sp1/40*100)) + '%"></div></div>' +
-                '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, hp1) + '%"></div></div>' +
+                '<div class="player-hp' + (phase === 'result' && round.resultHeal > 0 ? ' tut-heal-flash' : '') + (phase === 'ki-turn' && round.kiDmg > 0 ? ' tut-dmg-flash' : '') + '">HP: ' + hp1 + '/100</div>' +
+                '<div class="player-fp-sp' + (phase === 'result' && round.resultSP > 0 ? ' tut-sp-glow' : '') + '">SP: <b>' + sp1 + '/55</b></div>' +
+                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(sp1/55*100)) + '%; transition: width 0.6s ease;"></div></div>' +
+                '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, hp1) + '%; transition: width 0.6s ease;"></div></div>' +
                 '<div class="ability-section">' + abilitiesP1 + '</div></div>' +
                 '<div class="player-panel player2"><div class="player-name player-color-red">' + p2Name + '</div>' +
-                '<div class="player-hp">HP: ' + hp2 + '/100</div>' +
-                '<div class="player-fp-sp">SP: <b>' + sp2 + '/40</b></div>' +
-                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(sp2/40*100)) + '%"></div></div>' +
-                '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, hp2) + '%"></div></div>' +
+                '<div class="player-hp' + (phase === 'result' && round.resultDmg > 0 ? ' tut-dmg-flash' : '') + (phase === 'ki-turn' && round.kiHeal > 0 ? ' tut-heal-flash' : '') + '">HP: ' + hp2 + '/100</div>' +
+                '<div class="player-fp-sp">SP: <b>' + sp2 + '/55</b></div>' +
+                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(sp2/55*100)) + '%; transition: width 0.6s ease;"></div></div>' +
+                '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, hp2) + '%; transition: width 0.6s ease;"></div></div>' +
                 '<div class="ability-section">' + abilitiesP2 + '</div></div></div>' +
-                '<div class="dice-container">' + diceHtml + '</div>' + btns + '</div>';
+                '<div class="dice-container tut-fade-in">' + diceHtml + '</div>' + btns + '</div>';
 
             this.container.innerHTML = h;
         };
@@ -2099,9 +2345,9 @@
         Game.prototype.renderDifficultySelect = function() {
             this.container.innerHTML = '<div class="selection-screen difficulty-screen"><button class="btn-back" onclick="game.showMainMenu()">← Zurück</button>' +
                 '<div class="screen-title">Wähle die KI-Schwierigkeit!</div><div class="difficulty-grid">' +
-                '<button class="difficulty-btn" onclick="game.selectDifficulty(\'Leicht\')"><div>🟢 Leicht</div><div class="difficulty-desc">Einfache KI</div></button>' +
+                '<button class="difficulty-btn" onclick="game.selectDifficulty(\'Leicht\')"><div>' + rgEmoji('🟢') + ' Leicht</div><div class="difficulty-desc">Einfache KI</div></button>' +
                 '<button class="difficulty-btn" onclick="game.selectDifficulty(\'Mittel\')"><div>🟡 Mittel</div><div class="difficulty-desc">Normale KI</div></button>' +
-                '<button class="difficulty-btn" onclick="game.selectDifficulty(\'Schwer\')"><div>🔴 Schwer</div><div class="difficulty-desc">Aggressiv</div></button></div></div>';
+                '<button class="difficulty-btn" onclick="game.selectDifficulty(\'Schwer\')"><div>' + rgEmoji('🔴') + ' Schwer</div><div class="difficulty-desc">Aggressiv</div></button></div></div>';
         };
 
         Game.prototype.renderCharacterSelect = function() {
@@ -2109,7 +2355,7 @@
             var chars = [{name:'Soldat*in',img:'images/soldat.png'},{name:'Rebell*in',img:'images/rebell.png'},{name:'Taschendieb*in',img:'images/taschendieb.png'},{name:'Quacksalber*in',img:'images/quacksalber.png'}];
             var h = '<div class="selection-screen"><button class="btn-back" onclick="game.goBack()">← Zurück</button>' +
                 '<div class="screen-title">' + pName + ' - Wähle deinen Charakter!</div><div class="character-grid">';
-            var fpThresholds = [10, 10, 10, 10];
+            var fpThresholds = [7, 7, 7, 7];
             for (var i = 0; i < chars.length; i++) {
                 var abils = CHARACTER_ABILITIES[i];
                 var abilList = '';
@@ -2189,7 +2435,7 @@
                     if (this.playerHasEffect(current, CharacterType.Taschendieb, 0)) { prevFP += 1; prevSP += 1; }
                     previewHtml = '<div class="ability-points-preview">Markierte Würfel: +' + prevFP + ' FP, +' + prevSP + ' SP</div>';
                 } else {
-                    previewHtml = '<div class="ability-points-preview" style="color: #cc4444;">Keine gültige Kombination</div>';
+                    previewHtml = '<div class="ability-points-preview" style="color: ' + rgColor('#cc4444') + ';">Keine gültige Kombination</div>';
                 }
             }
 
@@ -2212,16 +2458,18 @@
                     else if (skinData.cssClass === 'skin-preview-feuer') skinStyle = ' style="color:#ff6600;text-shadow:0 0 8px #ff3300,0 0 16px rgba(255,51,0,0.5);"';
                     else if (skinData.cssClass === 'skin-preview-eis') skinStyle = ' style="color:#88ddff;text-shadow:0 0 8px #00aaff,0 0 16px rgba(0,170,255,0.4);"';
                     else if (skinData.cssClass === 'skin-preview-nekromant') skinStyle = ' style="color:#aa44cc;text-shadow:0 0 8px #7722aa;"';
-                    else if (skinData.cssClass === 'skin-preview-himmelsschmiede') skinStyle = ' style="color:#ffe066;text-shadow:0 0 10px #ffcc00;"';
-                    else if (skinData.cssClass === 'skin-preview-void') skinStyle = ' style="color:#6633cc;text-shadow:0 0 10px #4400aa;"';
-                    else if (skinData.cssClass === 'skin-preview-runen') skinStyle = ' style="font-family:Segoe UI Symbol,Noto Sans Symbols,serif;"';
+                    else if (skinData.cssClass === 'skin-preview-urzeit') skinStyle = ' class="skin-preview-urzeit"';
+                    else if (skinData.cssClass === 'skin-preview-kristall') skinStyle = ' class="skin-preview-kristall"';
+                    else if (skinData.cssClass === 'skin-preview-knochen') skinStyle = ' class="skin-preview-knochen"';
+                    else if (skinData.cssClass === 'skin-preview-himmelsschmiede') skinStyle = ' class="skin-preview-himmelsschmiede"';
+                    else if (skinData.cssClass === 'skin-preview-void') skinStyle = ' class="skin-preview-void"';
                     else if (skinData.cssClass === 'skin-preview-regenbogen') skinStyle = ' class="skin-preview-regenbogen"';
                 }
                 diceHtml += '<div style="display:inline-block;text-align:center;margin:0 5px;">';
                 if (usePipDots) {
-                    diceHtml += '<div class="dice ' + cls + '" onclick="game.toggleDiceKeep(' + i + ')">' + this.renderBattlePipDots(d) + '</div>';
+                    diceHtml += '<div class="dice ' + cls + '" tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + this.renderBattlePipDots(d) + '</div>';
                 } else {
-                    diceHtml += '<div class="dice ' + cls + '"' + skinStyle + ' onclick="game.toggleDiceKeep(' + i + ')">' + txt + '</div>';
+                    diceHtml += '<div class="dice ' + cls + '"' + skinStyle + ' tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + txt + '</div>';
                 }
                 if (showReroll && d > 0 && d !== -1 && !this.diceKept[i]) {
                     diceHtml += '<div style="margin-top:4px;"><button style="font-size:0.7em;padding:2px 8px;background:#1e1832;color:#d4a030;border:2px solid #d4a030;cursor:pointer;font-family:VT323,monospace;" onclick="game.rerollDie(' + i + ')">🔁</button></div>';
@@ -2247,8 +2495,15 @@
             btns += '</div>';
             var alwaysBtns = '<div class="actions-container" style="margin-top:0;">' +
                 '<button class="btn-action btn-surrender" onclick="game.surrender()">🏳️ Aufgeben</button>' +
-                '<button class="btn-action btn-quit" style="background-color:#1e1832;border-color:#3d2d66;color:#8877aa;" onclick="game.confirmQuit()">🏠 Spiel beenden</button>' +
-                '<button class="btn-action" style="background-color:#1e1832;border-color:#3d2d66;color:#8877aa;min-width:auto;padding:8px 12px;" onclick="SFX.toggle(); this.textContent = SFX.muted ? \'🔇\' : \'🔊\'">' + (SFX.muted ? '🔇' : '🔊') + '</button></div>';
+                '<button class="btn-action btn-quit" style="background-color:#1e1832;border-color:#3d2d66;color:#8877aa;" onclick="game.confirmQuit()">🏠 Spiel beenden</button>';
+            if (loadA11ySettings().separatevolume) {
+                alwaysBtns +=
+                    '<button class="btn-action" style="background-color:#1e1832;border-color:#3d2d66;color:#8877aa;min-width:auto;padding:8px 12px;" onclick="SFX.toggleMusic(); this.textContent = SFX.musicMuted ? \'🎵✖\' : \'🎵\'">' + (SFX.musicMuted ? '🎵✖' : '🎵') + '</button>' +
+                    '<button class="btn-action" style="background-color:#1e1832;border-color:#3d2d66;color:#8877aa;min-width:auto;padding:8px 12px;" onclick="SFX.toggleSfx(); this.textContent = SFX.sfxMuted ? \'🔇\' : \'🔊\'">' + (SFX.sfxMuted ? '🔇' : '🔊') + '</button>';
+            } else {
+                alwaysBtns += '<button class="btn-action" style="background-color:#1e1832;border-color:#3d2d66;color:#8877aa;min-width:auto;padding:8px 12px;" onclick="SFX.toggle(); this.textContent = SFX.muted ? \'🔇\' : \'🔊\'">' + (SFX.muted ? '🔇' : '🔊') + '</button>';
+            }
+            alwaysBtns += '</div>';
 
             var opponent = this.getOpponent();
             var oppColorClass = (opponent === p1) ? 'player-color-green' : 'player-color-red';
@@ -2263,7 +2518,7 @@
             var interactiveStyle = '';
             if (this.onlineMode) {
                 if (this.isMyTurn()) {
-                    onlineBanner = '<div style="text-align:center;padding:8px;background:rgba(46,125,50,0.3);border:2px solid #4caf50;margin-bottom:8px;color:#4caf50;font-family:Press Start 2P,monospace;font-size:0.6em;line-height:1.4;">🎲 Dein Zug!</div>';
+                    onlineBanner = '<div style="text-align:center;padding:8px;background:rgba(' + (document.body.classList.contains('rg-mode') ? '68,136,204,0.3' : '46,125,50,0.3') + ');border:2px solid ' + rgColor('#4caf50') + ';margin-bottom:8px;color:' + rgColor('#4caf50') + ';font-family:Press Start 2P,monospace;font-size:0.6em;line-height:1.4;">🎲 Dein Zug!</div>';
                 } else {
                     onlineBanner = '<div style="text-align:center;padding:8px;background:rgba(212,160,48,0.2);border:2px solid #d4a030;margin-bottom:8px;color:#d4a030;font-family:Press Start 2P,monospace;font-size:0.6em;line-height:1.4;">⏳ Gegner*in ist am Zug...</div>';
                     interactiveStyle = ' style="pointer-events:none;opacity:0.45;"';
@@ -2278,10 +2533,10 @@
                 if (penalty > 0) {
                     var icons = '';
                     for (var ei = 0; ei < Math.min(penalty, 6); ei++) icons += '⚡';
-                    var color = penalty >= 4 ? '#cc2222' : penalty >= 3 ? '#cc4444' : penalty >= 2 ? '#e09030' : '#d4a030';
+                    var color = penalty >= 4 ? rgColor('#cc2222') : penalty >= 3 ? rgColor('#cc4444') : penalty >= 2 ? '#e09030' : '#d4a030';
                     return '<div style="font-size:0.75em;color:' + color + ';margin-top:2px;" title="Erschöpfung: ' + ca + ' Angriffe hintereinander">' + icons + ' -' + penalty + ' Würfel</div>';
                 }
-                var freiColor = frei === 0 ? '#e0c030' : '#55aa55';
+                var freiColor = frei === 0 ? '#e0c030' : rgColor('#55aa55');
                 return '<div style="font-size:0.75em;color:' + freiColor + ';margin-top:2px;" title="Freischüsse: ' + frei + ' Angriffe ohne Malus">⚔ ' + frei + ' Freischüsse</div>';
             }
 
@@ -2295,15 +2550,15 @@
                 '<span class="opp-name ' + oppColorClass + '">' + opponent.name + this.getPlayerMedals(opponent) + ' - ' + opponent.getCharacterName() + '</span>' +
                 '<span class="opp-stat">HP: ' + opponent.health + '/100</span>' +
                 '<div class="opp-hp-bar"><div class="opp-hp-fill" style="width:' + Math.max(0, opponent.health) + '%"></div></div>' +
-                '<span class="opp-stat">SP: ' + opponent.sp + '/40</span>' +
-                '<div class="opp-sp-bar"><div class="opp-sp-fill" style="width:' + Math.min(100, Math.round(opponent.sp/40*100)) + '%"></div></div>' +
+                '<span class="opp-stat">SP: ' + opponent.sp + '/55</span>' +
+                '<div class="opp-sp-bar"><div class="opp-sp-fill" style="width:' + Math.min(100, Math.round(opponent.sp/55*100)) + '%"></div></div>' +
                 exhaustionHtml(opponent) +
                 '<div style="width:100%;font-size:0.75em;margin-top:4px;">' + this.getOpponentAbilitySummary(opponent) + '</div>' +
                 '</div>' +
                 '<div class="current-panel"><div class="player-name ' + curColorClass + '">' + current.name + this.getPlayerMedals(current) + ' - ' + current.getCharacterName() + '</div>' +
                 '<div class="player-hp">HP: ' + current.health + '/100</div>' +
-                '<div class="player-fp-sp">SP: <b>' + current.sp + '/40</b></div>' +
-                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(current.sp/40*100)) + '%"></div></div>' +
+                '<div class="player-fp-sp">SP: <b>' + current.sp + '/55</b></div>' +
+                '<div class="progress-bar-wrap"><div class="progress-bar sp" style="width: ' + Math.min(100, Math.round(current.sp/55*100)) + '%"></div></div>' +
                 '<div class="hp-bar"><div class="hp-fill" style="width: ' + Math.max(0, current.health) + '%"></div></div>' +
                 exhaustionHtml(current) +
                 '<div class="ability-section">' + this.getAbilityDisplay(current) + '</div></div></div>' +
@@ -2352,7 +2607,7 @@
                 var ab = abilities[i];
                 var name = ab ? getGenderedText(ab.name, g) : 'Fähigkeit ' + (i + 1);
                 var desc = ab ? getGenderedText(ab.desc, g) : '';
-                var thresholds = [10, 10, 10, 10];
+                var thresholds = [7, 7, 7, 7];
                 if (player.abilityUnlocked[i]) {
                     html += '<div style="color: #d4a030; padding: 3px 5px; margin: 2px 0; background-color: rgba(212,160,48,0.1); border-left: 3px solid #d4a030;">' +
                         name + ' ⭐' +
@@ -2367,8 +2622,8 @@
         };
 
         Game.prototype.renderGameOver = function() {
-            var isTranszendenz = this.player1.sp >= 40 || this.player2.sp >= 40;
-            var w = isTranszendenz ? (this.player1.sp >= 40 ? this.player1 : this.player2) : (this.player1.health <= 0 ? this.player2 : this.player1);
+            var isTranszendenz = this.player1.sp >= 55 || this.player2.sp >= 55;
+            var w = isTranszendenz ? (this.player1.sp >= 55 ? this.player1 : this.player2) : (this.player1.health <= 0 ? this.player2 : this.player1);
             var loser = (w === this.player1) ? this.player2 : this.player1;
             var winIcon = isTranszendenz ? '🌟' : '💀';
             var winType = isTranszendenz ? '🌟 Transzendenz-Sieg! 🌟' : '💀 Elimination! 💀';
@@ -2449,6 +2704,9 @@
             }
 
             saveMetaData(meta);
+
+            // KI-Lern-Tracking
+            this.trackGameResult(winner, loser, isTranszendenz);
 
             // Quest-Tracking
             this.updateQuests(meta, 'games', 1);
@@ -2785,7 +3043,10 @@
             var modes = [
                 { key: 'lrs', icon: '📖', name: 'LRS-Modus', desc: 'Schriftart für bessere Lesbarkeit (OpenDyslexic). Erhöhter Buchstabenabstand und Zeilenhöhe.' },
                 { key: 'colorblind', icon: '🎨', name: 'Farbenblindheit', desc: 'Erhöhter Kontrast für gedämpfte Farben. Dickere Würfelränder und stärkere Leuchteffekte.' },
-                { key: 'rg', icon: '🔴🔵', name: 'Rot-Grün-Schwäche', desc: 'Rot wird durch Orange ersetzt, Grün durch Blau. Alle HP-Balken und Aktionsknöpfe angepasst.' }
+                { key: 'rg', icon: '🔴🔵', name: 'Rot-Grün-Schwäche', desc: 'Rot wird durch Orange ersetzt, Grün durch Blau. Alle HP-Balken und Aktionsknöpfe angepasst.' },
+                { key: 'bigfont', icon: '🔎', name: 'Größere Schrift', desc: 'Alle Texte werden vergrößert für bessere Lesbarkeit.' },
+                { key: 'reducedmotion', icon: '🖥️', name: 'Animationen reduzieren', desc: 'Kein Bildschirmwackeln, keine Blitz-Effekte. Sound bleibt aktiv.' },
+                { key: 'separatevolume', icon: '🔊', name: 'Getrennte Lautstärke', desc: 'Musik und Sound-Effekte können im Kampf separat stumm geschaltet werden.' }
             ];
 
             for (var i = 0; i < modes.length; i++) {
@@ -2794,7 +3055,7 @@
                 var borderColor = active ? '#d4a030' : '#2d1f4d';
                 var bg = active ? '#1e1832' : '#0a0814';
                 var checkMark = active ? '<span style="color: #d4a030; font-size: 1.3em;">✓</span>' : '<span style="color: #4a3d66;">✗</span>';
-                html += '<div style="padding: 14px; border: 3px solid ' + borderColor + '; background: ' + bg + '; margin-bottom: 10px; cursor: pointer; box-shadow: 2px 2px 0 #000; display: flex; align-items: center; gap: 12px;" onclick="game.toggleA11ySetting(\'' + m.key + '\')">';
+                html += '<div tabindex="0" role="button" aria-label="' + m.name + ' umschalten" style="padding: 14px; border: 3px solid ' + borderColor + '; background: ' + bg + '; margin-bottom: 10px; cursor: pointer; box-shadow: 2px 2px 0 #000; display: flex; align-items: center; gap: 12px;" onclick="game.toggleA11ySetting(\'' + m.key + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">';
                 html += '<div style="font-size: 1.8em; flex-shrink: 0;">' + m.icon + '</div>';
                 html += '<div style="flex: 1;">';
                 html += '<div style="font-family: Press Start 2P, monospace; font-size: 0.55em; color: ' + (active ? '#d4a030' : '#8877aa') + '; margin-bottom: 4px; line-height: 1.4;">' + m.name + '</div>';
@@ -3120,15 +3381,15 @@
                     var q = meta.quests[i];
                     var pct = Math.min(100, Math.round(q.progress / q.goal * 100));
                     var isDone = q.completed;
-                    html += '<div style="padding:15px;border:3px solid ' + (isDone ? '#44ccaa' : '#2d1f4d') + ';background:#0a0814;margin-bottom:10px;box-shadow:2px 2px 0 #000;">';
-                    html += '<div style="font-family:Press Start 2P,monospace;font-size:0.55em;color:' + (isDone ? '#44ccaa' : '#d4a030') + ';margin-bottom:8px;line-height:1.4;">' + q.icon + ' ' + q.desc + '</div>';
-                    html += '<div class="progress-bar-wrap"><div style="height:100%;background:' + (isDone ? '#44ccaa' : '#d4a030') + ';width:' + pct + '%;transition:width 0.3s;"></div></div>';
+                    html += '<div style="padding:15px;border:3px solid ' + (isDone ? rgColor('#44ccaa') : '#2d1f4d') + ';background:#0a0814;margin-bottom:10px;box-shadow:2px 2px 0 #000;">';
+                    html += '<div style="font-family:Press Start 2P,monospace;font-size:0.75em;color:' + (isDone ? rgColor('#44ccaa') : '#d4a030') + ';margin-bottom:10px;line-height:1.5;">' + q.icon + ' ' + q.desc + '</div>';
+                    html += '<div class="progress-bar-wrap"><div style="height:100%;background:' + (isDone ? rgColor('#44ccaa') : '#d4a030') + ';width:' + pct + '%;transition:width 0.3s;"></div></div>';
                     html += '<div style="display:flex;justify-content:space-between;margin-top:5px;">';
                     html += '<span style="color:#8877aa;">' + q.progress + '/' + q.goal + '</span>';
                     html += '<span style="color:#d4a030;">🪙 ' + q.reward + '</span>';
                     html += '</div>';
                     if (isDone) {
-                        html += '<button style="display:block;margin:8px auto 0;padding:8px 20px;background:#0d2a25;color:#44ccaa;border:2px solid #44ccaa;cursor:pointer;font-family:VT323,monospace;font-size:1em;" onclick="game.claimQuest(' + i + ')">✅ Abholen!</button>';
+                        html += '<button style="display:block;margin:8px auto 0;padding:8px 20px;background:' + rgColor('#0d2a25') + ';color:' + rgColor('#44ccaa') + ';border:2px solid ' + rgColor('#44ccaa') + ';cursor:pointer;font-family:VT323,monospace;font-size:1em;" onclick="game.claimQuest(' + i + ')">✅ Abholen!</button>';
                     }
                     html += '</div>';
                 }
@@ -3147,7 +3408,7 @@
                 var pct = Math.min(100, Math.round(current / target * 100));
                 html += '<div style="padding:12px;border:3px solid ' + (reached ? '#d4a030' : '#2d1f4d') + ';background:' + (reached ? '#1e1832' : '#0a0814') + ';margin-bottom:8px;box-shadow:2px 2px 0 #000;">';
                 html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-                html += '<span style="font-family:Press Start 2P,monospace;font-size:0.5em;color:' + (reached ? '#d4a030' : '#8877aa') + ';line-height:1.4;">' + m.icon + ' ' + m.desc + '</span>';
+                html += '<span style="font-family:Press Start 2P,monospace;font-size:0.7em;color:' + (reached ? '#d4a030' : '#8877aa') + ';line-height:1.5;">' + m.icon + ' ' + m.desc + '</span>';
                 html += '<span style="color:' + (reached ? '#44ccaa' : '#c89040') + ';">' + (reached ? '✅' : '🪙 ' + m.reward) + '</span>';
                 html += '</div>';
                 if (!reached) {
@@ -3328,19 +3589,30 @@
         Game.prototype.startBattle = function() {
             this.player1.reset(); this.player2.reset();
             if (this.trainingMode) {
-                this.player1.abilityProgress = [10, 20, 30, 40];
+                this.player1.abilityProgress = [7, 14, 21, 28];
                 this.player1.abilityUnlocked = [true, true, true, true];
                 this.player1.currentAbilityIndex = 4;
-                this.player2.abilityProgress = [10, 20, 30, 40];
+                this.player2.abilityProgress = [7, 14, 21, 28];
                 this.player2.abilityUnlocked = [true, true, true, true];
                 this.player2.currentAbilityIndex = 4;
             }
-            this.currentPlayerIndex = 0;
+            // Zufällige Startspieler-Wahl (Münzwurf)
+            if (this.onlineMode) {
+                // Deterministisch aus Raumcode: beide Clients berechnen dasselbe
+                var hash = 0;
+                for (var i = 0; i < this.roomCode.length; i++) hash = ((hash << 5) - hash) + this.roomCode.charCodeAt(i);
+                this.currentPlayerIndex = (Math.abs(hash) % 2 === 0) ? 0 : 1;
+            } else {
+                this.currentPlayerIndex = Math.random() < 0.5 ? 0 : 1;
+            }
             this.rollsRemaining = 3;
             this.actionSelected = null;
             this.rerollUsed = false; this.restartUsed = false;
             this.copiedAbility = null; this.copyAbilityPending = false; this.gegnerZwangRoll = -1;
             if (this.onlineMode) this._onlineRandCounter = 0;
+            // Startspieler-Kompensation: Zweitspieler bekommt +8 HP
+            var secondPlayer = this.currentPlayerIndex === 0 ? this.player2 : this.player1;
+            secondPlayer.health = 108;
             // Meta-Progression Tracking zurücksetzen
             this.turnCount = 0;
             this.healedThisGame = false;
@@ -3355,7 +3627,16 @@
             this.applyPostDiceEffects();
             this.state = GameState.Playing;
             Music.play('battle');
+            // Münzwurf-Animation
+            var starter = this.getCurrentPlayer();
+            var self = this;
             this.render();
+            showCoinFlip(starter.name, function() {
+                // Falls KI beginnt, KI-Zug nach Animation starten
+                if (self.vsAI && self.getCurrentPlayer().isAI) {
+                    setTimeout(function() { self.performAITurn(); }, 800);
+                }
+            });
         };
 
         // ===== WÜRFEL-MARKIERUNG =====
@@ -3375,8 +3656,6 @@
             if (this.actionSelected === 'attack') {
                 // Soldat Doppelwertung: verschiedene Werte erlaubt
                 var hasDoppel = this.playerHasEffect(current, CharacterType.Soldat, 3);
-                // Soldat Kriegsmeister: bis zu 2 verschiedene Werte erlaubt
-                var hasKriegsmeister = this.playerHasEffect(current, CharacterType.Soldat, 1);
                 // Quacksalber Heilungs-Manager: 1er zusätzlich erlaubt für Heilung
                 var hasHealMgr = this.playerHasEffect(current, CharacterType.Quacksalber, 1);
 
@@ -3392,21 +3671,6 @@
                     if (!(hasHealMgr && val === 1)) {
                         if (usedValsDoppel.indexOf(val) === -1 && usedValsDoppel.length >= 2) {
                             showScroll('Doppelwertung: Maximal 2 verschiedene Würfelwerte erlaubt! (Aktuell: ' + usedValsDoppel.join(' und ') + ')', '⚠️');
-                            return;
-                        }
-                    }
-                } else if (hasKriegsmeister) {
-                    // Bis zu 2 verschiedene Werte erlaubt (ohne 1er bei HealMgr)
-                    var usedValues = [];
-                    for (var i = 0; i < this.currentDice.length; i++) {
-                        if (this.diceKept[i] && this.currentDice[i] > 0) {
-                            if (hasHealMgr && this.currentDice[i] === 1) continue;
-                            if (usedValues.indexOf(this.currentDice[i]) === -1) usedValues.push(this.currentDice[i]);
-                        }
-                    }
-                    if (!(hasHealMgr && val === 1)) {
-                        if (usedValues.indexOf(val) === -1 && usedValues.length >= 2) {
-                            showScroll(getGenderedText(['Kriegsmeister', 'Kriegsmeisterin', 'Kriegsmeister*in'], current.gender) + ': Maximal 2 verschiedene Würfelwerte erlaubt! (Aktuell: ' + usedValues.join(' und ') + ')', '⚠️');
                             return;
                         }
                     }
@@ -3470,8 +3734,42 @@
         Game.prototype.selectAction = function(actionType) {
             if (this.onlineMode) {
                 if (!this.isMyTurn()) return;
+                // Heilen: prüfe ob eligible Würfel vorhanden
+                if (actionType === 'heal') {
+                    var current = this.getCurrentPlayer();
+                    var hasZweier = this.playerHasEffect(current, CharacterType.Taschendieb, 1);
+                    var hasAny = false;
+                    for (var h = 0; h < this.currentDice.length; h++) {
+                        if (this.currentDice[h] === 1 || (hasZweier && this.currentDice[h] === 2)) { hasAny = true; break; }
+                    }
+                    if (!hasAny) {
+                        var healMsg = hasZweier ? 'Keine 1er oder 2er vorhanden — keine Heilung möglich!' : 'Keine 1er vorhanden — keine Heilung möglich!';
+                        showScroll(healMsg, '⚠️');
+                        current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+                        this.actionSelected = null;
+                        var self = this; afterScroll(function() { self.sendOnlineAction({ type: 'endTurn' }); });
+                        return;
+                    }
+                }
                 this.sendOnlineAction({ type: 'selectAction', actionType: actionType });
                 return;
+            }
+            // Heilen: prüfe ob eligible Würfel vorhanden
+            if (actionType === 'heal') {
+                var current2 = this.getCurrentPlayer();
+                var hasZweier2 = this.playerHasEffect(current2, CharacterType.Taschendieb, 1);
+                var hasAny2 = false;
+                for (var h2 = 0; h2 < this.currentDice.length; h2++) {
+                    if (this.currentDice[h2] === 1 || (hasZweier2 && this.currentDice[h2] === 2)) { hasAny2 = true; break; }
+                }
+                if (!hasAny2) {
+                    var healMsg2 = hasZweier2 ? 'Keine 1er oder 2er vorhanden — keine Heilung möglich!' : 'Keine 1er vorhanden — keine Heilung möglich!';
+                    showScroll(healMsg2, '⚠️');
+                    current2.consecutiveAttacks = Math.max(0, current2.consecutiveAttacks - 1);
+                    this.actionSelected = null;
+                    var self2 = this; afterScroll(function() { self2.endTurn(); });
+                    return;
+                }
             }
             for (var i = 0; i < this.diceKept.length; i++) {
                 if (this.diceKept[i] && !this.diceLocked[i]) this.diceKept[i] = false;
@@ -3497,10 +3795,11 @@
                 this.currentDice[idx] = Math.floor(Math.random() * 6) + 1;
                 this.diceKept[idx] = false;
                 this.rerollUsed = true;
+                current.sp += 1;
                 var newVal = this.currentDice[idx];
                 var dieNum = idx + 1;
                 this.render();
-                setTimeout(function() { showScroll('🔁 Neuwurf! Würfel ' + dieNum + ' → ' + newVal, '🔁'); }, 50);
+                setTimeout(function() { showScroll('🔁 Neuwurf! Würfel ' + dieNum + ' → ' + newVal + ' (+1 SP)', '🔁'); }, 50);
             }
         };
 
@@ -3530,9 +3829,65 @@
             this.render();
         };
 
+        // ===== MÜNZWURF-ANIMATION =====
+        function showCoinFlip(winnerName, callback) {
+            var overlay = document.getElementById('coinFlipOverlay');
+            var coin = document.getElementById('coinFlipCoin');
+            var label = document.getElementById('coinFlipLabel');
+            if (!overlay || !coin || !label) { callback(); return; }
+            label.textContent = '';
+            label.classList.remove('reveal');
+            coin.classList.remove('spinning');
+            overlay.classList.add('show');
+            SFX.click();
+            // Gold-Partikel spawnen
+            function spawnParticles() {
+                var rect = coin.getBoundingClientRect();
+                var cx = rect.left + rect.width / 2;
+                var cy = rect.top + rect.height / 2;
+                for (var i = 0; i < 12; i++) {
+                    var p = document.createElement('div');
+                    p.className = 'coinflip-particle';
+                    var angle = (Math.PI * 2 / 12) * i + Math.random() * 0.5;
+                    var dist = 40 + Math.random() * 60;
+                    p.style.left = cx + 'px';
+                    p.style.top = cy + 'px';
+                    p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
+                    p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
+                    p.style.animation = 'coinParticle 0.7s ease-out forwards';
+                    p.style.animationDelay = (Math.random() * 0.2) + 's';
+                    document.body.appendChild(p);
+                    (function(el) { setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 1000); })(p);
+                }
+            }
+            // Münze drehen
+            setTimeout(function() { coin.classList.add('spinning'); }, 50);
+            // Partikel nach Hälfte der Animation
+            setTimeout(spawnParticles, 1200);
+            // Ergebnis-Text nach Animation
+            setTimeout(function() {
+                label.textContent = '⚔ ' + winnerName + ' beginnt!';
+                label.classList.add('reveal');
+                SFX.collect();
+                spawnParticles();
+            }, 2200);
+            // Overlay schließen per Klick oder nach 3.5s
+            var closed = false;
+            function closeOverlay() {
+                if (closed) return;
+                closed = true;
+                overlay.classList.remove('show');
+                coin.classList.remove('spinning');
+                callback();
+            }
+            overlay.onclick = function() { if (label.classList.contains('reveal')) closeOverlay(); };
+            setTimeout(closeOverlay, 4000);
+        }
+
         // ===== EFFEKTE =====
         Game.prototype.showScreenShake = function() {
             SFX.attack();
+            if (document.body.classList.contains('reducedmotion-mode')) return;
             var container = document.getElementById('gameContainer');
             if (!container) return;
             container.classList.add('screen-shake');
@@ -3548,13 +3903,14 @@
 
         Game.prototype.showHealEffect = function() {
             SFX.heal();
+            if (document.body.classList.contains('reducedmotion-mode')) return;
             var flash = document.createElement('div');
             flash.className = 'heal-flash';
             document.body.appendChild(flash);
             setTimeout(function() { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 900);
             var container = document.createElement('div');
             container.className = 'heal-container';
-            var symbols = ['💚', '✚', '❤️‍🩹', '✦', '💚', '✚', '✨', '💚'];
+            var symbols = [rgEmoji('💚'), '✚', '❤️‍🩹', '✦', rgEmoji('💚'), '✚', '✨', rgEmoji('💚')];
             for (var i = 0; i < 35; i++) {
                 var p = document.createElement('div');
                 p.className = 'heal-particle';
@@ -3580,6 +3936,7 @@
 
         Game.prototype.showSparkles = function() {
             SFX.collect();
+            if (document.body.classList.contains('reducedmotion-mode')) return;
             var container = document.createElement('div');
             container.className = 'ripple-container';
             for (var i = 0; i < 5; i++) {
@@ -3704,7 +4061,11 @@
                 cycleCount++;
                 for (var c = 0; c < diceEls.length; c++) {
                     var rv = Math.floor(Math.random() * 6) + 1;
-                    diceEls[c].textContent = skinData.map[rv] || rv;
+                    if (skinData.pipDots) {
+                        diceEls[c].innerHTML = self.renderBattlePipDots(rv);
+                    } else {
+                        diceEls[c].textContent = skinData.map[rv] || rv;
+                    }
                 }
                 if (cycleCount >= maxCycles) {
                     clearInterval(cycleTimer);
@@ -3827,6 +4188,7 @@
             }
 
             var blockSum = markedDice.reduce(function(a, b) { return a + b; }, 0);
+            if (!current.isAI) this.trackPlayerAction('block', {});
             current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
             if (current.lastDamageReceived > 0 && blockSum >= current.lastDamageReceived) {
                 current.health = Math.min(100, current.health + current.lastDamageReceived);
@@ -3849,6 +4211,9 @@
             current.consecutiveAttacks++;
             var finalDamage = baseDamage;
 
+            // Kampfinstinkt: +3 Schaden
+            if (this.playerHasEffect(current, CharacterType.Soldat, 0)) finalDamage += 3;
+
             // Kriegsmeister: +2
             if (this.playerHasEffect(current, CharacterType.Soldat, 1)) finalDamage += 2;
 
@@ -3869,6 +4234,8 @@
                 current.sp += 2;
             }
 
+            // Spieler-Aktion tracken für adaptive KI
+            if (!current.isAI) this.trackPlayerAction('attack', { damage: finalDamage });
             // Schaden tracken für Schadensblockade
             opponent.lastDamageReceived = finalDamage;
             // Meta-Progression: höchster Schaden tracken
@@ -3890,8 +4257,8 @@
             if (healFromManager && healFromManager > 0) {
                 this.healedThisGame = true;
                 current.health = Math.min(100, current.health + healFromManager);
-                current.sp += 1;
-                msg += '\n💊 Heilungs-Manager*in: +' + healFromManager + ' HP, +1 SP!';
+                current.sp += 3;
+                msg += '\n💊 Heilungs-Manager*in: +' + healFromManager + ' HP, +3 SP!';
             }
 
             this.showScreenShake();
@@ -3907,11 +4274,12 @@
             this.healedThisGame = true;
             this.healsThisGame++;
             var healAmount = count * 5;
+            if (!current.isAI) this.trackPlayerAction('heal', { healAmount: healAmount, currentHP: current.health });
             current.health = Math.min(100, current.health + healAmount);
             var healMsg = '💚 ' + count + ' Heilwürfel = ' + healAmount + ' HP geheilt!\nHP: ' + current.health + '/100';
             if (this.playerHasEffect(current, CharacterType.Quacksalber, 1)) {
-                current.sp += 1;
-                healMsg += '\n💊 +1 SP durch Heilung!';
+                current.sp += 3;
+                healMsg += '\n💊 +3 SP durch Heilung!';
             }
             this.showHealEffect();
             var self = this;
@@ -3925,6 +4293,7 @@
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
             current.consecutiveAttacks = Math.max(0, current.consecutiveAttacks - 1);
+            if (!current.isAI) this.trackPlayerAction('ability', {});
             this.abilityCollectsThisGame++;
             var fp = 0;
             var sp = 0;
@@ -3973,7 +4342,7 @@
                         var totalFP = 0;
                         for (var ap = 0; ap < 4; ap++) totalFP += opponent.abilityProgress[ap];
                         totalFP = Math.max(0, totalFP - stolen);
-                        opponent.abilityProgress = [Math.min(10, totalFP), Math.max(0, Math.min(10, totalFP - 10)), Math.max(0, Math.min(10, totalFP - 20)), Math.max(0, Math.min(10, totalFP - 30))];
+                        opponent.abilityProgress = [Math.min(7, totalFP), Math.max(0, Math.min(7, totalFP - 7)), Math.max(0, Math.min(7, totalFP - 14)), Math.max(0, Math.min(7, totalFP - 21))];
                         raubMsg = '\n💰 Ressourcen-Raub: ' + opponent.name + ' verliert ' + stolen + ' FP!';
                     }
                 }
@@ -4079,21 +4448,21 @@
                 this.render();
                 return true;
             }
-            // 2. Aktiver Spieler: 40 SP erreicht?
-            if (current.sp >= 40) {
+            // 2. Aktiver Spieler: 55 SP erreicht?
+            if (current.sp >= 55) {
                 this.state = GameState.GameOver;
                 Music.stop();
                 SFX.victory();
-                showScroll('🌟 Transzendenz-Sieg! ' + current.name + ' erreicht 40 SP!', '🌟');
+                showScroll('🌟 Transzendenz-Sieg! ' + current.name + ' erreicht 55 SP!', '🌟');
                 this.render();
                 return true;
             }
-            // 3. Inaktiver Spieler: 40 SP erreicht? (z.B. durch passiven SP-Gain)
-            if (opponent.sp >= 40) {
+            // 3. Inaktiver Spieler: 55 SP erreicht? (z.B. durch passiven SP-Gain)
+            if (opponent.sp >= 55) {
                 this.state = GameState.GameOver;
                 Music.stop();
                 SFX.victory();
-                showScroll('🌟 Transzendenz-Sieg! ' + opponent.name + ' erreicht 40 SP!', '🌟');
+                showScroll('🌟 Transzendenz-Sieg! ' + opponent.name + ' erreicht 55 SP!', '🌟');
                 this.render();
                 return true;
             }
@@ -4123,11 +4492,10 @@
             var current = this.getCurrentPlayer();
             var opponent = this.getOpponent();
 
-            // Rebell Kriegsstratege: nach Aktion, Gegner nimmt 2 auto-Schaden + 1 SP
+            // Rebell Kriegsstratege: nach Aktion, Gegner nimmt 4 auto-Schaden
             if (this.playerHasEffect(current, CharacterType.Rebell, 2)) {
-                opponent.health = Math.max(0, opponent.health - 2);
-                current.sp += 1;
-                showScroll(getGenderedText(['👑 Kriegsstratege! ', '👑 Kriegsstrategin! ', '👑 Kriegsstrateg*in! '], current.gender) + opponent.name + ' nimmt 2 auto-Schaden! +1 SP', '👑');
+                opponent.health = Math.max(0, opponent.health - 4);
+                showScroll(getGenderedText(['👑 Kriegsstratege! ', '👑 Kriegsstrategin! ', '👑 Kriegsstrateg*in! '], current.gender) + opponent.name + ' nimmt 4 auto-Schaden!', '👑');
                 if (this.checkWinCondition()) return;
                 var self = this;
                 afterScroll(function() { self._endTurnContinue(); });
@@ -4182,6 +4550,11 @@
 
         // ===== KI =====
         Game.prototype.performAITurn = function() {
+            // Schwere KI: adaptive Variante nutzen
+            if (this.aiDifficulty === Difficulty.Schwer) {
+                this.performAITurnHard();
+                return;
+            }
             var self = this;
             var ai = this.getCurrentPlayer();
             var opp = this.getOpponent();
@@ -4249,10 +4622,10 @@
             var strategy = 'attack'; // Standard
             var oppCanKill = opp.health <= 0;
             var aiLowHP = ai.health <= 40;
-            var oppCloseSP = opp.sp >= 30;
-            var aiCloseSP = ai.sp >= 30;
+            var oppCloseSP = opp.sp >= 38;
+            var aiCloseSP = ai.sp >= 38;
             var aiNeedsAbility = ai.currentAbilityIndex < 4;
-            var fpToNextAbility = aiNeedsAbility ? (10 - ai.abilityProgress[ai.currentAbilityIndex]) : 999;
+            var fpToNextAbility = aiNeedsAbility ? (7 - ai.abilityProgress[ai.currentAbilityIndex]) : 999;
             var aiExhausted = ai.consecutiveAttacks >= 2; // Erschöpfung berücksichtigen
 
             // Phase 2: Strategisches Würfeln — 3 Würfe mit Auswertung dazwischen
@@ -4268,7 +4641,8 @@
             var spCombo = calcSPForDice(this.currentDice);
 
             // Entscheide Strategie basierend auf erstem Wurf + Spielzustand
-            if (analysis.bestDmg >= opp.health && analysis.bestCount >= 2) {
+            var aiKampfinstinkt = self.playerHasEffect(ai, CharacterType.Soldat, 0) ? 3 : 0;
+            if ((analysis.bestDmg + aiKampfinstinkt) >= opp.health && analysis.bestCount >= 2) {
                 strategy = 'attack'; // Kann Gegner töten! (Erschöpfung egal)
             } else if (aiExhausted && (spCombo.sp >= 3 || analysis.ones >= 2)) {
                 // Erschöpft: Angriff vermeiden wenn möglich
@@ -4330,7 +4704,7 @@
             var spCombo2 = calcSPForDice(this.currentDice);
 
             // Strategie ggf. anpassen nach zweitem Wurf
-            if (analysis2.bestDmg >= opp.health && analysis2.bestCount >= 2) {
+            if ((analysis2.bestDmg + aiKampfinstinkt) >= opp.health && analysis2.bestCount >= 2) {
                 strategy = 'attack';
             } else if (strategy === 'attack' && analysis2.bestDmg < 4 && analysis2.ones >= 2 && aiLowHP) {
                 strategy = 'heal'; // Angriff schlecht, lieber heilen
@@ -4371,7 +4745,7 @@
             var finalSP = calcSPForDice(this.currentDice);
 
             // Finale Strategieentscheidung basierend auf dem was wir tatsächlich haben
-            if (finalAnalysis.bestDmg >= opp.health && finalAnalysis.bestCount >= 2) {
+            if ((finalAnalysis.bestDmg + aiKampfinstinkt) >= opp.health && finalAnalysis.bestCount >= 2) {
                 strategy = 'attack'; // Kill sichern
             } else if (strategy === 'heal' && finalAnalysis.ones === 0) {
                 // Wollten heilen, aber keine 1er — erzwinge Alternativ-Aktion
@@ -4428,6 +4802,8 @@
                         damage = 6 * finalAnalysis.bestCount;
                     }
                     var finalDmg = damage;
+                    // Kampfinstinkt: +3 Schaden
+                    if (self.playerHasEffect(ai, CharacterType.Soldat, 0)) finalDmg += 3;
                     if (self.playerHasEffect(ai, CharacterType.Soldat, 1)) finalDmg += 2;
                     // Vergeltung
                     var vergeltungMsg = '';
@@ -4450,7 +4826,7 @@
                     ai.health = Math.min(100, ai.health + healAmt);
                     ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
                     if (self.playerHasEffect(ai, CharacterType.Quacksalber, 1)) {
-                        ai.sp += 1;
+                        ai.sp += 2;
                     }
                     showScroll('KI heilt sich um ' + healAmt + ' HP!', '🤖');
                     if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
@@ -4479,6 +4855,471 @@
                         var eCount = 0;
                         for (var ek = 0; ek < diceCount; ek++) { if (self.currentDice[ek] === highVal) eCount++; }
                         eDmg = highVal * eCount;
+                        if (self.playerHasEffect(ai, CharacterType.Soldat, 0)) eDmg += 3;
+                        if (self.playerHasEffect(ai, CharacterType.Soldat, 1)) eDmg += 2;
+                        opp.lastDamageReceived = eDmg;
+                        opp.health = Math.max(0, opp.health - eDmg);
+                        ai.consecutiveAttacks++;
+                        showScroll('KI greift an: ' + eDmg + ' Schaden!', '🤖');
+                        if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
+                    } else {
+                        showScroll('KI hat keine Würfel übrig.', '🤖');
+                        afterScroll(function() { self.endTurn(); });
+                    }
+                } else {
+                    showScroll('KI hat keine Würfel übrig.', '🤖');
+                    afterScroll(function() { self.endTurn(); });
+                }
+            }, 500);
+        };
+
+        // ===== ADAPTIVE SCHWERE KI =====
+        // Spieleraktionen tracken (nur vs Schwere KI)
+        Game.prototype.trackPlayerAction = function(action, context) {
+            if (!this.vsAI || this.aiDifficulty !== Difficulty.Schwer) return;
+            var meta = loadMetaData();
+            var learn = meta.aiLearning;
+            if (!learn) return;
+            if (learn.actionCounts[action] !== undefined) learn.actionCounts[action]++;
+            if (action === 'heal' && context && context.healAmount) {
+                learn.healThresholds.push(context.currentHP);
+                if (learn.healThresholds.length > 50) learn.healThresholds.shift();
+            }
+            if (action === 'attack' && context && context.damage) {
+                learn.totalDamageDealt += context.damage;
+                learn.totalAttacks++;
+                learn.avgDamagePerAttack = learn.totalDamageDealt / learn.totalAttacks;
+            }
+            saveMetaData(meta);
+        };
+
+        // Spielergebnis tracken (nur vs Schwere KI)
+        Game.prototype.trackGameResult = function(winner, loser, isTranszendenz) {
+            if (!this.vsAI || this.aiDifficulty !== Difficulty.Schwer) return;
+            var meta = loadMetaData();
+            var learn = meta.aiLearning;
+            if (!learn) return;
+            learn.gamesPlayed++;
+            var humanWon = !winner.isAI;
+            if (isTranszendenz) {
+                if (humanWon) learn.winsByTrans++;
+            } else {
+                if (humanWon) learn.winsByElim++;
+            }
+            // Charakter-Picks tracken
+            var humanChar = this.player1.character;
+            if (learn.charPicks[humanChar] !== undefined) learn.charPicks[humanChar]++;
+            // Matchup tracken
+            var key = humanChar + 'v' + this.player2.character;
+            if (!learn.matchups[key]) learn.matchups[key] = { wins: 0, losses: 0 };
+            if (humanWon) learn.matchups[key].wins++;
+            else learn.matchups[key].losses++;
+            saveMetaData(meta);
+        };
+
+        // ===== SCHWERE KI: Adaptive Entscheidungen =====
+        Game.prototype.performAITurnHard = function() {
+            var self = this;
+            var ai = this.getCurrentPlayer();
+            var opp = this.getOpponent();
+            var diceCount = this.currentDice.length;
+            var meta = loadMetaData();
+            var learn = meta.aiLearning || {};
+            var adaptFactor = Math.min(1.0, (learn.gamesPlayed || 0) / 100);
+
+            // ===== HELPER: Analyse der aktuellen Würfel =====
+            function analyzeDice(dice) {
+                var counts = {};
+                var ones = 0, twos = 0;
+                var alive = 0;
+                for (var i = 0; i < dice.length; i++) {
+                    var v = dice[i];
+                    if (v > 0) {
+                        alive++;
+                        counts[v] = (counts[v] || 0) + 1;
+                        if (v === 1) ones++;
+                        if (v === 2) twos++;
+                    }
+                }
+                var bestVal = 0, bestCount = 0, bestDmg = 0;
+                for (var v in counts) {
+                    if (counts.hasOwnProperty(v)) {
+                        var val = parseInt(v);
+                        var cnt = counts[v];
+                        var dmg = val * cnt;
+                        if (cnt >= 2 && dmg > bestDmg) { bestVal = val; bestCount = cnt; bestDmg = dmg; }
+                    }
+                }
+                if (bestDmg === 0) {
+                    for (var v2 in counts) {
+                        if (counts.hasOwnProperty(v2)) {
+                            var val2 = parseInt(v2);
+                            if (val2 > bestVal) { bestVal = val2; bestCount = counts[v2]; bestDmg = val2 * counts[v2]; }
+                        }
+                    }
+                }
+                var healAmt = ones * 5;
+                // Taschendieb: 2er zählen auch als Heilung
+                if (self.playerHasEffect(ai, CharacterType.Taschendieb, 1)) {
+                    healAmt += twos * 5;
+                }
+                return { counts: counts, ones: ones, twos: twos, alive: alive, bestVal: bestVal, bestCount: bestCount, bestDmg: bestDmg, healAmt: healAmt };
+            }
+
+            function calcSPForDice(dice) {
+                var sorted = [];
+                for (var i = 0; i < dice.length; i++) { if (dice[i] > 0) sorted.push(dice[i]); }
+                sorted.sort(function(a, b) { return a - b; });
+                if (sorted.length === 0) return { fp: 0, sp: 0 };
+                var groups = {};
+                for (var j = 0; j < sorted.length; j++) { groups[sorted[j]] = (groups[sorted[j]] || 0) + 1; }
+                var maxC = 0, pairs = 0;
+                for (var k in groups) { if (groups.hasOwnProperty(k)) { if (groups[k] > maxC) maxC = groups[k]; if (groups[k] >= 2) pairs++; } }
+                if (maxC >= 6) return { fp: 6, sp: 18 };
+                var unique = [];
+                for (var u = 0; u < sorted.length; u++) { if (unique.indexOf(sorted[u]) === -1) unique.push(sorted[u]); }
+                if (unique.length >= 6 && unique[0] === 1 && unique[5] === 6) return { fp: 4, sp: 10 };
+                if (unique.length >= 5) { for (var s = 0; s <= unique.length - 5; s++) { if (unique[s + 4] - unique[s] === 4) return { fp: 3, sp: 6 }; } }
+                if (maxC >= 4) return { fp: 3, sp: 5 };
+                if (pairs >= 2) return { fp: 2, sp: 4 };
+                if (maxC >= 3) return { fp: 2, sp: 3 };
+                return { fp: 0, sp: 0 };
+            }
+
+            // ===== SPIELER-PROFIL ANALYSE =====
+            var totalActs = (learn.actionCounts ? (learn.actionCounts.attack + learn.actionCounts.heal + learn.actionCounts.ability + learn.actionCounts.block) : 0) || 1;
+            var attackRate = (learn.actionCounts ? learn.actionCounts.attack : 0) / totalActs;
+            var healRate = (learn.actionCounts ? learn.actionCounts.heal : 0) / totalActs;
+            var abilityRate = (learn.actionCounts ? learn.actionCounts.ability : 0) / totalActs;
+            var avgHealHP = 100;
+            if (learn.healThresholds && learn.healThresholds.length > 0) {
+                var sum = 0;
+                for (var ht = 0; ht < learn.healThresholds.length; ht++) sum += learn.healThresholds[ht];
+                avgHealHP = sum / learn.healThresholds.length;
+            }
+            // Häufigster Charakter des Spielers
+            var favChar = 0;
+            if (learn.charPicks) {
+                for (var cp = 1; cp < learn.charPicks.length; cp++) {
+                    if (learn.charPicks[cp] > learn.charPicks[favChar]) favChar = cp;
+                }
+            }
+
+            // ===== STRATEGISCHE ENTSCHEIDUNG =====
+            var strategy = 'attack';
+            var aiKampfinstinkt = self.playerHasEffect(ai, CharacterType.Soldat, 0) ? 3 : 0;
+            var aiKriegsmeister = self.playerHasEffect(ai, CharacterType.Soldat, 1) ? 2 : 0;
+            var aiExhausted = ai.consecutiveAttacks >= 2;
+            var aiLowHP = ai.health <= (40 + Math.floor(adaptFactor * 20));
+            var oppCloseSP = opp.sp >= (38 - Math.floor(adaptFactor * 8));
+            var aiCloseSP = ai.sp >= 38;
+            var aiNeedsAbility = ai.currentAbilityIndex < 4;
+            var fpToNextAbility = aiNeedsAbility ? (7 - ai.abilityProgress[ai.currentAbilityIndex]) : 999;
+            var canBlock = self.playerHasEffect(ai, CharacterType.Rebell, 1) && ai.lastDamageReceived > 0;
+
+            // Erster Wurf
+            for (var i = 0; i < diceCount; i++) {
+                if (this.currentDice[i] !== -1) {
+                    this.currentDice[i] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+
+            var analysis = analyzeDice(this.currentDice);
+            var spCombo = calcSPForDice(this.currentDice);
+
+            // ===== ADAPTIVE STRATEGIE =====
+            // Kill-Check zuerst (immer höchste Priorität)
+            if ((analysis.bestDmg + aiKampfinstinkt + aiKriegsmeister) >= opp.health && analysis.bestCount >= 2) {
+                strategy = 'attack';
+            }
+            // Block-Chance nutzen (adaptiv: erst nach genug Spielen)
+            else if (canBlock && ai.lastDamageReceived <= analysis.bestDmg && adaptFactor > 0.2) {
+                // Gute Block-Chance: Schaden komplett zurückholen
+                strategy = 'block';
+            }
+            // Erschöpfungsmanagement (adaptiv: frühzeitiger vermeiden)
+            else if (aiExhausted && (spCombo.sp >= 3 || analysis.healAmt >= 10)) {
+                strategy = (spCombo.sp >= 3) ? 'ability' : 'heal';
+            }
+            // Gegner nah an SP-Sieg: aggressiv kontern
+            else if (oppCloseSP && analysis.bestDmg >= 6) {
+                strategy = 'attack';
+            }
+            // Adaptiv: Spieler heilt spät → aggressive Strategie
+            else if (adaptFactor > 0.3 && attackRate > 0.5 && analysis.bestDmg >= 8) {
+                strategy = 'attack';
+            }
+            // Adaptiv: Spieler sammelt viel SP → Rush-Elimination
+            else if (adaptFactor > 0.3 && abilityRate > 0.35 && analysis.bestDmg >= 6) {
+                strategy = 'attack';
+            }
+            // SP-Sieg nah + gute Combo
+            else if (aiCloseSP && spCombo.sp >= 5) {
+                strategy = 'ability';
+            }
+            // Niedrige HP → heilen (adaptiver Schwellenwert)
+            else if (aiLowHP && analysis.healAmt >= 10) {
+                strategy = 'heal';
+            }
+            // Gute SP-Combo
+            else if (spCombo.sp >= 5) {
+                strategy = 'ability';
+            }
+            // Starker Angriff
+            else if (analysis.bestDmg >= 12) {
+                strategy = 'attack';
+            }
+            // Fähigkeit freischalten nah
+            else if (aiNeedsAbility && fpToNextAbility <= 3 && spCombo.fp >= fpToNextAbility) {
+                strategy = 'ability';
+            }
+            // Niedrige HP, weniger heilen reicht
+            else if (aiLowHP && analysis.healAmt >= 5) {
+                strategy = 'heal';
+            }
+            // Ordentlicher Angriff
+            else if (analysis.bestDmg >= 6) {
+                strategy = 'attack';
+            }
+            // SP sammeln
+            else if (spCombo.sp >= 2) {
+                strategy = 'ability';
+            }
+            // Heilen als Notfallplan
+            else if (analysis.healAmt >= 5) {
+                strategy = 'heal';
+            }
+            // Notfall
+            else {
+                strategy = 'attack';
+            }
+
+            // Phase 3: Zweiter Wurf — behalte passende Würfel
+            var kept = [];
+            for (var k = 0; k < diceCount; k++) { kept[k] = false; }
+
+            if (strategy === 'attack') {
+                for (var k2 = 0; k2 < diceCount; k2++) {
+                    if (this.currentDice[k2] === analysis.bestVal) kept[k2] = true;
+                }
+            } else if (strategy === 'heal') {
+                for (var k3 = 0; k3 < diceCount; k3++) {
+                    if (this.currentDice[k3] === 1) kept[k3] = true;
+                    if (self.playerHasEffect(ai, CharacterType.Taschendieb, 1) && this.currentDice[k3] === 2) kept[k3] = true;
+                }
+            } else if (strategy === 'ability') {
+                for (var k4 = 0; k4 < diceCount; k4++) {
+                    if (this.currentDice[k4] > 0) kept[k4] = true;
+                }
+            } else if (strategy === 'block') {
+                // Behalte Würfel mit höchstem Wert für Block-Summe
+                var blockTarget = ai.lastDamageReceived;
+                for (var kb = 0; kb < diceCount; kb++) {
+                    if (this.currentDice[kb] > 0) kept[kb] = true;
+                }
+            }
+
+            // Zweiter Wurf
+            for (var w2 = 0; w2 < diceCount; w2++) {
+                if (!kept[w2] && this.currentDice[w2] !== -1) {
+                    this.currentDice[w2] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+
+            var analysis2 = analyzeDice(this.currentDice);
+            var spCombo2 = calcSPForDice(this.currentDice);
+
+            // Re-Evaluate nach zweitem Wurf
+            if ((analysis2.bestDmg + aiKampfinstinkt + aiKriegsmeister) >= opp.health && analysis2.bestCount >= 2) {
+                strategy = 'attack';
+            } else if (strategy === 'attack' && analysis2.bestDmg < 4 && analysis2.healAmt >= 10 && aiLowHP) {
+                strategy = 'heal';
+            } else if (strategy === 'attack' && analysis2.bestDmg < 4 && spCombo2.sp >= 3) {
+                strategy = 'ability';
+            } else if (canBlock && strategy !== 'block' && ai.lastDamageReceived >= 8 && adaptFactor > 0.4) {
+                // Nachträglich Block erwägen bei hohem Schaden
+                var blockSum = 0;
+                for (var bs = 0; bs < diceCount; bs++) { if (this.currentDice[bs] > 0) blockSum += this.currentDice[bs]; }
+                if (blockSum >= ai.lastDamageReceived) strategy = 'block';
+            }
+
+            // Phase 4: Dritter Wurf
+            var kept2 = [];
+            for (var k5 = 0; k5 < diceCount; k5++) { kept2[k5] = false; }
+
+            if (strategy === 'attack') {
+                var newBest = analysis2.bestVal;
+                for (var k6 = 0; k6 < diceCount; k6++) {
+                    if (this.currentDice[k6] === newBest) kept2[k6] = true;
+                }
+            } else if (strategy === 'heal') {
+                for (var k7 = 0; k7 < diceCount; k7++) {
+                    if (this.currentDice[k7] === 1) kept2[k7] = true;
+                    if (self.playerHasEffect(ai, CharacterType.Taschendieb, 1) && this.currentDice[k7] === 2) kept2[k7] = true;
+                }
+            } else if (strategy === 'ability' || strategy === 'block') {
+                for (var k8 = 0; k8 < diceCount; k8++) {
+                    if (this.currentDice[k8] > 0) kept2[k8] = true;
+                }
+            }
+
+            // Dritter Wurf
+            for (var w3 = 0; w3 < diceCount; w3++) {
+                if (!kept2[w3] && this.currentDice[w3] !== -1) {
+                    this.currentDice[w3] = Math.floor(Math.random() * 6) + 1;
+                }
+            }
+
+            this.rollsRemaining = 0;
+
+            // Finale Analyse
+            var finalAnalysis = analyzeDice(this.currentDice);
+            var finalSP = calcSPForDice(this.currentDice);
+
+            // Finale Strategieentscheidung
+            if ((finalAnalysis.bestDmg + aiKampfinstinkt + aiKriegsmeister) >= opp.health && finalAnalysis.bestCount >= 2) {
+                strategy = 'attack';
+            } else if (strategy === 'block') {
+                var finalBlockSum = 0;
+                for (var fbs = 0; fbs < diceCount; fbs++) { if (this.currentDice[fbs] > 0) finalBlockSum += this.currentDice[fbs]; }
+                if (finalBlockSum < ai.lastDamageReceived) {
+                    // Block reicht nicht — Fallback
+                    if (finalAnalysis.bestDmg > 0 && finalAnalysis.bestCount >= 2) strategy = 'attack';
+                    else if (finalSP.sp > 0) strategy = 'ability';
+                    else if (finalAnalysis.healAmt > 0) strategy = 'heal';
+                    else strategy = 'attack';
+                }
+            } else if (strategy === 'heal' && finalAnalysis.healAmt === 0) {
+                if (finalAnalysis.bestDmg > 0 && finalAnalysis.bestCount >= 2) strategy = 'attack';
+                else if (finalSP.sp > 0) strategy = 'ability';
+                else if (finalAnalysis.bestDmg > 0) strategy = 'attack';
+            } else if (strategy === 'ability' && finalSP.sp === 0) {
+                if (finalAnalysis.bestDmg > 0 && finalAnalysis.bestCount >= 2) strategy = 'attack';
+                else if (finalAnalysis.healAmt > 0) strategy = 'heal';
+                else if (finalAnalysis.bestDmg > 0) strategy = 'attack';
+            } else if (strategy === 'attack' && finalAnalysis.bestCount < 2) {
+                if (finalSP.sp > 0) strategy = 'ability';
+                else if (finalAnalysis.healAmt > 0) strategy = 'heal';
+            }
+
+            // Adaptiv: 2-Zug-Kill Planung (ab adaptFactor > 0.5)
+            if (adaptFactor > 0.5 && strategy !== 'attack' && finalAnalysis.bestDmg >= (opp.health / 2) && opp.health <= 40) {
+                strategy = 'attack'; // Nah genug am Kill — aggressiv bleiben
+            }
+
+            // Adaptiv: Gegner heilt spät → noch aggressiver (ab adaptFactor > 0.6)
+            if (adaptFactor > 0.6 && avgHealHP < 35 && strategy === 'heal' && ai.health > 30 && finalAnalysis.bestDmg >= 8) {
+                strategy = 'attack'; // Gegner heilt erst spät, also kann KI auch aggressiver spielen
+            }
+
+            // Fallback
+            var hasDice = false;
+            for (var chk = 0; chk < diceCount; chk++) { if (this.currentDice[chk] > 0) { hasDice = true; break; } }
+            if (hasDice && strategy !== 'attack' && strategy !== 'heal' && strategy !== 'ability' && strategy !== 'block') {
+                if (finalAnalysis.bestDmg > 0) strategy = 'attack';
+                else if (finalAnalysis.healAmt > 0) strategy = 'heal';
+                else if (finalSP.sp > 0) strategy = 'ability';
+                else strategy = 'attack';
+            }
+
+            // Würfel markieren
+            for (var m = 0; m < diceCount; m++) { this.diceKept[m] = false; }
+
+            if (strategy === 'attack') {
+                for (var ma = 0; ma < diceCount; ma++) {
+                    this.diceKept[ma] = (this.currentDice[ma] === finalAnalysis.bestVal);
+                }
+            } else if (strategy === 'heal') {
+                for (var mh = 0; mh < diceCount; mh++) {
+                    if (this.currentDice[mh] === 1) this.diceKept[mh] = true;
+                    if (self.playerHasEffect(ai, CharacterType.Taschendieb, 1) && this.currentDice[mh] === 2) this.diceKept[mh] = true;
+                }
+            } else if (strategy === 'ability') {
+                for (var ms = 0; ms < diceCount; ms++) {
+                    if (this.currentDice[ms] > 0) this.diceKept[ms] = true;
+                }
+            } else if (strategy === 'block') {
+                // Alle Würfel für Block markieren
+                for (var mb = 0; mb < diceCount; mb++) {
+                    if (this.currentDice[mb] > 0) this.diceKept[mb] = true;
+                }
+            }
+
+            this.render();
+
+            setTimeout(function() {
+                if (strategy === 'block' && canBlock) {
+                    self.actionSelected = 'block';
+                    var blockSum = 0;
+                    for (var bi = 0; bi < diceCount; bi++) { if (self.currentDice[bi] > 0) blockSum += self.currentDice[bi]; }
+                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
+                    if (blockSum >= ai.lastDamageReceived) {
+                        ai.health = Math.min(100, ai.health + ai.lastDamageReceived);
+                        showScroll('🛡️ KI blockt: ' + ai.lastDamageReceived + ' HP wiederhergestellt! (Block: ' + blockSum + ' ≥ Schaden: ' + ai.lastDamageReceived + ')', '🛡️');
+                        ai.lastDamageReceived = 0;
+                    } else {
+                        showScroll('🛡️ KI-Block zu schwach! (' + blockSum + ' < ' + ai.lastDamageReceived + ')', '🛡️');
+                    }
+                    afterScroll(function() { self.endTurn(); });
+                } else if (strategy === 'attack' && finalAnalysis.bestDmg > 0) {
+                    self.actionSelected = 'attack';
+                    var damage = finalAnalysis.bestVal * finalAnalysis.bestCount;
+                    if (self.playerHasEffect(ai, CharacterType.Rebell, 3) && finalAnalysis.bestVal === 5) {
+                        damage = 6 * finalAnalysis.bestCount;
+                    }
+                    var finalDmg = damage;
+                    if (self.playerHasEffect(ai, CharacterType.Soldat, 0)) finalDmg += 3;
+                    if (self.playerHasEffect(ai, CharacterType.Soldat, 1)) finalDmg += 2;
+                    var vergeltungMsg = '';
+                    if (self.playerHasEffect(opp, CharacterType.Soldat, 2)) {
+                        var rVal = finalAnalysis.bestVal;
+                        ai.health = Math.max(0, ai.health - rVal);
+                        vergeltungMsg = '\n🔄 Vergeltung: ' + rVal + ' Schaden zurück!';
+                    }
+                    if (self.playerHasEffect(ai, CharacterType.Soldat, 1) && finalDmg >= 12) {
+                        ai.sp += 2;
+                    }
+                    opp.lastDamageReceived = finalDmg;
+                    opp.health = Math.max(0, opp.health - finalDmg);
+                    ai.consecutiveAttacks++;
+                    showScroll('KI greift an: ' + finalDmg + ' Schaden!' + vergeltungMsg, '🤖');
+                    if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
+                } else if (strategy === 'heal' && finalAnalysis.healAmt > 0) {
+                    var healOnes = finalAnalysis.ones;
+                    if (self.playerHasEffect(ai, CharacterType.Taschendieb, 1)) healOnes += finalAnalysis.twos;
+                    var healAmt = healOnes * 5;
+                    ai.health = Math.min(100, ai.health + healAmt);
+                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
+                    if (self.playerHasEffect(ai, CharacterType.Quacksalber, 1)) {
+                        ai.sp += 2;
+                    }
+                    showScroll('KI heilt sich um ' + healAmt + ' HP!', '🤖');
+                    if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
+                } else if (strategy === 'ability' && finalSP.sp > 0) {
+                    var aiFP = finalSP.fp;
+                    var aiSP = finalSP.sp;
+                    if (self.playerHasEffect(ai, CharacterType.Taschendieb, 0)) { aiFP += 1; aiSP += 1; }
+                    ai.fp += aiFP;
+                    ai.addAbilityPoints(aiFP);
+                    ai.sp += aiSP;
+                    ai.consecutiveAttacks = Math.max(0, ai.consecutiveAttacks - 1);
+                    showScroll('KI sammelt +' + aiFP + ' FP, +' + aiSP + ' SP!', '🤖');
+                    if (!self.checkWinCondition()) afterScroll(function() { self.endTurn(); });
+                } else if (hasDice) {
+                    var highVal = 0;
+                    for (var ei = 0; ei < diceCount; ei++) {
+                        if (self.currentDice[ei] > highVal) highVal = self.currentDice[ei];
+                    }
+                    if (highVal > 0) {
+                        for (var ej = 0; ej < diceCount; ej++) {
+                            self.diceKept[ej] = (self.currentDice[ej] === highVal);
+                        }
+                        self.actionSelected = 'attack';
+                        var eDmg = highVal;
+                        var eCount = 0;
+                        for (var ek = 0; ek < diceCount; ek++) { if (self.currentDice[ek] === highVal) eCount++; }
+                        eDmg = highVal * eCount;
+                        if (self.playerHasEffect(ai, CharacterType.Soldat, 0)) eDmg += 3;
                         if (self.playerHasEffect(ai, CharacterType.Soldat, 1)) eDmg += 2;
                         opp.lastDamageReceived = eDmg;
                         opp.health = Math.max(0, opp.health - eDmg);
@@ -4721,7 +5562,11 @@
                 cycleCount++;
                 for (var c = 0; c < diceEls.length; c++) {
                     var rv = Math.floor(Math.random() * 6) + 1;
-                    diceEls[c].textContent = skinData.map[rv] || rv;
+                    if (skinData.pipDots) {
+                        diceEls[c].innerHTML = self.renderBattlePipDots(rv);
+                    } else {
+                        diceEls[c].textContent = skinData.map[rv] || rv;
+                    }
                 }
                 if (cycleCount >= maxCycles) {
                     clearInterval(cycleTimer);
@@ -4775,9 +5620,10 @@
                 this.currentDice[idx] = newValue;
                 this.diceKept[idx] = false;
                 this.rerollUsed = true;
+                current.sp += 1;
                 var dieNum = idx + 1;
                 this.render();
-                setTimeout(function() { showScroll('🔁 Neuwurf! Würfel ' + dieNum + ' → ' + newValue, '🔁'); }, 50);
+                setTimeout(function() { showScroll('🔁 Neuwurf! Würfel ' + dieNum + ' → ' + newValue + ' (+1 SP)', '🔁'); }, 50);
             }
         };
 

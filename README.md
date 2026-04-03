@@ -26,12 +26,12 @@ Es gibt zwei alternative Wege zum Sieg:
 | Siegweg | Bedingung | Beschreibung |
 |---|---|---|
 | 💀 **Elimination** | Gegner auf 0 HP | Klassischer Kampfsieg durch Angriffe |
-| 🌟 **Transzendenz** | 40 SP erreichen | Alternativer Sieg durch Punktesammlung |
+| 🌟 **Transzendenz** | 55 SP erreichen | Alternativer Sieg durch Punktesammlung |
 
 **Priorität bei gleichzeitigem Sieg:** Der aktive Spieler hat Vorrang. Prüfreihenfolge:
 1. Gegner auf 0 HP → aktiver Spieler gewinnt (Elimination)
-2. Aktiver Spieler ≥40 SP → aktiver Spieler gewinnt (Transzendenz)
-3. Gegner ≥40 SP → Gegner gewinnt (z.B. durch passiven SP-Gain)
+2. Aktiver Spieler ≥55 SP → aktiver Spieler gewinnt (Transzendenz)
+3. Gegner ≥55 SP → Gegner gewinnt (z.B. durch passiven SP-Gain)
 4. Aktiver Spieler auf 0 HP → Gegner gewinnt (z.B. durch Vergeltung)
 
 ---
@@ -39,6 +39,7 @@ Es gibt zwei alternative Wege zum Sieg:
 ## Grundmechanik
 
 - Jeder Spieler startet mit **100 HP**, **5 FP** (Fähigkeitspunkte), **0 SP** (Siegpunkte).
+- **Zufällige Startspieler-Wahl:** Per Münzwurf wird bestimmt, wer beginnt. Der Zweitspieler erhält **+8 HP** (108 HP) als Kompensation für den Nachteil des späteren Zugs.
 - Pro Zug hat der Spieler **3 Würfe** mit **6 Würfeln** (Bonuswürfel durch Fähigkeiten/SP möglich).
 - Nach jedem Wurf können Würfel **markiert (gehalten)** werden — markierte Würfel werden bei weiteren Würfen nicht erneut geworfen.
 - Nach dem Würfeln wählt der Spieler eine von vier **Aktionen** und bestätigt sie.
@@ -71,14 +72,10 @@ Beim Sammeln (⭐-Aktion) geben bestimmte Würfelkombinationen sowohl FP als auc
 
 ## Fähigkeitensystem
 
-- Jede Fähigkeit kostet **10 FP** zum Freischalten.
+- Jede Fähigkeit kostet **7 FP** zum Freischalten.
 - Vier Fähigkeiten pro Charakter, sequentiell freigeschaltet (1 → 2 → 3 → 4).
 - Überschüssige FP fließen automatisch in die nächste Fähigkeit über.
 - Freigeschaltete Fähigkeiten sind **dauerhaft aktiv**.
-
-### SP-Schwelle
-
-Bei **35 SP** erhält der Spieler **+1 permanenten Bonuswürfel** (7 statt 6 Würfel).
 
 ### Erschöpfungs-System
 
@@ -101,11 +98,11 @@ Aufeinanderfolgende Angriffe führen zu Erschöpfung:
 ## Charaktere & Fähigkeiten
 
 ### 🗡️ Soldat*in — Offensiv-Spezialist
-Fokus: Maximaler Schaden durch Bonuswürfel und flexible Angriffsoptionen.
+Fokus: Maximaler Schaden durch Schadensbonus und flexible Angriffsoptionen.
 
 | # | Fähigkeit | Effekt |
 |---|---|---|
-| 1 | ⚡ Extrawürfel | 7 Würfel statt 6 |
+| 1 | ⚔️ Kampfinstinkt | +3 Angriffsschaden |
 | 2 | 🎯 Kriegsmeister*in | +2 Schaden. Bei ≥12 Schaden: +2 SP |
 | 3 | 🔄 Vergeltung | Reflektiert 1 Würfelwert als Gegenschaden bei eintreffendem Angriff |
 | 4 | 🎪 Doppelwertung | 2 verschiedene Würfelwert-Gruppen für Angriff markierbar |
@@ -119,10 +116,10 @@ Fokus: Verteidigung, passive Schadenszufügung und Würfelmanipulation.
 |---|---|---|
 | 1 | 🎲 Würfel-Diebstahl | +1 Bonuswürfel nächste Runde, wenn Gegner ungenutzte Würfel hatte |
 | 2 | 🛡️ Schadensblockade | Neue Aktion „Blocken": Wenn Summe ≥ erlittenem Schaden → volle Heilung |
-| 3 | 👑 Kriegsstrateg*in | Am Zugende: Gegner nimmt 2 auto-Schaden + 1 SP für den Rebell |
+| 3 | 👑 Kriegsstrateg*in | Am Zugende: Gegner nimmt 4 auto-Schaden |
 | 4 | 🚀 Fünfer-Upgrade | 5er-Würfel zählen als 6 bei Angriff |
 
-**SP-Synergie:** Kriegsstrateg*in generiert +1 SP pro eigener Runde (passiv).
+**Elimination-Synergie:** Kriegsstrateg*in macht 4 passiven Schaden pro Runde — über ein Spiel hinweg mehr als die Hälfte der gegnerischen HP.
 
 ### 🗝️ Taschendieb*in — Ressourcen-Spezialist
 Fokus: Mehr Punkte pro Sammlung, Heilflexibilität und Ressourcen-Raub.
@@ -141,12 +138,12 @@ Fokus: Würfelkontrolle, Kombination von Angriff und Heilung, und Gegnerbehinder
 
 | # | Fähigkeit | Effekt |
 |---|---|---|
-| 1 | 🔁 Neuwurf-Bonus | 1 einzelnen Würfel separat neu werfen (1×/Zug) |
-| 2 | 💊 Heilungs-Manager*in | Bei Angriff: markierte 1er heilen gleichzeitig + 1 SP pro Heilaktion |
+| 1 | 🔁 Neuwurf-Bonus | 1 einzelnen Würfel separat neu werfen (1×/Zug) + 1 SP |
+| 2 | 💊 Heilungs-Manager*in | Bei Angriff: markierte 1er heilen gleichzeitig + 3 SP pro Heilaktion |
 | 3 | 🔮 Gegner*in-Zwang | 1 zufälliger Gegner-Wurf wird erzwungen wiederholt |
 | 4 | ♻️ Selber-Neustart | Alle Würfel komplett neu werfen (1×/Zug) |
 
-**SP-Synergie:** Heilungs-Manager*in generiert +1 SP bei jeder Heilung (auch beim Angriff mit 1ern).
+**SP-Synergie:** Heilungs-Manager*in generiert +3 SP bei jeder Heilung (auch beim Angriff mit 1ern).
 
 ---
 
@@ -168,7 +165,7 @@ Fokus: Würfelkontrolle, Kombination von Angriff und Heilung, und Gegnerbehinder
    ├── Würfel für Aktion markieren
    ├── Aktion bestätigen → Effekt wird ausgeführt
    │
-   ├── Kriegsstrateg*in-Effekt (2 auto-Schaden + 1 SP, falls aktiv)
+   ├── Kriegsstrateg*in-Effekt (4 auto-Schaden, falls aktiv)
    ├── Würfel-Diebstahl prüfen (Bonuswürfel für Gegner)
    └── Spieler wechseln
 `
@@ -179,9 +176,9 @@ Fokus: Würfelkontrolle, Kombination von Angriff und Heilung, und Gegnerbehinder
 
 ### Siegwege im Vergleich
 
-| Aspekt | Elimination (HP-Kill) | Transzendenz (40 SP) |
+| Aspekt | Elimination (HP-Kill) | Transzendenz (55 SP) |
 |---|---|---|
-| Geschwindigkeit | ~12-15 eigene Züge | ~25-30 eigene Züge |
+| Geschwindigkeit | ~12-15 eigene Züge | ~33-38 eigene Züge |
 | Risiko | Gegner heilt/blockt | Gegner greift an, man muss überleben |
 | Hauptaktion | Angriff | Sammeln |
 | Nebenaktion | — | Heilen/Blocken zum Überleben |
@@ -197,16 +194,53 @@ Fokus: Würfelkontrolle, Kombination von Angriff und Heilung, und Gegnerbehinder
 | Große Straße | 10 | Sammelaktion (selten) |
 | 6× gleich | 18 | Sammelaktion (extrem selten) |
 | Kriegsmeister*in (Soldat) | +2 | Pro Angriff ≥12 Schaden |
-| Kriegsstrateg*in (Rebell) | +1 | Passiv jede eigene Runde |
+| ~~Kriegsstrateg*in (Rebell)~~ | ~~+1~~ | ~~Entfernt — Rebell fokussiert Elimination~~ |
 | Punkt-Bonus (Taschendieb) | +1 | Pro Sammelaktion |
-| Heilungs-Manager*in (Quacksalber) | +1 | Pro Heilaktion |
+| Neuwurf-Bonus (Quacksalber) | +1 | Pro Neuwurf (1×/Zug) |
+| Heilungs-Manager*in (Quacksalber) | +3 | Pro Heilaktion |
 
 ### Charakter-Philosophie
 
-- **Soldat*in**: Hoher Burst-Schaden, gewinnt schnell über Elimination. SP nur als Nebenprodukt bei starken Angriffen.
-- **Rebell*in**: Hybrid — passiver Schaden + SP-Generierung + Verteidigung. Kann beide Siegwege verfolgen.
+- **Soldat*in**: Hoher Burst-Schaden, gewinnt schnell über Elimination. SP nur als Nebenprodukt bei starken Angriffen. Kampfinstinkt (+3) und Kriegsmeister*in (+2) geben zusammen +5 Angriffsschaden.
+- **Rebell*in**: Hybrid — passiver Schaden + Verteidigung. Kann beide Siegwege verfolgen, mit Fokus auf Elimination durch Kriegsstrateg*in.
 - **Taschendieb*in**: Ressourceneffizienz — bekommt mehr pro Sammelaktion und schwächt Gegner durch Ressourcen-Raub.
 - **Quacksalber*in**: Würfelkontrolle — kann gleichzeitig angreifen und heilen, dadurch SP generieren, ohne auf Sammeln angewiesen zu sein.
+
+---
+
+## 🤖 KI-System
+
+Drei Schwierigkeitsgrade mit unterschiedlichem Verhalten:
+
+| Stufe | Verhalten |
+|---|---|
+| **Leicht / Mittel** | Feste Strategie: 3-Wurf-System mit situativer Aktionswahl (Angriff, Heilung, SP-Sammeln). Berücksichtigt HP, SP, Erschöpfung und Fähigkeiten. |
+| **Schwer** | Adaptive KI — lernt aus dem Spielverhalten des Spielers und wird mit der Zeit stärker. |
+
+### Adaptive Schwere KI
+
+Die schwere KI analysiert das Spielverhalten über Partien hinweg und passt ihre Strategie an:
+
+- **Lernfortschritt**: Skaliert von 0% bis 100% über ~100 Partien (`adaptFactor = gamesPlayed / 100`)
+- **Spieler-Profil**: Trackt Aktionsverteilung (Angriff/Heilung/SP/Block), durchschnittlichen Schaden, Heil-Schwellenwerte und Charakter-Picks
+- **Matchup-Tracking**: Gewinn/Verlust-Quote pro Charakter-Kombination
+
+**Adaptive Verbesserungen (mit steigendem Lernfortschritt):**
+
+| adaptFactor | Verbesserung |
+|---|---|
+| > 0.2 | Block-Aktion nutzen (Schadensblockade) |
+| > 0.3 | Spieler-Profil auswerten: aggressiver gegen Angreifer, defensiver gegen SP-Sammler |
+| > 0.4 | Nachträgliche Block-Entscheidung bei hohem Einzelschaden |
+| > 0.5 | 2-Zug-Kill-Planung: aggressiv bleiben wenn Gegner ≤40 HP |
+| > 0.6 | Spieler heilt spät → KI bleibt aggressiv statt zu heilen |
+
+**Zusätzliche Verbesserungen gegenüber Leicht/Mittel:**
+- Dynamischer Heil-Schwellenwert: 40 HP (Start) → 60 HP (bei adaptFactor 1.0)
+- SP-Bedrohungserkennung: reagiert früher auf gegnerische SP-Fortschritte
+- Taschendieb-Synergie: nutzt 2er zum Heilen (falls Fähigkeit aktiv)
+- Kriegsmeister-Bonusschaden wird bei Kill-Berechnung berücksichtigt
+- Keine versteckten Stat-Boni — nur bessere Entscheidungen
 
 ---
 
@@ -238,16 +272,16 @@ Pergament-Ansicht mit Spielstatistiken des aktiven Profils:
 
 | Erfolg | Bedingung |
 |---|---|
-| 🔥 Berserker(*in) | 30+ Schaden in einer Runde |
-| 💡 Erleuchtung | Sieg durch Transzendenz |
-| 🎓 Meister(*in) | Sieg gegen Schwere KI |
-| 🖼️ Goldrahmen | 10 Siege erreichen |
-| 💥 Zerstörer(*in) | Gegner mit einem Angriff von ≥50 HP besiegen |
-| ⚡ Blitzkrieg | Sieg in ≤10 Zügen |
-| 🛡️ Überlebend(e/*e) | Mit ≤10 HP gewinnen |
-| 🧲 Sammler(*in) | 40+ FP in einer Partie sammeln |
-| ⭐ Veteran(*in) | 25 Spiele absolvieren |
-| 👑 Legende | Alle anderen Erfolge freischalten |
+| 🔥 Berserker(*in) | Gewinne ohne zu heilen |
+| 🌟 Erleuchtung | Gewinne durch Transzendenz |
+| 👑 Meister(*in) | Gewinne mit jedem Charakter |
+| 🏆 Goldrahmen | Besiege die schwere KI |
+| 💥 Zerstörer(*in) | Verursache ≥25 Schaden in einem Angriff |
+| ⚡ Blitzkrieg | Gewinne in ≤20 Zügen |
+| 💪 Überlebenskünstler(*in) | Gewinne mit ≤10 HP |
+| 📚 Sammler(*in) | Schalte alle 4 Fähigkeiten in einem Spiel frei |
+| 🎖️ Veteran(*in) | Spiele 20 Partien |
+| 🏅 Legende | Gewinne 10 Partien |
 
 ### 🪙 Münzen & Shop-System
 
@@ -259,9 +293,9 @@ Münzen werden durch Siege, Erfolge, Aufträge, Meilensteine und das Glücksrad 
 | Sieg vs. KI (Mittel) | +13 🪙 |
 | Sieg vs. KI (Schwer) | +15 🪙 |
 | Erfolg freigeschaltet | +20 🪙 |
-| Aufträge (Quests) | +15–50 🪙 |
-| Meilensteine | +30–200 🪙 |
-| Tägliches Glücksrad | +10–500 🪙 |
+| Aufträge (Quests) | +20–70 🪙 |
+| Meilensteine | +50–500 🪙 |
+| Tägliches Glücksrad | +10–200 🪙 |
 
 Der **Shop** (🛒) bietet 6 rein kosmetische Kategorien:
 
@@ -273,14 +307,14 @@ Der **Shop** (🛒) bietet 6 rein kosmetische Kategorien:
 | Gotisch | MedievalSharp-Font | 30 🪙 |
 | Strichliste | Strich-Zählung | 60 🪙 |
 | Symbole | CSS Pip-Dots | 100 🪙 |
-| Runen | ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ | 50 🪙 |
-| Kristall | Glitzer-Effekt | 80 🪙 |
-| Knochen | Skelett-Look | 100 🪙 |
+| Urzeit | Steinzeitliche Zahlen | 50 🪙 |
+| Kristall | Funkelnde Zahlen | 80 🪙 |
+| Knochen | Zahlen aus Knochen | 100 🪙 |
 | Feuer 🔥 | Flammen-Glow | 150 🪙 |
 | Eis ❄️ | Frost-Effekt | 150 🪙 |
 | Nekromant 💀 | Dunkle Aura | 200 🪙 |
-| Himmelsschmiede ⚒️ | Gold-Glanz | 300 🪙 |
-| Void 🕳️ | Schwarzloch-Look | 500 🪙 |
+| Himmelsschmiede ⚒️ | Gold/Weiß-Farbwechsel | 300 🪙 |
+| Void 🕳️ | Wabernder Umriss | 500 🪙 |
 | Regenbogen 🌈 | Animierter Farbwechsel | 1000 🪙 ⭐ |
 
 ### 🎯 Tisch-Designs (7 Designs)
@@ -322,11 +356,11 @@ Der **Shop** (🛒) bietet 6 rein kosmetische Kategorien:
 
 | Pack | Beschreibung | Preis |
 |---|---|---|
-| Standard | Original-Sounds | Gratis |
-| Taverne 🍺 | Gedämpfte Tavern-Klänge | 80 🪙 |
-| 8-Bit 👾 | Retro-Chiptune-Sounds | 100 🪙 |
-| Mystisch 🔮 | Ätherische Klänge | 120 🪙 |
-| Kriegstrommeln 🥁 | Epische Trommeln | 150 🪙 |
+| Standard | Original (Würfeln, Angriff, Heilung, Sammeln, Sieg, Klick) | Gratis |
+| Taverne 🍺 | Dumpfe Holztöne (Würfeln, Angriff, Sammeln, Klick, Musik) | 80 🪙 |
+| 8-Bit 👾 | Retro-Chiptune (Würfeln, Angriff, Heilung, Sammeln, Sieg, Klick, Musik) | 100 🪙 |
+| Mystisch 🔮 | Ätherische Klänge (Würfeln, Angriff, Heilung, Sammeln, Sieg, Klick, Musik) | 120 🪙 |
+| Kriegstrommeln 🥁 | Epische Trommeln (Würfeln, Angriff, Heilung, Sammeln, Sieg, Musik) | 150 🪙 |
 
 ⭐ = Legendärer Gegenstand (mit goldenem Leuchteffekt)
 
@@ -345,17 +379,17 @@ Der **Shop** (🛒) bietet 6 rein kosmetische Kategorien:
 | Meilenstein | Bedingung | Belohnung |
 |---|---|---|
 | Erste Schritte | 10 Siege | 50 🪙 |
-| Aufsteigend | 25 Siege | 100 🪙 + Kristall-Skin |
-| Halbzeit | 50 Partien | 80 🪙 + Wald-Tisch |
-| Veteran | 50 Siege | 150 🪙 + Flammen-Rahmen |
-| Marathonläufer | 100 Partien | 120 🪙 + Feuerwerk-Animation |
-| Legende | 100 Siege | 200 🪙 + Void-Skin |
+| Aufsteigend | 25 Siege | 100 🪙 |
+| Veteran | 50 Siege | 200 🪙 + Urzeit-Skin |
+| Legende | 100 Siege | 500 🪙 + Flammen-Rahmen |
+| Halbzeit | 50 Partien | 100 🪙 |
+| Marathonläufer | 100 Partien | 250 🪙 |
 
 ### 🎡 Tägliches Glücksrad
 
 - Einmal pro Tag drehbar
-- 9 Segmente mit gewichteter Zufallsverteilung
-- Gewinne: 10 bis 500 Münzen
+- 8 Segmente mit gewichteter Zufallsverteilung
+- Gewinne: 10 bis 200 Münzen
 - Animiertes Drehen mit Ergebnis-Anzeige
 
 ---
@@ -383,7 +417,7 @@ Die schwere KI nutzt einen mehrstufigen Entscheidungsprozess:
 
 **Strategieentscheidung** berücksichtigt:
 - Kill-Erkennung (Gegner mit einem Angriff besiegbar?)
-- SP-Rennen-Bewusstsein (Gegner nah an 40 SP?)
+- SP-Rennen-Bewusstsein (Gegner nah an 55 SP?)
 - HP-abhängige Heilschwellen
 - Fähigkeits-Freischaltungs-Nähe
 - **Niemals-verschwendeter-Zug**: Fallback-Logik stellt sicher, dass immer eine Aktion ausgeführt wird
@@ -444,14 +478,21 @@ Prozedural generierte Musik mit Melodie, Bass, Harmonien und Rhythmus:
 
 ## Barrierefreiheit
 
-Über den 👓-Button (unten rechts) erreichbar:
+Über den 👓-Button (unten rechts) oder im Hauptmenü unter „Barrierefreiheit" erreichbar. Alle Modi sind **opt-in** (standardmäßig deaktiviert).
 
 | Modus | Beschreibung |
 |---|---|
 | **LRS-Modus** | OpenDyslexic-Schrift, erhöhter Zeilenabstand (1.8), Buchstabenabstand |
-| **Farbenblind-Modus** | Höherer Kontrast (#c0b0d4), dickere Würfelrahmen (4px), stärkere Glow-Effekte |
-| **Rot-Grün-Schwäche** | HP-Balken: Grün→Blau, Rot→Orange; alle UI-Elemente umgefärbt |
+| **Farbenblind-Modus** | Höherer Kontrast (#c0b0d4), dickere Würfelrahmen (4px), stärkere Glow-Effekte, dickere Button-Borders, unterstrichene Spielernamen, HP-Balken mit weißem Rand |
+| **Rot-Grün-Schwäche** | HP-Balken: Grün→Blau, Rot→Orange; alle inline-Farben über `rgColor()`/`rgEmoji()` umgemappt; Tutorial-Animationen, Rainbow-Skin angepasst |
 | **Größere Schrift** | Basis-Schriftgröße 1.45em, alle Elemente proportional skaliert |
+| **Animationen reduzieren** | Bildschirmwackeln, Blitz-Effekte, Heal-Partikel und Sparkles deaktiviert. Sound bleibt aktiv. Respektiert auch `prefers-reduced-motion` des Betriebssystems |
+| **Getrennte Lautstärke** | Im Kampf erscheinen zwei separate Stumm-Buttons (🎵 Musik / 🔊 Effekte) statt einem globalen |
+
+### Tastatursteuerung & ARIA
+- Alle interaktiven Elemente (Buttons, Würfel, Einstellungs-Karten) sind per Tab-Taste erreichbar
+- Dynamische Würfel haben `role="button"` und `aria-label` mit aktuellem Wert
+- Barrierefreiheits-Optionen haben `tabindex="0"` und reagieren auf Enter/Leertaste
 
 Einstellungen werden in `localStorage` gespeichert und überdauern Seitenneuladen.
 
@@ -507,14 +548,39 @@ Dann öffnen: http://localhost:3000 (inkl. Online-Multiplayer im LAN)
 
 ---
 
+## Balance-Simulation
+
+Automatisierte Balance-Überprüfung durch KI-vs-KI-Spiele.
+
+**288.000 Spiele** (4 Charaktere × 4 Gegner × 3 Strategien × 3 Gegenstrategien × 2 Startspieler × 2.000 Wiederholungen).
+
+### Strategien
+| Strategie | Verhalten |
+|---|---|
+| **Aggro** | Greift fast immer an. Heilt nur bei ≤30 HP. Ziel: schnelle Elimination. |
+| **Control** | Sammelt SP für Transzendenz. Heilt bei ≤50 HP. Greift nur bei Kill-Chance an. |
+| **Schwer** | Bildet die schwere KI nach — dynamische Hybrid-Entscheidung. |
+
+### Starten
+- **Doppelklick** auf `start_simulation.bat` (öffnet Ergebnis automatisch in Notepad)
+- **Oder**: `node simulate.js` im Terminal
+
+### Ausgabe
+Ergebnis in `simulation_ergebnis.txt` — 9-Abschnitt-Report mit:
+Charakter-Winrates, Matchup-Matrix, Strategie-Analyse, Startspieler-Vorteil, Siegbedingungen, Spiellänge, Erschöpfungs-Statistik, Fähigkeiten-Statistik, Charakter-Detailanalyse + Fazit mit [OK]/[!]-Indikatoren.
+
+---
+
 ## Projektstruktur
 
 ```
 Wuerfelspiel_dice/
 ├── server.js              # Express + Socket.IO Server (Online-Multiplayer)
 ├── package.json           # Node.js-Abhängigkeiten (express, socket.io)
-├── simulate.js            # Simulationsskript
+├── simulate.js            # Balance-Simulationsskript (288k KI-Spiele)
 ├── start_game.bat         # Windows Quick-Start
+├── start_simulation.bat   # Simulation per Doppelklick starten
+├── simulation_ergebnis.txt # Simulationsergebnis (generiert)
 ├── README.md              # Diese Dokumentation
 └── public/
     ├── index.html         # Komplettes Spiel (HTML + CSS + JS, ~7800 Zeilen)
