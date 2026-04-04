@@ -193,6 +193,7 @@
         .tut-reward-banner { background: linear-gradient(135deg, rgba(212,160,48,0.15), rgba(212,160,48,0.05)); border: 2px solid #d4a030; padding: 10px 16px; text-align: center; margin: 10px 0; animation: tutBounceIn 0.6s ease-out both; }
         .dice-eligible { box-shadow: 3px 3px 0 #000, 0 0 12px rgba(212,160,48,0.6), 0 0 20px rgba(212,160,48,0.3); border-color: #d4a030 !important; }
         .btn-select-action.action-active { border-color: #d4a030; background-color: #261f42; color: #fff; box-shadow: 2px 2px 0 #000, 0 0 8px rgba(212,160,48,0.4); }
+        .btn-select-action.action-locked { opacity: 0.35; cursor: not-allowed; }
         @keyframes screenShake {
             0%, 100% { transform: translate(0, 0); }
             10% { transform: translate(-6px, -3px); }
@@ -299,18 +300,12 @@
         .dice-pip { width: 10px; height: 10px; border-radius: 50%; background: #141020; }
         .dice-pip.on { background: #d4c8e0; }
         .table-standard { }
-        .table-taverne { background: linear-gradient(180deg, #2a1a0a 0%, #3d2610 100%) !important; border-color: #5a3a1a !important; }
-        .table-taverne .player-panel, .table-taverne .opponent-bar, .table-taverne .current-panel, .table-taverne .battle-header { background-color: rgba(42,26,10,0.7) !important; border-color: #5a3a1a !important; }
-        .table-kerker { background: linear-gradient(180deg, #0a0a10 0%, #141420 100%) !important; border-color: #2a2a3a !important; }
-        .table-kerker .player-panel, .table-kerker .opponent-bar, .table-kerker .current-panel, .table-kerker .battle-header { background-color: rgba(10,10,16,0.7) !important; border-color: #2a2a3a !important; }
-        .table-wald { background: linear-gradient(180deg, #0a1a0a 0%, #102010 100%) !important; border-color: #1a3a1a !important; }
-        .table-wald .player-panel, .table-wald .opponent-bar, .table-wald .current-panel, .table-wald .battle-header { background-color: rgba(10,26,10,0.7) !important; border-color: #1a3a1a !important; }
-        .table-drachenhort { background: linear-gradient(180deg, #1a1000 0%, #2a1a00 100%) !important; border-color: #d4a030 !important; box-shadow: inset 0 0 30px rgba(212,160,48,0.1); }
-        .table-drachenhort .player-panel, .table-drachenhort .opponent-bar, .table-drachenhort .current-panel, .table-drachenhort .battle-header { background-color: rgba(26,16,0,0.7) !important; border-color: #d4a030 !important; }
-        .table-sternenhimmel { background: linear-gradient(180deg, #050510 0%, #0a0a20 100%) !important; border-color: #334488 !important; }
-        .table-sternenhimmel .player-panel, .table-sternenhimmel .opponent-bar, .table-sternenhimmel .current-panel, .table-sternenhimmel .battle-header { background-color: rgba(5,5,16,0.7) !important; border-color: #334488 !important; }
-        .table-thronsaal { background: linear-gradient(180deg, #1a0a0a 0%, #2a1020 100%) !important; border-color: #cc3333 !important; box-shadow: inset 0 0 40px rgba(204,51,51,0.1); }
-        .table-thronsaal .player-panel, .table-thronsaal .opponent-bar, .table-thronsaal .current-panel, .table-thronsaal .battle-header { background-color: rgba(26,10,10,0.7) !important; border-color: #cc3333 !important; }
+        .table-taverne { background: linear-gradient(180deg, #2a1a0a 0%, #3d2610 100%) !important; }
+        .table-kerker { background: linear-gradient(180deg, #0a0a10 0%, #141420 100%) !important; }
+        .table-wald { background: linear-gradient(180deg, #0a1a0a 0%, #102010 100%) !important; }
+        .table-drachenhort { background: linear-gradient(180deg, #1a1000 0%, #2a1a00 100%) !important; box-shadow: inset 0 0 30px rgba(212,160,48,0.1); }
+        .table-sternenhimmel { background: linear-gradient(180deg, #050510 0%, #0a0a20 100%) !important; }
+        .table-thronsaal { background: linear-gradient(180deg, #1a0a0a 0%, #2a1020 100%) !important; box-shadow: inset 0 0 40px rgba(204,51,51,0.1); }
         .frame-standard { }
         .frame-silber { border-color: #aaaacc !important; box-shadow: 0 0 8px rgba(170,170,204,0.3); }
         .frame-gold { border-color: #d4a030 !important; box-shadow: 0 0 10px rgba(212,160,48,0.4); }
@@ -1877,6 +1872,9 @@
         // ===== RENDER =====
         Game.prototype.render = function() {
                 this.container.innerHTML = '';
+                var tableDesignR = loadMetaData().selectedTable || 'standard';
+                var tableClassR = TABLE_DESIGNS[tableDesignR] ? TABLE_DESIGNS[tableDesignR].cssClass : '';
+                this.container.className = tableClassR || '';
                 switch (this.state) {
                     case GameState.MainMenu: this.renderMainMenu(); break;
                     case GameState.Tutorial: this.renderTutorial(); break;
@@ -2525,11 +2523,8 @@
             }
 
             // Build final HTML
-            var tableDesign = loadMetaData().selectedTable || 'standard';
-            var tableClass = TABLE_DESIGNS[tableDesign] ? TABLE_DESIGNS[tableDesign].cssClass : '';
-            if (tableClass) this.container.className = tableClass;
-            else this.container.className = '';
-            var h = '<div class="battle-screen ' + tableClass + '">' +
+
+            var h = '<div class="battle-screen">' +
                 '<div class="battle-header">' +
                 '<div class="current-player">' + (isKiTurn ? '⚔ KI ist am Zug' : 'Am Zug: Du (6 Würfel)') + '</div>' +
                 '<div class="rolls-left">' + roundLabel + ' — Würfe übrig: ' + rollsRem + '</div></div>';
@@ -2738,15 +2733,15 @@
             // Aktions-Buttons
             var actionHtml = '';
             if (hasRolled) {
-                var atkCls = this.actionSelected === 'attack' ? ' action-active' : '';
-                var healCls = this.actionSelected === 'heal' ? ' action-active' : '';
-                var abCls = this.actionSelected === 'ability' ? ' action-active' : '';
+                var atkCls = this.actionSelected === 'attack' ? ' action-active' : (this.actionSelected ? ' action-locked' : '');
+                var healCls = this.actionSelected === 'heal' ? ' action-active' : (this.actionSelected ? ' action-locked' : '');
+                var abCls = this.actionSelected === 'ability' ? ' action-active' : (this.actionSelected ? ' action-locked' : '');
                 actionHtml = '<div class="action-buttons-container">' +
                     '<button class="btn-select-action' + atkCls + '" onclick="game.selectAction(\'attack\')">⚔ Angriff</button>' +
                     '<button class="btn-select-action' + healCls + '" onclick="game.selectAction(\'heal\')">💚 Heilen</button>' +
                     '<button class="btn-select-action' + abCls + '" onclick="game.selectAction(\'ability\')">⭐ Fähigkeitspunkte</button>';
                 if (this.playerHasEffect(current, CharacterType.Rebell, 2) && current.lastDamageReceived > 0) {
-                    var blkCls = this.actionSelected === 'block' ? ' action-active' : '';
+                    var blkCls = this.actionSelected === 'block' ? ' action-active' : (this.actionSelected ? ' action-locked' : '');
                     actionHtml += '<button class="btn-select-action' + blkCls + '" style="border-color: #d4a030;" onclick="game.selectAction(\'block\')">🛡️ Blocken (' + current.lastDamageReceived + ' Schaden)</button>';
                 }
                 actionHtml += '</div>';
@@ -2775,7 +2770,7 @@
                 var cls = '', txt = '';
                 if (d === -1) { cls = 'destroyed'; txt = '💀'; }
                 else if (d === 0) { cls = 'disabled'; txt = '?'; }
-                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : (this.actionSelected && !this.diceAnimating && this.rollsRemaining === 0 && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.pipDots ? '' : (skinData.map[d] || d); }
+                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : (this.actionSelected && !this.diceAnimating && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.pipDots ? '' : (skinData.map[d] || d); }
                 var skinStyle = '';
                 var skinClass = '';
                 var usePipDots = d > 0 && d !== -1 && skinData.pipDots;
@@ -4078,6 +4073,7 @@
         };
 
         Game.prototype.selectAction = function(actionType) {
+            if (this.actionSelected) return;
             if (this.onlineMode) {
                 if (!this.isMyTurn()) return;
                 // Heilen: prüfe ob eligible Würfel vorhanden (nur wenn keine Würfe mehr übrig)
@@ -4327,7 +4323,7 @@
                 return d === 1 || (hasZweier && d === 2);
             }
             if (this.actionSelected === 'ability') {
-                return false;
+                return true;
             }
             if (this.actionSelected === 'block') {
                 var keptValsB = [];
