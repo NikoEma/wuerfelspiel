@@ -4609,13 +4609,15 @@
                 showScroll('🔮 Gegner*in-Zwang! Wurf ' + rollNum + ' wurde erzwungen wiederholt!', '🔮');
             }
 
+            // Würfel-Animation: Flag VOR render setzen, damit Gold-Rahmen nicht zu früh erscheint
+            this.diceAnimating = true;
+
             this.render();
 
             // Würfel-Sound
             SFX.roll();
 
             // Würfel-Animation: Zahlen durchwürfeln + Tumble
-            this.diceAnimating = true;
             var diceEls = document.querySelectorAll('.dice:not(.kept):not(.locked):not(.destroyed):not(.disabled)');
             var activeSkin = loadMetaData().selectedSkin || 'standard';
             var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
@@ -6142,9 +6144,10 @@
                 }
                 showScroll('🔮 Gegner*in-Zwang! Wurf ' + rollNum + ' wurde erzwungen wiederholt!', '🔮');
             }
+            // Würfel-Animation: Flag VOR render setzen, damit Gold-Rahmen nicht zu früh erscheint
+            this.diceAnimating = true;
             this.render();
             SFX.roll();
-            this.diceAnimating = true;
             var diceEls = document.querySelectorAll('.dice:not(.kept):not(.locked):not(.destroyed):not(.disabled)');
             var activeSkin = loadMetaData().selectedSkin || 'standard';
             var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
