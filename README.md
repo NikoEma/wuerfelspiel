@@ -115,20 +115,20 @@ Fokus: Verteidigung, passive Schadenszufügung und Würfelmanipulation.
 | # | Fähigkeit | Effekt |
 |---|---|---|
 | 1 | 🎲 Würfel-Diebstahl | +1 Bonuswürfel nächste Runde, wenn Gegner ungenutzte Würfel hatte |
-| 2 | 🛡️ Schadensblockade | Neue Aktion „Blocken": Wenn Summe ≥ erlittenem Schaden → volle Heilung |
-| 3 | 👑 Kriegsstrateg*in | Am Zugende: Gegner nimmt 4 auto-Schaden |
+| 2 | � Kriegsstrateg*in | Am Zugende: Gegner nimmt 5 auto-Schaden |
+| 3 | 🛡️ Schadensblockade | Neue Aktion „Blocken": Wenn Summe ≥ erlittenem Schaden → volle Heilung |
 | 4 | 🚀 Fünfer-Upgrade | 5er-Würfel zählen als 6 bei Angriff |
 
-**Elimination-Synergie:** Kriegsstrateg*in macht 4 passiven Schaden pro Runde — über ein Spiel hinweg mehr als die Hälfte der gegnerischen HP.
+**Elimination-Synergie:** Kriegsstrateg*in macht 5 passiven Schaden pro Runde — über ein Spiel hinweg mehr als die Hälfte der gegnerischen HP.
 
 ### 🗝️ Taschendieb*in — Ressourcen-Spezialist
 Fokus: Mehr Punkte pro Sammlung, Heilflexibilität und Ressourcen-Raub.
 
 | # | Fähigkeit | Effekt |
 |---|---|---|
-| 1 | 💰 Punkt-Bonus | +1 FP und +1 SP pro Sammelaktion |
+| 1 | 💰 Punkt-Bonus | +1 SP pro Sammelaktion |
 | 2 | ✨ Zweier-Magisch | 2er-Würfel können auch zum Heilen verwendet werden |
-| 3 | 💰 Ressourcen-Raub | Bei ⭐-Sammlung: Gegner verliert 2 FP |
+| 3 | 💰 Ressourcen-Raub | Bei ⭐-Sammlung: Gegner verliert 1 FP |
 | 4 | 💣 Würfel-Zerstörer*in | Zerstört zu Zugbeginn 1 zufälligen Gegner-Würfel |
 
 **SP-Synergie:** Punkt-Bonus steigert jede Sammlung um +1 SP.
@@ -602,6 +602,18 @@ Wuerfelspiel_dice/
 ---
 
 ## Changelog
+
+### v2.2 — Balance-Patch & UI-Verbesserungen
+
+**Balance-Patch** (Spread 22% → 2.4%, verifiziert mit 1.4 Mio. KI-Spielen):
+- ⚖️ **Taschendieb Punkt-Bonus**: +1 FP +1 SP → nur +1 SP (FP-Beschleunigung entfernt)
+- ⚖️ **Taschendieb Ressourcen-Raub**: Gegner verliert 2 FP → 1 FP (weniger aggressiv)
+- ⚖️ **Rebell Kriegsstrateg*in**: Slot 3 → Slot 2 (früher verfügbar), 4 → 5 Schaden (stärker)
+
+**UI-Verbesserungen:**
+- 🟡 **Gold-Rahmen sofort**: Eligible Würfel leuchten gold sobald Aktion gewählt wird (nicht erst beim letzten Wurf)
+- 🔒 **Aktion gesperrt**: Nach Aktionswahl kann die Aktion nicht mehr geändert werden. Nicht-gewählte Buttons werden ausgegraut.
+- 🎨 **Tisch-Designs global**: Gekaufte Tisch-Designs wirken jetzt auf allen Screens (Lobby, Shop, Kampf etc.), nicht nur im Kampf. Design ändert nur den Hintergrund.
 
 ### v2.1 — Verbesserungen & Bugfixes
 
