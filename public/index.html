@@ -2770,7 +2770,8 @@
                 var cls = '', txt = '';
                 if (d === -1) { cls = 'destroyed'; txt = '💀'; }
                 else if (d === 0) { cls = 'disabled'; txt = '?'; }
-                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : (this.actionSelected && !this.diceAnimating && this.isDiceEligible(i) ? 'dice-eligible' : ''); txt = skinData.pipDots ? '' : (skinData.map[d] || d); }
+                else { cls = this.diceKept[i] ? (this.diceLocked[i] ? 'kept locked' : (this.diceAnimating ? '' : 'kept')) : ''; txt = skinData.pipDots ? '' : (skinData.map[d] || d); }
+                var isEligible = d > 0 && d !== -1 && !this.diceKept[i] && this.actionSelected && !this.diceAnimating && this.isDiceEligible(i);
                 var skinStyle = '';
                 var skinClass = '';
                 var usePipDots = d > 0 && d !== -1 && skinData.pipDots;
@@ -2788,10 +2789,11 @@
                     else if (skinData.cssClass === 'skin-preview-regenbogen') skinClass = ' skin-preview-regenbogen';
                 }
                 diceHtml += '<div style="display:inline-block;text-align:center;margin:0 5px;">';
+                var eligAttr = isEligible ? ' data-eligible="1"' : '';
                 if (usePipDots) {
-                    diceHtml += '<div class="dice ' + cls + skinClass + '" tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + this.renderBattlePipDots(d) + '</div>';
+                    diceHtml += '<div class="dice ' + cls + skinClass + '"' + eligAttr + ' tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + this.renderBattlePipDots(d) + '</div>';
                 } else {
-                    diceHtml += '<div class="dice ' + cls + skinClass + '"' + skinStyle + ' tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + txt + '</div>';
+                    diceHtml += '<div class="dice ' + cls + skinClass + '"' + skinStyle + eligAttr + ' tabindex="0" role="button" aria-label="Würfel ' + (i+1) + ': ' + d + '" onclick="game.toggleDiceKeep(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}">' + txt + '</div>';
                 }
                 if (showReroll && d > 0 && d !== -1 && !this.diceKept[i]) {
                     diceHtml += '<div style="margin-top:4px;"><button style="font-size:0.7em;padding:2px 8px;background:#1e1832;color:#d4a030;border:2px solid #d4a030;cursor:pointer;font-family:VT323,monospace;" onclick="game.rerollDie(' + i + ')">🔁</button></div>';
@@ -2885,6 +2887,13 @@
                 exhaustionHtml(current) +
                 '<div class="ability-section">' + this.getAbilityDisplay(current) + '</div></div></div>' +
                 '<div' + interactiveStyle + '><div' + diceGreyStyle + ' class="dice-container">' + diceHtml + '</div>' + btns + '</div>' + alwaysBtns + '</div>';
+            // Gold-Umrandung (dice-eligible) verzögert nach 5ms einblenden
+            setTimeout(function() {
+                var eligibles = document.querySelectorAll('.dice[data-eligible="1"]');
+                for (var e = 0; e < eligibles.length; e++) {
+                    eligibles[e].classList.add('dice-eligible');
+                }
+            }, 5);
         };
 
         // Medaillen für Erfolge eines Spielers
@@ -4140,8 +4149,40 @@
                 current.sp += 1;
                 var newVal = this.currentDice[idx];
                 var dieNum = idx + 1;
+                this.diceAnimating = true;
                 this.render();
-                setTimeout(function() { showScroll('🔁 Neuwurf! Würfel ' + dieNum + ' → ' + newVal + ' (+1 SP)', '🔁'); }, 50);
+                SFX.roll();
+                var self = this;
+                var activeSkin = loadMetaData().selectedSkin || 'standard';
+                var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
+                var targetDie = document.querySelectorAll('.dice')[idx];
+                if (targetDie) {
+                    targetDie.classList.add('rolling');
+                    var cycleCount = 0, maxCycles = 8;
+                    var cycleTimer = setInterval(function() {
+                        cycleCount++;
+                        var rv = Math.floor(Math.random() * 6) + 1;
+                        if (skinData.pipDots) {
+                            targetDie.innerHTML = self.renderBattlePipDots(rv);
+                        } else {
+                            targetDie.textContent = skinData.map[rv] || rv;
+                        }
+                        if (cycleCount >= maxCycles) {
+                            clearInterval(cycleTimer);
+                        }
+                    }, 70);
+                    setTimeout(function() {
+                        targetDie.classList.remove('rolling');
+                        setTimeout(function() {
+                            self.diceAnimating = false;
+                            if (typeof game !== 'undefined') game.render();
+                        }, 5);
+                    }, 700);
+                } else {
+                    self.diceAnimating = false;
+                    this.render();
+                }
+                setTimeout(function() { showScroll('🔁 Neuwurf! Würfel ' + dieNum + ' → ' + newVal + ' (+1 SP)', '🔁'); }, 750);
             }
         };
 
@@ -4168,7 +4209,37 @@
             }
             this.restartUsed = true;
             showScroll('♻️ Selber-Neustart! ' + count + ' Würfel komplett neu gewürfelt!', '♻️');
+            this.diceAnimating = true;
             this.render();
+            SFX.roll();
+            var self = this;
+            var diceEls = document.querySelectorAll('.dice:not(.destroyed):not(.disabled)');
+            var activeSkin = loadMetaData().selectedSkin || 'standard';
+            var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
+            for (var a = 0; a < diceEls.length; a++) { diceEls[a].classList.add('rolling'); }
+            var cycleCount = 0, maxCycles = 8;
+            var cycleTimer = setInterval(function() {
+                cycleCount++;
+                for (var c = 0; c < diceEls.length; c++) {
+                    var rv = Math.floor(Math.random() * 6) + 1;
+                    if (skinData.pipDots) {
+                        diceEls[c].innerHTML = self.renderBattlePipDots(rv);
+                    } else {
+                        diceEls[c].textContent = skinData.map[rv] || rv;
+                    }
+                }
+                if (cycleCount >= maxCycles) {
+                    clearInterval(cycleTimer);
+                }
+            }, 70);
+            setTimeout(function() {
+                var els = document.querySelectorAll('.dice.rolling');
+                for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); }
+                setTimeout(function() {
+                    self.diceAnimating = false;
+                    if (typeof game !== 'undefined') game.render();
+                }, 5);
+            }, 700);
         };
 
         // ===== MÜNZWURF-ANIMATION =====
@@ -4411,13 +4482,15 @@
                 }
                 if (cycleCount >= maxCycles) {
                     clearInterval(cycleTimer);
-                    self.diceAnimating = false;
-                    if (typeof game !== 'undefined') game.render();
                 }
             }, 70);
             setTimeout(function() {
                 var els = document.querySelectorAll('.dice.rolling');
                 for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); }
+                setTimeout(function() {
+                    self.diceAnimating = false;
+                    if (typeof game !== 'undefined') game.render();
+                }, 5);
             }, 700);
         };
 
@@ -5938,13 +6011,15 @@
                 }
                 if (cycleCount >= maxCycles) {
                     clearInterval(cycleTimer);
-                    self.diceAnimating = false;
-                    if (typeof game !== 'undefined') game.render();
                 }
             }, 70);
             setTimeout(function() {
                 var els = document.querySelectorAll('.dice.rolling');
                 for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); }
+                setTimeout(function() {
+                    self.diceAnimating = false;
+                    if (typeof game !== 'undefined') game.render();
+                }, 5);
             }, 700);
         };
 
@@ -5990,8 +6065,40 @@
                 this.rerollUsed = true;
                 current.sp += 1;
                 var dieNum = idx + 1;
+                this.diceAnimating = true;
                 this.render();
-                setTimeout(function() { showScroll('🔁 Neuwurf! Würfel ' + dieNum + ' → ' + newValue + ' (+1 SP)', '🔁'); }, 50);
+                SFX.roll();
+                var self = this;
+                var activeSkin = loadMetaData().selectedSkin || 'standard';
+                var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
+                var targetDie = document.querySelectorAll('.dice')[idx];
+                if (targetDie) {
+                    targetDie.classList.add('rolling');
+                    var cycleCount = 0, maxCycles = 8;
+                    var cycleTimer = setInterval(function() {
+                        cycleCount++;
+                        var rv = Math.floor(Math.random() * 6) + 1;
+                        if (skinData.pipDots) {
+                            targetDie.innerHTML = self.renderBattlePipDots(rv);
+                        } else {
+                            targetDie.textContent = skinData.map[rv] || rv;
+                        }
+                        if (cycleCount >= maxCycles) {
+                            clearInterval(cycleTimer);
+                        }
+                    }, 70);
+                    setTimeout(function() {
+                        targetDie.classList.remove('rolling');
+                        setTimeout(function() {
+                            self.diceAnimating = false;
+                            if (typeof game !== 'undefined') game.render();
+                        }, 5);
+                    }, 700);
+                } else {
+                    self.diceAnimating = false;
+                    this.render();
+                }
+                setTimeout(function() { showScroll('🔁 Neuwurf! Würfel ' + dieNum + ' → ' + newValue + ' (+1 SP)', '🔁'); }, 750);
             }
         };
 
@@ -6008,7 +6115,37 @@
             }
             this.restartUsed = true;
             showScroll('♻️ Selber-Neustart! ' + count + ' Würfel komplett neu gewürfelt!', '♻️');
+            this.diceAnimating = true;
             this.render();
+            SFX.roll();
+            var self = this;
+            var diceEls = document.querySelectorAll('.dice:not(.destroyed):not(.disabled)');
+            var activeSkin = loadMetaData().selectedSkin || 'standard';
+            var skinData = DICE_SKINS[activeSkin] || DICE_SKINS.standard;
+            for (var a = 0; a < diceEls.length; a++) { diceEls[a].classList.add('rolling'); }
+            var cycleCount = 0, maxCycles = 8;
+            var cycleTimer = setInterval(function() {
+                cycleCount++;
+                for (var c = 0; c < diceEls.length; c++) {
+                    var rv = Math.floor(Math.random() * 6) + 1;
+                    if (skinData.pipDots) {
+                        diceEls[c].innerHTML = self.renderBattlePipDots(rv);
+                    } else {
+                        diceEls[c].textContent = skinData.map[rv] || rv;
+                    }
+                }
+                if (cycleCount >= maxCycles) {
+                    clearInterval(cycleTimer);
+                }
+            }, 70);
+            setTimeout(function() {
+                var els = document.querySelectorAll('.dice.rolling');
+                for (var b = 0; b < els.length; b++) { els[b].classList.remove('rolling'); }
+                setTimeout(function() {
+                    self.diceAnimating = false;
+                    if (typeof game !== 'undefined') game.render();
+                }, 5);
+            }, 700);
         };
 
         Game.prototype._onlineSurrender = function(playerNum) {
