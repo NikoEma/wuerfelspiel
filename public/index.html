@@ -300,12 +300,164 @@
         .dice-pip { width: 10px; height: 10px; border-radius: 50%; background: #141020; }
         .dice-pip.on { background: #d4c8e0; }
         .table-standard { }
-        .table-taverne { background: linear-gradient(180deg, #2a1a0a 0%, #3d2610 100%) !important; }
-        .table-kerker { background: linear-gradient(180deg, #0a0a10 0%, #141420 100%) !important; }
-        .table-wald { background: linear-gradient(180deg, #0a1a0a 0%, #102010 100%) !important; }
-        .table-drachenhort { background: linear-gradient(180deg, #1a1000 0%, #2a1a00 100%) !important; box-shadow: inset 0 0 30px rgba(212,160,48,0.1); }
-        .table-sternenhimmel { background: linear-gradient(180deg, #050510 0%, #0a0a20 100%) !important; }
-        .table-thronsaal { background: linear-gradient(180deg, #1a0a0a 0%, #2a1020 100%) !important; box-shadow: inset 0 0 40px rgba(204,51,51,0.1); }
+
+        .table-taverne {
+            background: repeating-linear-gradient(0deg, #2a1a0a 0px, #3d2610 4px, #2e1c0e 8px, #34200d 12px) !important;
+            background-size: 100% 60px !important;
+            box-shadow: inset 0 0 40px rgba(180,120,40,0.08), inset 0 2px 6px rgba(0,0,0,0.5) !important;
+            overflow: hidden;
+        }
+        .table-taverne::before {
+            content: '🪙 · 🍞 · 🪙 · · 🍺';
+            position: absolute; bottom: 12px; right: 16px;
+            font-size: 0.7em; opacity: 0.18; letter-spacing: 8px;
+            pointer-events: none; z-index: 0;
+        }
+        .table-taverne::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse 40px 30px at 15% 80%, rgba(139,90,20,0.12) 0%, transparent 100%),
+                radial-gradient(ellipse 30px 25px at 75% 25%, rgba(139,90,20,0.08) 0%, transparent 100%),
+                radial-gradient(ellipse 50px 35px at 50% 60%, rgba(100,60,10,0.06) 0%, transparent 100%),
+                repeating-linear-gradient(90deg, transparent 0px, transparent 198px, rgba(0,0,0,0.15) 198px, rgba(0,0,0,0.15) 202px);
+            pointer-events: none; z-index: 0;
+        }
+
+        .table-kerker {
+            background:
+                repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, transparent 1px, transparent 49px, rgba(255,255,255,0.02) 50px),
+                repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, transparent 1px, transparent 99px, rgba(255,255,255,0.02) 100px),
+                linear-gradient(180deg, #0a0a10 0%, #141420 100%) !important;
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.6), inset 0 0 10px rgba(80,80,120,0.05) !important;
+            overflow: hidden;
+        }
+        .table-kerker::before {
+            content: '⛓️ · · 🔥 · · ⛓️';
+            position: absolute; top: 10px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7em; opacity: 0.15; letter-spacing: 12px;
+            pointer-events: none; z-index: 0;
+        }
+        .table-kerker::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse 4px 30px at 20% 40%, rgba(100,100,140,0.1) 0%, transparent 100%),
+                radial-gradient(ellipse 4px 20px at 60% 70%, rgba(100,100,140,0.08) 0%, transparent 100%),
+                radial-gradient(ellipse 3px 15px at 80% 30%, rgba(100,100,140,0.06) 0%, transparent 100%),
+                radial-gradient(circle 60px at 90% 10%, rgba(255,150,50,0.04) 0%, transparent 100%);
+            pointer-events: none; z-index: 0;
+        }
+
+        .table-wald {
+            background: linear-gradient(180deg, #0a1a0a 0%, #102010 50%, #0d1a0d 100%) !important;
+            box-shadow: inset 0 0 50px rgba(30,80,30,0.1), inset 0 -20px 40px rgba(0,0,0,0.3) !important;
+            overflow: hidden;
+        }
+        .table-wald::before {
+            content: '🍂 · 🍄 · 🌿 · · 🍃';
+            position: absolute; bottom: 10px; left: 16px;
+            font-size: 0.7em; opacity: 0.16; letter-spacing: 6px;
+            pointer-events: none; z-index: 0;
+        }
+        .table-wald::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(circle 80px at 25% 20%, rgba(100,180,60,0.04) 0%, transparent 100%),
+                radial-gradient(circle 60px at 70% 50%, rgba(120,200,80,0.03) 0%, transparent 100%),
+                radial-gradient(circle 40px at 40% 75%, rgba(80,140,40,0.05) 0%, transparent 100%),
+                radial-gradient(ellipse 200px 100px at 50% 0%, rgba(100,160,60,0.03) 0%, transparent 100%);
+            pointer-events: none; z-index: 0;
+        }
+
+        .table-drachenhort {
+            background:
+                repeating-linear-gradient(120deg, rgba(212,160,48,0.03) 0px, transparent 3px, transparent 17px, rgba(212,160,48,0.02) 20px),
+                linear-gradient(180deg, #1a1000 0%, #2a1a00 100%) !important;
+            box-shadow: inset 0 0 50px rgba(212,160,48,0.12), inset 0 0 10px rgba(255,200,50,0.05) !important;
+            overflow: hidden;
+        }
+        .table-drachenhort::before {
+            content: '💎 · 🪙🪙🪙 · 💰 · 👑';
+            position: absolute; bottom: 12px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75em; opacity: 0.2; letter-spacing: 6px;
+            pointer-events: none; z-index: 0;
+        }
+        @keyframes goldShimmer { 0%,100% { opacity: 0.04; } 50% { opacity: 0.09; } }
+        .table-drachenhort::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(circle 100px at 30% 85%, rgba(212,160,48,0.1) 0%, transparent 100%),
+                radial-gradient(circle 70px at 70% 80%, rgba(212,160,48,0.08) 0%, transparent 100%),
+                radial-gradient(circle 50px at 50% 90%, rgba(255,200,50,0.06) 0%, transparent 100%),
+                radial-gradient(circle 120px at 80% 70%, rgba(180,100,20,0.05) 0%, transparent 100%);
+            pointer-events: none; z-index: 0;
+            animation: goldShimmer 4s ease-in-out infinite;
+        }
+
+        .table-sternenhimmel {
+            background:
+                radial-gradient(circle 1px at 10% 15%, #ffffff 0%, transparent 100%),
+                radial-gradient(circle 1px at 30% 8%, #ccccff 0%, transparent 100%),
+                radial-gradient(circle 2px at 50% 22%, #ffffff 0%, transparent 100%),
+                radial-gradient(circle 1px at 70% 12%, #aaaaff 0%, transparent 100%),
+                radial-gradient(circle 1px at 85% 28%, #ffffff 0%, transparent 100%),
+                radial-gradient(circle 1px at 15% 35%, #ccccff 0%, transparent 100%),
+                radial-gradient(circle 2px at 42% 5%, #ffffff 0%, transparent 100%),
+                radial-gradient(circle 1px at 90% 18%, #ddddff 0%, transparent 100%),
+                radial-gradient(circle 1px at 62% 32%, #ffffff 0%, transparent 100%),
+                radial-gradient(circle 1px at 25% 25%, #bbbbff 0%, transparent 100%),
+                radial-gradient(circle 1px at 78% 8%, #ffffff 0%, transparent 100%),
+                radial-gradient(circle 1px at 55% 38%, #ccccff 0%, transparent 100%),
+                linear-gradient(180deg, #050510 0%, #0a0a20 100%) !important;
+            box-shadow: inset 0 0 40px rgba(80,80,180,0.06) !important;
+            overflow: hidden;
+        }
+        .table-sternenhimmel::before {
+            content: '🌙';
+            position: absolute; top: 14px; right: 24px;
+            font-size: 1.4em; opacity: 0.2;
+            pointer-events: none; z-index: 0;
+        }
+        @keyframes twinkle { 0%,100% { opacity: 0.03; } 50% { opacity: 0.08; } }
+        .table-sternenhimmel::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse 300px 80px at 40% 15%, rgba(100,100,200,0.04) 0%, transparent 100%),
+                radial-gradient(ellipse 200px 60px at 70% 30%, rgba(120,100,180,0.03) 0%, transparent 100%);
+            pointer-events: none; z-index: 0;
+            animation: twinkle 5s ease-in-out infinite;
+        }
+
+        .table-thronsaal {
+            background:
+                repeating-linear-gradient(45deg, rgba(180,60,80,0.02) 0px, transparent 2px, transparent 28px, rgba(180,60,80,0.02) 30px),
+                repeating-linear-gradient(-45deg, rgba(180,60,80,0.02) 0px, transparent 2px, transparent 28px, rgba(180,60,80,0.02) 30px),
+                linear-gradient(180deg, #1a0a0a 0%, #2a1020 100%) !important;
+            box-shadow: inset 0 0 50px rgba(204,51,51,0.1), inset 0 0 15px rgba(255,200,50,0.04) !important;
+            overflow: hidden;
+        }
+        .table-thronsaal::before {
+            content: '👑';
+            position: absolute; top: 12px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.6em; opacity: 0.12;
+            pointer-events: none; z-index: 0;
+        }
+        .table-thronsaal::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                linear-gradient(180deg, transparent 0%, transparent 40%, rgba(140,20,40,0.06) 50%, transparent 60%, transparent 100%),
+                radial-gradient(ellipse 60px 100% at 0% 50%, rgba(140,20,40,0.05) 0%, transparent 100%),
+                radial-gradient(ellipse 60px 100% at 100% 50%, rgba(140,20,40,0.05) 0%, transparent 100%);
+            pointer-events: none; z-index: 0;
+        }
         .frame-standard { }
         .frame-silber { border-color: #aaaacc !important; box-shadow: 0 0 8px rgba(170,170,204,0.3); }
         .frame-gold { border-color: #d4a030 !important; box-shadow: 0 0 10px rgba(212,160,48,0.4); }
